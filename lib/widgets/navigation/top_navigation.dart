@@ -15,7 +15,7 @@ class TopNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Row(
     children: [
-      let<String, CircleAvatar>(null, (String fotoUrl) => CircleAvatar(
+      let<String, CircleAvatar>(estudiante?.fotoUrl, (String fotoUrl) => CircleAvatar(
         radius: 30,
         foregroundImage:
         MemoryImage(base64Decode(fotoUrl)),

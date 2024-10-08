@@ -4,7 +4,6 @@ import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/screens/home/actions/try_login_action.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,14 +34,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16),
-    child: Skeletonizer(
-      enabled: estudiante == null,
-      ignorePointers: true,
-      child: Column(
-        children: [
-          TopNavigation(estudiante: estudiante)
-        ],
-      ),
+    child: Column(
+      children: [
+        TopNavigation(estudiante: estudiante),
+      ],
     ),
   );
 }
