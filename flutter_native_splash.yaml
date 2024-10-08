@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#fafafa"
+  color_dark: "#1e1e1e"
+  image: assets/launcher_icons/prod/splash_dark.png
+  image_dark: assets/launcher_icons/prod/splash_light.png
+  branding: assets/images/exdev_dark.png
+  branding_bottom_padding: 10
+  branding_dark: assets/images/exdev_light.png
+  branding_mode: bottom

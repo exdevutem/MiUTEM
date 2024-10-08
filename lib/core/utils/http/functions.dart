@@ -1,0 +1,61 @@
+import 'package:dio/dio.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:miutem/core/models/preferencia.dart';
+import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/http/http_client.dart';
+
+
+/// Función para realizar solicitudes mediante el httpClient a Siga.UTEM.
+/// Esta función además genera un [CacheOptions] con opciones personalizadas por defecto.
+/// También esta función utiliza `$sigaServiceUri/` como prefijo.
+///
+/// [path] es el endpoint al que se desea acceder. No puede tener el prefijo `/`.
+/// [method] es el método HTTP a utilizar.
+/// [data] es un mapa con los datos a enviar.
+/// [options] son las opciones personalizadas para la solicitud.
+/// [forceRefresh] fuerza a que se realice una solicitud nueva.
+/// [ttl] es el tiempo que se guardará en caché la solicitud.
+Future<Response> sigaClientRequest(String path, {
+  String method = "GET",
+  Map<String, String>? headers,
+  dynamic data,
+  String? contentType,
+  ResponseType? responseType,
+  Options? options,
+  bool forceRefresh = false,
+  Duration ttl = const Duration(days: 7),
+  Map<String, dynamic>? extra,
+  Map<String, dynamic>? queryParameters,
+  Map<String, dynamic>? sigaParams,
+}) async => await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
+  data: data,
+  queryParameters: queryParameters,
+  options: options ?? buildCacheOptions(ttl,
+    forceRefresh: forceRefresh,
+    primaryKey: 'api_siga.miutem',
+    subKey: path,
+    maxStale: const Duration(days: 14),
+    options: (options ?? Options()).copyWith(
+      method: method,
+      headers: headers,
+      contentType: contentType,
+      responseType: responseType,
+      extra: extra,
+    ),
+  ),
+);
+
+Future<bool> isOffline() async {
+  bool offlineMode = (await Preferencia.isOffline.getAsBool(defaultValue: false, guardar: true));
+
+  try {
+    final response = await HttpClient.dioClient.head(sigaServiceUri);
+    offlineMode = !"${response.statusCode}".startsWith("2");
+  } catch (e) {
+    logger.e("[HttpRequest#isOffline]: Error al conectar con la API", error: e);
+    offlineMode = true;
+  }
+
+  await Preferencia.isOffline.set(offlineMode.toString());
+  return offlineMode;
+}

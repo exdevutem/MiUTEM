@@ -1,0 +1,50 @@
+name: miutem
+description: 'Plataforma académica para estudiantes de la Universidad Tecnológica Metropolitana (UTEM)'
+publish_to: none
+
+version: 3.0.0+142
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  logger: ^2.4.0
+  flutter_secure_storage: ^9.2.2
+  flutter_dotenv: ^5.1.0
+  dio: ^4.0.6
+  dio_http_cache: ^0.3.0
+  get: ^4.6.6
+  package_info_plus: ^8.0.2
+  shared_preferences: ^2.3.2
+  dart_jsonwebtoken: ^2.14.1
+  cloud_firestore: ^5.4.4
+  google_fonts: ^6.2.1
+  flutter_native_splash: ^2.4.1
+  video_player: ^2.9.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/videos/login_bg.mp4
+    - assets/images/login_bg.png
+    - assets/images/utem_logo_color_blanco.png
+    - assets/images/utem_logo_color_azul.png
+    - assets/images/utem_logo_negativo.png
+    - assets/images/utem_isotipo_negativo.png
+    - assets/animations/monito.flr
+    - assets/animations/utem.flr
+    - assets/images/sibutem.jpg
+    - assets/launcher_icons/prod/full_icon.png
+    - assets/images/exdev_light.png
+    - assets/images/exdev_dark.png
+    - assets/images/exdev.png
+    - assets/images/miutem_claro.png
+    - assets/images/miutem_oscuro.png
