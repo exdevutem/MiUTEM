@@ -2,20 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:miutem/screens/auth/login/widgets/background_video.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-
-  @override
-  void initState() {
-    // TODO: Revisar si la sesión está iniciada, si es así redirigir al home screen.
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -44,4 +32,5 @@ class _LoginScreenState extends State<LoginScreen> {
     )),
   );
 }
+
 

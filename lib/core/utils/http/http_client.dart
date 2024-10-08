@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/core/utils/http/interceptors/auth_interceptor.dart';
 import 'package:miutem/core/utils/http/interceptors/error_interceptor.dart';
 import 'package:miutem/core/utils/http/interceptors/headers_interceptor.dart';
 import 'package:miutem/core/utils/http/interceptors/log_interceptor.dart';
@@ -26,12 +25,7 @@ class HttpClient {
   ]);
 
   static final Dio authClientSiga = httpClient..interceptors.addAll([
-    AuthInterceptorSiga(),
     cacheManagerSiga.interceptor,
-    QueuedInterceptorsWrapper(onRequest: (options, handler) {
-      logger.d('[HttpClient#authClientSiga]: ${options.method} ${options.uri}\n${options.data}');
-      return handler.next(options);
-    }),
   ]);
 
   static Future<void> clearCache() async {

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/models/user/credential.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/auth_service.dart';
+import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
-import 'package:miutem/widgets/snackbar.dart';
+import 'package:miutem/screens/main_screen.dart';
+import 'package:miutem/widgets/loading/loading_dialog.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -16,6 +17,7 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
 
   final TextEditingController _usernameController = TextEditingController();
+  final FocusNode _usernameFocus = FocusNode();
 
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _passwordFocus = FocusNode();
@@ -23,6 +25,7 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    _init();
     super.initState();
   }
 
@@ -62,39 +65,22 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
             Form(
               child: Column(
                 children: [
-                  LoginFormFields(usernameController: _usernameController, passwordController: _passwordController, passwordFocus: _passwordFocus, onLogin: () async {
-                    // Si usuario y clave no están vacíos
-                    final username = _usernameController.text;
-                    final password = _passwordController.text;
-
-                    if(username.isEmpty) {
-                      showErrorSnackbar(context, "Debes ingresar tu usuario!");
-                      return;
-                    }
-
-                    if(password.isEmpty) {
-                      showErrorSnackbar(context, "Debes ingresar tu contraseña!");
-                      return;
-                    }
-
-                    if(_passwordFocus.hasFocus) {
-                      _passwordFocus.unfocus();
-                    }
-
-                    // Guardar credenciales
-                    await Get.find<SecureStorageRepository>().setCredentials(Credentials(username: username, password: password));
-
-                    try {
-                      await Get.find<AuthService>().login(forceRefresh: true);
-                    } catch (e) {
-                      if(context.mounted) {
-                        showErrorSnackbar(context, "Error al iniciar sesión. Por favor intenta nuevamente.");
-                      }
-                    }
-                  }),
+                  LoginFormFields(
+                    usernameController: _usernameController,
+                    passwordController: _passwordController,
+                    passwordFocus: _passwordFocus,
+                    usernameFocus: _usernameFocus,
+                    onLogin: () => loginAction(
+                      context: context,
+                      usernameController: _usernameController,
+                      passwordController: _passwordController,
+                      usernameFocus: _usernameFocus,
+                      passwordFocus: _passwordFocus,
+                    ),
+                  ),
                   TextButton(
                     onPressed: () {
-
+                      // launchURL('https://pasaporte.utem.cl/reset');
                     },
                     style: TextButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.secondary,
@@ -109,5 +95,31 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
       ),
     ),
   );
+
+  _init() async {
+    final credentials = await Get.find<SecureStorageRepository>().getCredentials();
+    if(credentials == null) return;
+
+    _usernameController.text = credentials.username;
+    _passwordController.text = credentials.password;
+
+
+    if(context.mounted) {
+      showLoadingDialog(context);
+    }
+
+    try {
+      Get.find<AuthService>().login();
+      if(context.mounted) {
+        Navigator.pop(context);
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+      }
+    } catch(e) {
+      if(context.mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
 }

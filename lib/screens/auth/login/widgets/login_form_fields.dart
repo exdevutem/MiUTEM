@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class LoginFormFields extends StatelessWidget {
   final TextEditingController usernameController, passwordController;
-  final FocusNode passwordFocus;
-  final Function onLogin;
-  
-  const LoginFormFields({super.key, required this.usernameController, required this.passwordController, required this.passwordFocus, required this.onLogin});
+  final FocusNode usernameFocus, passwordFocus;
+  final Function() onLogin;
+
+  const LoginFormFields({super.key, required this.usernameController, required this.passwordController, required this.passwordFocus, required this.onLogin, required this.usernameFocus});
 
   @override
   Widget build(BuildContext context) => Column(
@@ -23,6 +23,7 @@ class LoginFormFields extends StatelessWidget {
         autofillHints: const [AutofillHints.email],
         autofocus: true,
         onSubmitted: (_) => passwordFocus.requestFocus(),
+        focusNode: usernameFocus,
       ),
       const SizedBox(height: 10),
       TextField(
@@ -36,10 +37,11 @@ class LoginFormFields extends StatelessWidget {
         obscureText: true,
         obscuringCharacter: '•',
         controller: passwordController,
+        onSubmitted: (_) => onLogin(),
       ),
       const SizedBox(height: 10),
       FilledButton(
-        onPressed: () => onLogin,
+        onPressed: () => onLogin(),
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

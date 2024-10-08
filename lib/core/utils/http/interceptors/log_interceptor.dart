@@ -4,7 +4,7 @@ import 'package:miutem/core/utils/constants.dart';
 InterceptorsWrapper logInterceptor = InterceptorsWrapper(
   onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
     final now = DateTime.now();
-    logger.d("[HttpClient - ${now.toIso8601String()}]: ${options.method.toUpperCase()} ${options.uri}");
+    logger.d("[HttpClient - ${now.toIso8601String()}]: ${options.method.toUpperCase()} ${options.uri}\nHeaders: ${options.headers}\nExtra: ${options.extra}");
     options.extra["request_created_at"] = now.toIso8601String();
     return handler.next(options);
   },
