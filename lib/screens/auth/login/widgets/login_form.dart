@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/repositories/secure_storage_repository.dart';
-import 'package:miutem/core/services/auth_service.dart';
+import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
-import 'package:miutem/screens/main_screen.dart';
 import 'package:miutem/widgets/loading/loading_dialog.dart';
+import 'package:miutem/widgets/snackbar.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -25,7 +23,6 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    _init();
     super.initState();
   }
 
@@ -70,13 +67,23 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     passwordController: _passwordController,
                     passwordFocus: _passwordFocus,
                     usernameFocus: _usernameFocus,
-                    onLogin: () => loginAction(
-                      context: context,
-                      usernameController: _usernameController,
-                      passwordController: _passwordController,
-                      usernameFocus: _usernameFocus,
-                      passwordFocus: _passwordFocus,
-                    ),
+                    onLogin: () async {
+                      showLoadingDialog(context);
+                      try {
+                        loginAction(
+                          usernameController: _usernameController,
+                          passwordController: _passwordController,
+                          usernameFocus: _usernameFocus,
+                          passwordFocus: _passwordFocus,
+                        );
+                      } on CustomException catch (e) {
+                        Navigator.pop(context);
+                        showErrorSnackbar(context, e.message);
+                      } catch (e) {
+                        Navigator.pop(context);
+                        showErrorSnackbar(context, "Ocurrió un error inesperado. Por favor, intenta nuevamente.");
+                      }
+                    },
                   ),
                   TextButton(
                     onPressed: () {
@@ -95,31 +102,5 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
       ),
     ),
   );
-
-  _init() async {
-    final credentials = await Get.find<SecureStorageRepository>().getCredentials();
-    if(credentials == null) return;
-
-    _usernameController.text = credentials.username;
-    _passwordController.text = credentials.password;
-
-
-    if(context.mounted) {
-      showLoadingDialog(context);
-    }
-
-    try {
-      Get.find<AuthService>().login();
-      if(context.mounted) {
-        Navigator.pop(context);
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
-      }
-    } catch(e) {
-      if(context.mounted) {
-        Navigator.pop(context);
-      }
-    }
-  }
 
 }

@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:miutem/core/utils/constants.dart';
+
 /// Esta función ejecuta la función `op` si es que el objeto no es nulo, además retorna lo que retorne la función op.
 ///
 /// Modo de uso:
@@ -35,8 +37,7 @@ String? formatoNota(num? nota) => nota == 3.95 ? nota?.toStringAsFixed(2) : nota
 /// print(lista.rotate(-2)); // [4, 5, 1, 2, 3]
 /// ```
 extension RotateList<T> on List<T> {
-
-  List<T> rotate(int count) => count > 0 ? (this.sublist(count)..addAll(this.sublist(0, count))) : (this.sublist(this.length + count)..addAll(this.sublist(0, this.length + count)));
+  List<T> rotate(int count) => count > 0 ? (sublist(count)..addAll(sublist(0, count))) : (sublist(length + count)..addAll(sublist(0, length + count)));
 }
 
 /// Capitaliza el texto entregado
@@ -45,17 +46,7 @@ extension RotateList<T> on List<T> {
 /// print(capitalize("hola mundo")); // Hola Mundo
 /// ```
 ///
-String capitalize(String text) => text.split(" ").map((it) => {
-  if(it.isEmpty) {
-    ""
-  } else if (it.length == 1) {
-    it.toUpperCase()
-  } else if (it.length > 1) {
-    it[0].toUpperCase() + it.substring(1).toLowerCase()
-  } else {
-    it
-  }
-}).join(" ");
+String capitalize(String text) => text.split(" ").map((e) => e[0].toUpperCase() + e.substring(1).toLowerCase()).join(" ");
 
 Color fromHex(String hexString) {
   final buffer = StringBuffer();

@@ -7,9 +7,10 @@ import 'package:miutem/core/models/user/persona/rut.dart';
 
 class Estudiante extends PersonaUtem with TokenizedObject {
 
+  @override
   final String token;
+
   final String correoPersonal;
-  final String fotoUrl;
   final List<Perfil> perfiles;
 
   Estudiante({
@@ -18,7 +19,7 @@ class Estudiante extends PersonaUtem with TokenizedObject {
     required super.nombreCompleto,
     required super.correoUtem,
     required this.correoPersonal,
-    required this.fotoUrl,
+    required super.fotoUrl,
     required this.perfiles,
   });
 
