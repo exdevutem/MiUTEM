@@ -3,6 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
 
+  static Color get lightBlueCard => const Color(0xFFB8E8FC);
+  static Color get darkBlueCard => const Color(0xFF005C82);
+
+  static Color get lightPurpleCard => const Color(0xFFDFCCFB);
+  static Color get darkPurpleCard => const Color(0xFF692083);
+
+  static Color get lightYellowCard => const Color(0xFFFCF7BB);
+  static Color get darkYellowCard => const Color(0xFF6D660A);
+
   static ThemeData getTheme(BuildContext context) => ThemeData.light().copyWith(
     colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
       secondary: const Color(0xFF06607A),

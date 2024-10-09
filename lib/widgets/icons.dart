@@ -4,6 +4,7 @@ class AppIcons {
   /// Iconos de la barra de navegación.
   static const home = Symbols.home_rounded;
   static const subjects = Symbols.book_2_rounded;
+  static const subjectsMarker = Symbols.book_rounded;
   static const updates = Symbols.notifications_rounded;
   static const profile = Symbols.person_rounded;
   /// Iconos de accesos rápidos

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/screens/home/actions/try_login_action.dart';
+import 'package:miutem/screens/home/widgets/acceso_rapido/acceso_rapido.dart';
+import 'package:miutem/screens/home/widgets/saludo.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      setState(() => estudiante = estudiante);
+      setState(() => this.estudiante = estudiante);
     });
   }
 
@@ -35,8 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TopNavigation(estudiante: estudiante),
+        const SizedBox(height: 20),
+        Saludo(estudiante: estudiante),
+        const SizedBox(height: 20),
+        const AccesoRapido(),
       ],
     ),
   );
