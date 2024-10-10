@@ -7,9 +7,9 @@ class LoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const PopScope(
-      child: LoadingIndicator(
-        color: Colors.white,
-      )
+    child: LoadingIndicator(
+      color: Colors.white,
+    ),
   );
 }
 

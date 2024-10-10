@@ -46,7 +46,11 @@ extension RotateList<T> on List<T> {
 /// print(capitalize("hola mundo")); // Hola Mundo
 /// ```
 ///
-String capitalize(String text) => text.split(" ").map((e) => e[0].toUpperCase() + e.substring(1).toLowerCase()).join(" ");
+String capitalize(String text) => text.split(" ").map((e) {
+  if(e.isEmpty) return "";
+  if(e.length == 1) return e.toUpperCase();
+  return e[0].toUpperCase() + e.substring(1).toLowerCase();
+}).join(" ");
 
 /// Convierte un string hexadecimal a un color de Flutter
 Color fromHex(String hexString) {

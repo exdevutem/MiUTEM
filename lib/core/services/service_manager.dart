@@ -18,5 +18,4 @@ Future<void> initServices() async {
   Get.lazyPut(() => AsignaturasService());
   Get.lazyPut(() => GradesService());
   Get.lazyPut(() => HorarioService());
-  // await Get.find<HorarioService>().getHorario(forceRefresh: true);
 }
