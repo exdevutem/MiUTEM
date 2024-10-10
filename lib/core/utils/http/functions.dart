@@ -28,16 +28,17 @@ Future<Response> sigaClientRequest(String path, {
   Duration ttl = const Duration(days: 7),
   Map<String, dynamic>? extra,
   Map<String, dynamic>? queryParameters,
-  Map<String, dynamic>? sigaParams,
+  Map<String, dynamic> sigaParams = const {},
 }) async {
-  if(extra?['noToken'] != true) {
-    sigaParams?.addAll({
-      'token': await Get.find<AuthService>().activeToken(),
-    });
+  Map<String, dynamic> params = {
+    ...sigaParams
+  };
+  if((extra?['noToken'] ?? false) != true) {
+    params['token'] = await Get.find<AuthService>().activeToken();
   }
 
   return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
-    data: data ?? sigaParams?.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&"),
+    data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&"),
     queryParameters: queryParameters,
     options: options ?? buildCacheOptions(ttl,
       forceRefresh: forceRefresh,

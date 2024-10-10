@@ -48,9 +48,16 @@ extension RotateList<T> on List<T> {
 ///
 String capitalize(String text) => text.split(" ").map((e) => e[0].toUpperCase() + e.substring(1).toLowerCase()).join(" ");
 
+/// Convierte un string hexadecimal a un color de Flutter
 Color fromHex(String hexString) {
   final buffer = StringBuffer();
   if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
   buffer.write(hexString.replaceFirst('#', ''));
   return Color(int.parse(buffer.toString(), radix: 16));
+}
+
+/// Obtiene el día actual en formato 'Día, Numero de Mes'.
+String getToday() {
+  final now = DateTime.now();
+  return "${days[now.weekday - 1]}, ${now.day} de ${months[now.month - 1]}";
 }

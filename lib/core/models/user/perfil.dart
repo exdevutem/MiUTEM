@@ -1,5 +1,5 @@
 enum Perfil {
-  Estudante
+  Estudiante
 
   ;
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:miutem/widgets/loading/loading_indicator.dart';
 
 class LoadingDialog extends StatelessWidget {
+
+  const LoadingDialog({super.key});
+
   @override
   Widget build(BuildContext context) => const PopScope(
       child: LoadingIndicator(
@@ -10,4 +13,4 @@ class LoadingDialog extends StatelessWidget {
   );
 }
 
-void showLoadingDialog(BuildContext context) => showDialog(context: context, builder: (ctx) => LoadingDialog(), barrierDismissible: false);
+void showLoadingDialog(BuildContext context) => showDialog(context: context, builder: (ctx) => const LoadingDialog(), barrierDismissible: false);

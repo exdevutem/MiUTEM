@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/services/service_manager.dart';
 import 'package:miutem/core/utils/theme.dart';
-import 'package:miutem/screens/auth/login/login_screen.dart';
-import 'package:miutem/screens/home/home_screen.dart';
 import 'package:miutem/widgets/navigation/bottom_navbar.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   runApp(const MiUTEMApp());
 }

@@ -12,3 +12,6 @@ const String uxCamProdKey = 'fxkjj5ulr7vb4yf';
 
 final logger = Logger(printer: PrettyPrinter());
 const secureStorage = FlutterSecureStorage();
+
+const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
