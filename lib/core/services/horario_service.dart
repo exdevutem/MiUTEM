@@ -1,9 +1,12 @@
+import 'dart:ffi';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/core/models/user/persona/persona.dart';
 import 'package:miutem/core/services/carrera_service.dart';
-import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 
 class HorarioService {
@@ -11,7 +14,6 @@ class HorarioService {
   Future<Horario> getHorario({ bool forceRefresh = false }) async {
     try {
       final carrera = await Get.find<CarreraService>().getCarrera();
-      logger.d('*1');
       final response = await sigaClientRequest('estudiante/horario/',
         method: 'POST',
         contentType: Headers.formUrlEncodedContentType,
@@ -20,19 +22,31 @@ class HorarioService {
           'carrera_id': carrera.id,
         }
       );
-      logger.d('*2');
 
-      logger.d('getHorario: $response');
       if(response.data['status_code'] != 200) {
         throw CustomException.fromSiga(response.data);
       }
 
-      logger.d('*3, $response');
       // Create a matrix of 6x9
-      final horario = List.generate(6, (i) => List.generate(9, (j) => []));
-      logger.d('Horario: $horario');
+      final List<List<BloqueHorario>> horario = List.generate(18, (it) => List.generate(6, (it) => BloqueHorario()));
+      for(final bloque in response.data['response']) {
+        final diaIdx = bloque['dia_numero'] - 1;
+        final bloqueIdx = bloque['bloque'] - 1;
 
-      throw CustomException(message: 'Error al obtener horario. Intenta más tarde.');
+        final asignatura = Asignatura(
+          id: bloque['seccion_id'],
+          nombre: bloque['nombre_asignatura'],
+          codigo: bloque['codigo_asignatura'],
+          tipoHora: bloque['tipo_hora'],
+          seccion: bloque['asignatura_seccion'],
+          docente: Persona(nombreCompleto: bloque['asignatura_profesor']),
+          estado: '',
+        );
+
+        horario[bloqueIdx][diaIdx] = BloqueHorario(asignatura: asignatura, sala: bloque['nombre_sala'], codigo: "${bloque['codigo_asignatura']}/${bloque['asignatura_seccion']}");
+      }
+
+      return Horario(horario: horario);
     } catch (e) {
       rethrow;
     }

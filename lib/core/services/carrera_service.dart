@@ -19,10 +19,7 @@ class CarreraService {
       }
 
       final carreras = (response.data['response'] as List<dynamic>).map((it) => Carrera.fromJson(it)).toList();
-      final estados = ["Regular", "Causal de Eliminacion"]
-          .reversed
-          .map((e) => e.toLowerCase())
-          .toList();
+      final estados = ["causal de eliminacion", "regular"].toList();
 
       carreras.sort((a,b) => estados.indexOf(b.estado.toLowerCase()).compareTo(estados.indexOf(a.estado.toLowerCase())));
       return carreras.first;
