@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CardAccesoRapido extends StatefulWidget {
   final Color color, colorDark;
@@ -36,21 +37,27 @@ class _CardAccesoRapidoState extends State<CardAccesoRapido> with WidgetsBinding
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: widget.onTap,
-    child: Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: MediaQuery.of(context).platformBrightness == Brightness.light ? widget.color : widget.colorDark,
+    child: Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: MediaQuery.of(context).platformBrightness == Brightness.light ? widget.color : widget.colorDark,
+      ),
       child: SizedBox(
         width: 120,
         height: 125,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(12,20,12,20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(widget.icon, fill: widget.fill, size: 32, color: Theme.of(context).textTheme.bodyMedium?.color),
+              Icon(widget.icon, fill: widget.fill, size: 32, weight: 600, color: Theme.of(context).textTheme.bodyMedium?.color),
               const Spacer(),
-              Text(widget.label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
+              //todo: Formatear los textos y transformarlos en un theme
+              Text(widget.label, style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),),
             ],
           ),
         ),

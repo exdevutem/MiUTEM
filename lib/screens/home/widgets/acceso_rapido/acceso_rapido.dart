@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido/card_acceso_rapido.dart';
 import 'package:miutem/widgets/icons.dart';
@@ -10,7 +11,12 @@ class AccesoRapido extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("¿Que quieres hacer hoy?", style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Theme.of(context).textTheme.bodyMedium?.color)),
+      //todo: Formatear los textos y transformarlos en un theme
+      Text("¿Que quieres hacer hoy?", style: GoogleFonts.roboto(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    letterSpacing: 0.01,
+  ),),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
