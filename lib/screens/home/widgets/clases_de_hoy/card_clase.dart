@@ -44,6 +44,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     ),
+    margin: const EdgeInsets.only(bottom: 10),
     child: Row(
       children: [
         DecoratedBox(

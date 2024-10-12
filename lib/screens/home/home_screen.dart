@@ -37,17 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TopNavigation(estudiante: estudiante),
-        const SizedBox(height: 20),
-        Saludo(estudiante: estudiante),
-        const SizedBox(height: 20),
-        const AccesoRapido(),
-        const SizedBox(height: 20),
-        const ClasesDeHoy(),
-      ],
+    child: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TopNavigation(estudiante: estudiante),
+          const SizedBox(height: 20),
+          Saludo(estudiante: estudiante),
+          const SizedBox(height: 20),
+          const AccesoRapido(),
+          const SizedBox(height: 20),
+          const ClasesDeHoy(),
+        ],
+      ),
     ),
   );
 }
