@@ -48,47 +48,75 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Card(
     color: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     margin: const EdgeInsets.only(bottom: 10),
-    child: Row(
-      children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
-            border: Border(right: BorderSide(color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black12 : Colors.white54)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(formatTime(widget.horaInicio), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                Text(formatTime(widget.horaFin))
-              ],
+    child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,  // Forzamos que ocupe toda la altura
+        children: [
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
+              border: Border(
+                right: BorderSide(
+                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black12 : Colors.white54,
+                ),
+              ),
+            ),
+            child: SizedBox(
+              width: 85,  // Ancho ajustado para la columna de la hora
+              child: Padding(
+                padding: const EdgeInsets.all(16),  // Ajuste de padding
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      formatTime(widget.horaInicio),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(formatTime(widget.horaFin)),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.nombreClase, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(14),  // Ajuste de padding en la parte derecha
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.location_on, size: 16),
-                  const SizedBox(width: 5),
-                  Text(widget.sala)
+                  SizedBox(
+                    height: 45,  // Espacio para el texto con 2 líneas
+                    child: Text(
+                      widget.nombreClase,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.location_on, size: 16),
+                      const SizedBox(width: 5),
+                      Text(widget.sala),
+                    ],
+                  ),
                 ],
-              )
-            ],
+              ),
+            ),
           ),
-        )
-      ],
+        ],
+      ),
     ),
   );
 }
