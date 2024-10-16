@@ -3,8 +3,6 @@ import 'package:miutem/core/models/navigation/navigation_item.dart';
 import 'package:miutem/screens/home/home_screen.dart';
 import 'package:miutem/widgets/icons.dart';
 
-import '../../features-ggonu20/Notes/screens/tasklist_scren.dart';
-
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
 
@@ -19,7 +17,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     NavigationItem(destination: const HomeScreen(), label: "Inicio", icon: AppIcons.home, iconSelected: AppIcons.home),
     NavigationItem(destination: const HomeScreen(), label: "Asignaturas", icon: AppIcons.subjects, iconSelected: AppIcons.subjects),
     NavigationItem(destination: const HomeScreen(), label: "Novedades", icon: AppIcons.updates, iconSelected: AppIcons.updates),
-    NavigationItem(destination: const TaskListScreen(), label: "Perfil", icon: AppIcons.profile, iconSelected: AppIcons.profile),
+    NavigationItem(destination: const HomeScreen(), label: "Perfil", icon: AppIcons.profile, iconSelected: AppIcons.profile),
   ];
 
   @override

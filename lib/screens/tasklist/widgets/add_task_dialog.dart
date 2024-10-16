@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart'; // Add this line to use UUID
 
-import '../../models/tasklist.dart';
+import '../../../../core/models/tasklist.dart';
 
 class AddTaskDialog extends StatefulWidget {
   const AddTaskDialog({super.key});
 
   @override
-  _AddTaskDialogState createState() => _AddTaskDialogState();
+  State<AddTaskDialog> createState() => _AddTaskDialogState();
 }
 
 class _AddTaskDialogState extends State<AddTaskDialog> {
   final _formKey = GlobalKey<FormState>();
   final _taskController = TextEditingController();
   final _notesController = TextEditingController();
-  final _uuid = Uuid();
+  final _uuid = const Uuid();
 
   String _status = 'In Progress';
   String _type = 'Personal';
@@ -116,18 +116,18 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
                 decoration: const InputDecoration(labelText: 'Notes'),
               ),
               DropdownButtonFormField<int>(
-                  value: _priority,
-                  decoration: const InputDecoration(labelText: 'Priority'),
-                  items: [
-                    DropdownMenuItem<int>(value: 0, child: Text('Low')),
-                    DropdownMenuItem<int>(value: 1, child: Text('Medium')),
-                    DropdownMenuItem<int>(value: 2, child: Text('High')),
-                  ],
-                  onChanged: (newValue) {
-                    setState(() {
-                      _priority = newValue!;
-                    });
-                  },
+                value: _priority,
+                decoration: const InputDecoration(labelText: 'Priority'),
+                items: const [
+                  DropdownMenuItem<int>(value: 0, child: Text('Low')),
+                  DropdownMenuItem<int>(value: 1, child: Text('Medium')),
+                  DropdownMenuItem<int>(value: 2, child: Text('High')),
+                ],
+                onChanged: (newValue) {
+                  setState(() {
+                    _priority = newValue!;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               Row(

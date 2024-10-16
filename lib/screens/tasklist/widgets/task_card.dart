@@ -1,8 +1,9 @@
 
 import 'package:flutter/material.dart';
-import 'package:miutem/features-ggonu20/Notes/models/tasklist.dart';
+import 'package:miutem/core/models/tasklist.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-import '../tasklist_scren.dart';
+import '../task_list_screen.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskList taskList;
@@ -22,18 +23,11 @@ class TaskCard extends StatelessWidget {
       child: ListTile(
         title: Text(taskList.task),
         subtitle: Text(taskList.notes),
-        trailing: IconButton(
+        trailing: Skeleton.keep(child: IconButton(
           icon: const Icon(Icons.delete_forever_outlined),
           onPressed: onDelete,
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const TaskListScreen()
-            )
-          );
-        },
+        )),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TaskListScreen())),
       ),
     );
   }
