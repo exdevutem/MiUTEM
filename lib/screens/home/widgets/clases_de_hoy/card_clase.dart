@@ -18,7 +18,7 @@ class CardClase extends StatefulWidget {
   State<CardClase> createState() => _CardClaseState();
 }
 
-class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
+class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
 
   @override
   void initState() {
@@ -36,6 +36,13 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
   void didChangePlatformBrightness() {
     setState(() {});
     super.didChangePlatformBrightness();
+  }
+
+  String formatTime(String time) {
+    final parts = time.split(':');
+    final hours = parts[0].padLeft(2, '0');
+    final minutes = parts[1].padLeft(2, '0');
+    return '$hours:$minutes';
   }
 
   @override
@@ -58,8 +65,8 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(widget.horaInicio, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                Text(widget.horaFin)
+                Text(formatTime(widget.horaInicio), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                Text(formatTime(widget.horaFin))
               ],
             ),
           ),
