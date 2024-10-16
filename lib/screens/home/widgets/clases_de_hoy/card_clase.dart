@@ -78,7 +78,12 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
                         fontSize: 16,
                       ),
                     ),
-                    Text(formatTime(widget.horaFin)),
+                    Text(formatTime(widget.horaFin),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),
                   ],
                 ),
               ),
