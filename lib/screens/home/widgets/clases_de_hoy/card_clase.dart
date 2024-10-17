@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class CardClase extends StatefulWidget {
@@ -22,6 +24,9 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    Timer.periodic(const Duration(minutes: 30), (timer) {
+      setState(() {});
+    });
     WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
@@ -45,9 +50,16 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
     return '$hours:$minutes';
   }
 
+  bool isCurrentClassActive() {
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, now.day, int.parse(widget.horaInicio.split(':')[0]), int.parse(widget.horaInicio.split(':')[1]));
+    final end = DateTime(now.year, now.month, now.day, int.parse(widget.horaFin.split(':')[0]), int.parse(widget.horaFin.split(':')[1]));
+    return now.isAfter(start) && now.isBefore(end);
+  }
+
   @override
   Widget build(BuildContext context) => Card(
-    color: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6),
+    color: isCurrentClassActive() ? null : (MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6)),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     margin: const EdgeInsets.only(bottom: 10),
     child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas
@@ -71,8 +83,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      formatTime(widget.horaInicio),
+                    Text(formatTime(widget.horaInicio),
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
