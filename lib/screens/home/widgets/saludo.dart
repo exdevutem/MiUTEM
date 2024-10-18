@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
+import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/core/utils/utils.dart';
 
 class Saludo extends StatelessWidget {
@@ -19,30 +19,22 @@ class Saludo extends StatelessWidget {
                 let<int, String>(
                         DateTime.now().hour,
                         (hour) => hour >= 6 && hour < 12
-                            ? '¡Buenos Días!'
+                            ? '¡Buenos Días!,'
                             : (hour >= 12 && hour < 19
-                                ? '¡Buenas Tardes!'
-                                : '¡Buenas Noches!')) ??
-                    '¡Te damos la Bienvenida!',
+                                ? '¡Buenas Tardes!,'
+                                : '¡Buenas Noches!,')) ??
+                    '¡Te damos la Bienvenida!,',
                     //todo: Formatear los textos y transformarlos en un theme
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.01,
-                ),
+                style: StyleText.headline,
               ),
               Text(
                 estudiante?.primerNombre ?? "",
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.01,
-                ),
+                style: StyleText.headline,
               ),
             ],
           ),
           const Spacer(),
-          const Text("👋", style: TextStyle(fontSize: 48)),
+          const Text("👋", style: TextStyle(fontSize: 40)),
         ],
       );
 }

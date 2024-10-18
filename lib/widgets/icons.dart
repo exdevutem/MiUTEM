@@ -23,4 +23,5 @@ class AppIcons {
   static const add = Symbols.add_rounded;
   static const close = Symbols.close_rounded;
   static const more = Symbols.more_vert_rounded;
+  static const edit = Symbols.edit_rounded;
 }
