@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/horario_service.dart';
+import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/card_clase.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -49,6 +50,7 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
           Text(getToday(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
         ],
       )),
+      const SizedBox(height: 10),
 
       FutureBuilder<Horario>(
         future: () async {
@@ -92,33 +94,43 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
 
           final diaIdx = DateTime.now().weekday - 1;
           final clasesDeHoy = horario.horario?.map((row) => row[diaIdx]).toList();
-          if (clasesDeHoy == null) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 50),
-              child: Text("No tienes clases hoy.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+          final filteredClasesDeHoy = (clasesDeHoy?.asMap().entries.where((entry) => entry.key % 2 == 0).map((entry) => entry.value).toList() ?? []).where((bloque) => bloque.asignatura != null).toList();
+          if (clasesDeHoy == null || filteredClasesDeHoy.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50),
+              child: GestureDetector(
+                onTap: () => setState(() => forceRefresh = true),
+                child: const Column(
+                  children: [
+                    Text("No tienes clases hoy.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                    Text("Presiona para refrescar.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                    Icon(Symbols.refresh_rounded, size: 32), // Botón para reintentar
+                  ],
+                ),
+              ),
             );
           }
 
-          // Filter to take every other block starting from the first one
-          final filteredClasesDeHoy = clasesDeHoy.asMap().entries.where((entry) => entry.key % 2 == 0).map((entry) => entry.value).toList();
-
           return RefreshIndicator(
             onRefresh: () async => setState(() => forceRefresh = true),
-            child: Column(
-              children: filteredClasesDeHoy.asMap().entries.where((entry) => entry.value.asignatura != null).map((entry) {
-                final index = entry.key * 2; // Adjust index to match the original timeSlots
-                final bloque = entry.value;
-                final startTimeSlot = timeSlots[index];
-                final endTimeSlot = timeSlots[index + 1];
-                final startTimes = startTimeSlot.split(" - ");
-                final endTimes = endTimeSlot.split(" - ");
-                return CardClase(
-                  horaInicio: startTimes[0],
-                  horaFin: endTimes[1],
-                  nombreClase: bloque.asignatura?.nombre ?? "Sin asignatura",
-                  sala: bloque.sala ?? "Sin sala",
-                );
-              }).toList(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: filteredClasesDeHoy.asMap().entries.map((entry) {
+                  final index = entry.key * 2; // Adjust index to match the original timeSlots
+                  final bloque = entry.value;
+                  final startTimeSlot = timeSlots[index];
+                  final endTimeSlot = timeSlots[index + 1];
+                  final startTimes = startTimeSlot.split(" - ");
+                  final endTimes = endTimeSlot.split(" - ");
+                  return CardClase(
+                    horaInicio: startTimes[0],
+                    horaFin: endTimes[1],
+                    nombreClase: bloque.asignatura?.nombre ?? "Sin asignatura",
+                    sala: bloque.sala ?? "Sin sala",
+                  );
+                }).toList(),
+              ),
             ),
           );
         },

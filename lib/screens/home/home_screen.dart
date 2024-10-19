@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
+import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/screens/home/actions/try_login_action.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido/acceso_rapido.dart';
@@ -26,13 +28,20 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     tryLoginWithSavedCredentials().then((estudiante) {
-      if(estudiante == null && context.mounted) {
+      if(estudiante == null && mounted) {
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
         return;
       }
 
       setState(() => this.estudiante = estudiante);
+    }, onError: (err) {
+      logger.e(err);
+      if(estudiante == null && mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+        return;
+      }
     });
   }
 
@@ -41,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     padding: const EdgeInsets.all(16),
     child: RefreshIndicator(
       onRefresh: () async {
+        await HttpClient.clearCache();
         final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
         setState(() => this.estudiante = estudiante);
       },
