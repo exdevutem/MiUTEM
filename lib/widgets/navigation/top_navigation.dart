@@ -16,12 +16,13 @@ class TopNavigation extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       let<String, CircleAvatar>(estudiante?.fotoUrl, (String fotoUrl) => CircleAvatar(
-        radius: 30,
+        radius: 25,
         foregroundImage:
         MemoryImage(base64Decode(fotoUrl)),
-      )) ?? const Skeleton.keep(child: CircleAvatar(radius: 30, child: Icon(AppIcons.profile, fill: 1, size: 40))),
+      )) ?? const Skeleton.keep(child: CircleAvatar(child: Icon(AppIcons.profile, fill: 1, size: 40))),
       const Spacer(),
-      const Skeleton.keep(child: Icon(AppIcons.more, size: 30)),
+      // const Skeleton.keep(child: Icon(AppIcons.more, size: 30)),
+      Skeleton.keep(child: IconButton(onPressed: (){}, icon: const Icon(AppIcons.more,weight: 900,))),
     ],
   );
 }

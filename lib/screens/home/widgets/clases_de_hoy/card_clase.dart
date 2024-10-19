@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miutem/core/utils/style_text.dart';
 
 class CardClase extends StatefulWidget {
   final String horaInicio;
@@ -40,9 +41,11 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) => Card(
+    elevation: 0,
     color: MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
+
     ),
     margin: const EdgeInsets.only(bottom: 10),
     child: Row(
@@ -58,8 +61,8 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(widget.horaInicio, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-                Text(widget.horaFin)
+                Text(widget.horaInicio, style: StyleText.header),
+                Text(widget.horaFin, style: StyleText.description)
               ],
             ),
           ),

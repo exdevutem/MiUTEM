@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/navigation/navigation_item.dart';
 import 'package:miutem/screens/home/home_screen.dart';
-import 'package:miutem/screens/profile/profile.dart';
+import 'package:miutem/screens/profile/profile-idea.dart';
 import 'package:miutem/widgets/icons.dart';
 
 class BottomNavBar extends StatefulWidget {
