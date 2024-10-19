@@ -34,7 +34,9 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
     "18:00 - 18:45",
     "18:45 - 19:30",
     "19:40 - 20:25",
-    "20:25 - 21:10"
+    "20:25 - 21:10",
+    "21:20 - 21:05",
+    "22:05 - 22:50",
   ];
 
   @override
@@ -60,11 +62,11 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
               enabled: true,
               child: Column(
                 children: [
-                  CardClase(horaInicio: "8:00", horaFin: "8:45", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
-                  CardClase(horaInicio: "8:45", horaFin: "9:30", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
-                  CardClase(horaInicio: "9:40", horaFin: "10:25", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
-                  CardClase(horaInicio: "10:25", horaFin: "11:10", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
-                  CardClase(horaInicio: "11:20", horaFin: "12:05", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
+                  CardClase(horaInicio: "8:00", horaFin: "9:30", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
+                  CardClase(horaInicio: "9:40", horaFin: "11:10", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
+                  CardClase(horaInicio: "11:20", horaFin: "12:50", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
+                  CardClase(horaInicio: "13:00", horaFin: "14:30", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
+                  CardClase(horaInicio: "14:40", horaFin: "16:10", nombreClase: "Club de Desarrollo Experimental", sala: "M8 - 103"),
                 ],
               ),
             );
