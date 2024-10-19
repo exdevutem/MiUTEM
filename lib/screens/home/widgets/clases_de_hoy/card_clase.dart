@@ -24,8 +24,16 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    Timer.periodic(const Duration(minutes: 30), (timer) {
-      setState(() {});
+    Timer.periodic(const Duration(seconds: 30), (timer) {
+      // Si es la hora de inicio o fin de la clase (en el mismo minuto) forzamos un rebuild
+      final now = DateTime.now();
+      final isHoraInicio = now.hour == int.parse(widget.horaInicio.split(':')[0]) && now.minute == int.parse(widget.horaInicio.split(':')[1]);
+      final isHoraFin = now.hour == int.parse(widget.horaFin.split(':')[0]) && now.minute == int.parse(widget.horaFin.split(':')[1]);
+
+      // Se verifica que sea la hora de inicio (o la de fin) para actualizar la tarjeta.
+      if(isHoraInicio || isHoraFin) {
+        setState(() {});
+      }
     });
     WidgetsBinding.instance.addObserver(this);
     super.initState();
