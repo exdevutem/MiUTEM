@@ -38,6 +38,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('Apuntes'),
+    ),
     body: SafeArea(child: Column(
       children: [
         Expanded(

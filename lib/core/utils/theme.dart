@@ -43,6 +43,24 @@ class AppTheme {
       backgroundColor: const Color(0xFFFFFFFF),
       elevation: 0,
     ),
+    appBarTheme: AppBarTheme.of(context).copyWith(
+      backgroundColor: const Color(0xFFFFFFFF),
+      actionsIconTheme: const IconThemeData(
+        color: Color(0xFF333333),
+      ),
+      titleTextStyle: GoogleFonts.inter(
+        color: const Color(0xFF333333),
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      toolbarTextStyle: GoogleFonts.roboto(
+        color: const Color(0xFF333333),
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      foregroundColor: const Color(0xFF333333),
+      elevation: 0,
+    ),
   );
 
   static ThemeData getThemeDark(BuildContext context) => ThemeData.dark().copyWith(
@@ -95,6 +113,24 @@ class AppTheme {
           color: Color(0xFFFAFAFA),
         );
       }),
+      elevation: 0,
+    ),
+    appBarTheme: AppBarTheme.of(context).copyWith(
+      backgroundColor: const Color(0xFF1A1A1A),
+      actionsIconTheme: const IconThemeData(
+        color: Color(0xFFFAFAFA),
+      ),
+      titleTextStyle: GoogleFonts.inter(
+        color: const Color(0xFFFAFAFA),
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      toolbarTextStyle: GoogleFonts.roboto(
+        color: const Color(0xFFFAFAFA),
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      foregroundColor: const Color(0xFFFAFAFA),
       elevation: 0,
     ),
   );
