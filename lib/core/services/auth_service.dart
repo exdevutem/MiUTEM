@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
@@ -7,6 +7,8 @@ import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/core/utils/http/functions.dart';
+import 'package:miutem/core/utils/http/http_client.dart';
+import 'package:miutem/screens/auth/login/login_screen.dart';
 
 class AuthService {
 
@@ -76,10 +78,11 @@ class AuthService {
     await _secureStorageRepository.setEstudiante(null);
     await _secureStorageRepository.setCredentials(null);
     await Preferencia.onboardingStep.delete();
+    await HttpClient.clearCache();
 
     if(context != null && context.mounted) {
       Navigator.popUntil(context, (route) => route.isFirst);
-      // Navigator.pushReplacement(context, CupertinoPageRoute(builder: (ctx) => LoginScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
     }
   }
 

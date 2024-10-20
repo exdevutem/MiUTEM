@@ -22,12 +22,17 @@ class AppTheme {
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
-      titleLarge: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleLarge),
-      titleMedium: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleMedium),
-      titleSmall: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleSmall),
+      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.01,
+      )),
+      titleLarge: GoogleFonts.inter(),
+      titleMedium: GoogleFonts.inter(),
+      titleSmall: GoogleFonts.inter(),
     ).apply(
       bodyColor: const Color(0xFF333333),
-      displayColor: const Color(0xFFFAFAFA),
+      displayColor: const Color(0xFF333333),
     ),
 
     /// Fondo de la aplicación
@@ -46,12 +51,17 @@ class AppTheme {
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme.copyWith(
-      titleLarge: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleLarge),
-      titleMedium: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleMedium),
-      titleSmall: GoogleFonts.inter(textStyle: Theme.of(context).textTheme.titleSmall),
+      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.01,
+      )),
+      titleLarge: GoogleFonts.inter(),
+      titleMedium: GoogleFonts.inter(),
+      titleSmall: GoogleFonts.inter(),
     ).apply(
       bodyColor: const Color(0xFFFAFAFA),
-      displayColor: const Color(0xFF333333),
+      displayColor: const Color(0xFFFAFAFA),
     )),
 
     /// Fondo de la aplicación

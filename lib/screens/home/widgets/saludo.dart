@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
+import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/utils.dart';
 
 class Saludo extends StatelessWidget {
@@ -15,34 +17,19 @@ class Saludo extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                let<int, String>(
-                        DateTime.now().hour,
-                        (hour) => hour >= 6 && hour < 12
-                            ? '¡Buenos Días!'
-                            : (hour >= 12 && hour < 19
-                                ? '¡Buenas Tardes!'
-                                : '¡Buenas Noches!')) ??
-                    '¡Te damos la Bienvenida!',
-                    //todo: Formatear los textos y transformarlos en un theme
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.01,
-                ),
+              Text(let<int, String>(DateTime.now().hour, (hour) => hour >= 6 && hour < 12 ? '¡Buenos Días!' : (hour >= 12 && hour < 19 ? '¡Buenas Tardes!' : '¡Buenas Noches!')) ?? '¡Te damos la Bienvenida!',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-              Text(
-                estudiante?.primerNombre ?? "",
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.01,
-                ),
+              Text(estudiante?.primerNombre ?? "",
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ],
           ),
           const Spacer(),
-          const Text("👋", style: TextStyle(fontSize: 48)),
+          GestureDetector(
+            onTap: () async => Get.find<AuthService>().logout(context: context),
+            child: const Text("👋", style: TextStyle(fontSize: 48)),
+          ),
         ],
       );
 }

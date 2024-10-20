@@ -3,6 +3,7 @@ import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
 import 'package:miutem/widgets/loading/loading_dialog.dart';
+import 'package:miutem/widgets/navigation/bottom_navbar.dart';
 import 'package:miutem/widgets/snackbar.dart';
 
 class LoginForm extends StatefulWidget {
@@ -70,16 +71,21 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     onLogin: () async {
                       showLoadingDialog(context);
                       try {
-                        loginAction(
+                        await loginAction(
                           usernameController: _usernameController,
                           passwordController: _passwordController,
                           usernameFocus: _usernameFocus,
                           passwordFocus: _passwordFocus,
                         );
+                        if(!context.mounted) return;
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const BottomNavBar()));
                       } on CustomException catch (e) {
+                        if(!context.mounted) return;
                         Navigator.pop(context);
                         showErrorSnackbar(context, e.message);
                       } catch (e) {
+                        if(!context.mounted) return;
                         Navigator.pop(context);
                         showErrorSnackbar(context, "Ocurrió un error inesperado. Por favor, intenta nuevamente.");
                       }
