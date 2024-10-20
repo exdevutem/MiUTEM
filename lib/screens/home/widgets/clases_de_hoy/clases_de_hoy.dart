@@ -93,9 +93,25 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
           }
 
           final diaIdx = DateTime.now().weekday - 1;
+          if(diaIdx < 0 || diaIdx >= (horario.horario?.first.length ?? 0)) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50),
+              child: GestureDetector(
+                onTap: () => setState(() => forceRefresh = true),
+                child: const Column(
+                  children: [
+                    Text("No tienes clases hoy.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                    Text("Presiona para refrescar.", style: TextStyle(fontSize: 18), textAlign: TextAlign.center),
+                    Icon(Symbols.refresh_rounded, size: 32), // Botón para reintentar
+                  ],
+                ),
+              ),
+            );
+          }
+
           final clasesDeHoy = horario.horario?.map((row) => row[diaIdx]).toList();
-          final filteredClasesDeHoy = (clasesDeHoy?.asMap().entries.where((entry) => entry.key % 2 == 0).map((entry) => entry.value).toList() ?? []).where((bloque) => bloque.asignatura != null).toList();
-          if (clasesDeHoy == null || filteredClasesDeHoy.isEmpty) {
+          final filteredClasesDeHoy = (clasesDeHoy?.asMap().entries.where((entry) => entry.key % 2 == 0).map((entry) => entry.value).toList() ?? []).toList();
+          if (clasesDeHoy == null || filteredClasesDeHoy.where((bloque) => bloque.asignatura != null).isEmpty) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 50),
               child: GestureDetector(
@@ -116,10 +132,11 @@ class _ClasesDeHoyState extends State<ClasesDeHoy> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
-                children: filteredClasesDeHoy.asMap().entries.map((entry) {
+                children: filteredClasesDeHoy.asMap().entries.where((entry) => entry.value.asignatura != null).map((entry) {
                   final index = entry.key * 2; // Adjust index to match the original timeSlots
                   final bloque = entry.value;
                   final startTimeSlot = timeSlots[index];
+                  logger.d('Idx: $index. TimeSlot: $startTimeSlot');
                   final endTimeSlot = timeSlots[index + 1];
                   final startTimes = startTimeSlot.split(" - ");
                   final endTimes = endTimeSlot.split(" - ");
