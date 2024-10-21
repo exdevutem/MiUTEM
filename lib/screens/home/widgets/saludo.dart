@@ -34,7 +34,10 @@ class Saludo extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          const Text("👋", style: TextStyle(fontSize: 40)),
+          GestureDetector(
+            onTap: () async => Get.find<AuthService>().logout(context: context),
+            child: const Text("👋", style: TextStyle(fontSize: 40)),
+          ),
         ],
       );
 }

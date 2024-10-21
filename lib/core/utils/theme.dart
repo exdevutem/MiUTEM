@@ -12,15 +12,33 @@ class AppTheme {
   static Color get lightYellowCard => const Color(0xFFFCF7BB);
   static Color get darkYellowCard => const Color(0xFF6D660A);
 
+  static ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
+    secondary: const Color(0xFF06607A),
+  );
+
   static ThemeData getTheme(BuildContext context) => ThemeData.light().copyWith(
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
-      secondary: const Color(0xFF06607A),
-    ),
-    textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme.apply(
+    /// Esquema de colores
+    colorScheme: colorScheme,
+
+    /// Tema de texto
+    textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
+      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.01,
+      )),
+      titleLarge: GoogleFonts.inter(),
+      titleMedium: GoogleFonts.inter(),
+      titleSmall: GoogleFonts.inter(),
+    ).apply(
       bodyColor: const Color(0xFF333333),
-      displayColor: const Color(0xFFFAFAFA),
-    )),
+      displayColor: const Color(0xFF333333),
+    ),
+
+    /// Fondo de la aplicación
     scaffoldBackgroundColor: const Color(0xFFFAFAFA),
+
+    /// Tema de la barra de navegación
     navigationBarTheme: NavigationBarTheme.of(context).copyWith(
       backgroundColor: const Color(0xFFFFFFFF),
       elevation: 0,
@@ -28,14 +46,28 @@ class AppTheme {
   );
 
   static ThemeData getThemeDark(BuildContext context) => ThemeData.dark().copyWith(
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
-      secondary: const Color(0xFF06607A),
-    ),
-    textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme.apply(
+    /// Esquema de colores
+    colorScheme: colorScheme,
+
+    /// Tema de texto
+    textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme.copyWith(
+      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 0.01,
+      )),
+      titleLarge: GoogleFonts.inter(),
+      titleMedium: GoogleFonts.inter(),
+      titleSmall: GoogleFonts.inter(),
+    ).apply(
       bodyColor: const Color(0xFFFAFAFA),
-      displayColor: const Color(0xFF333333),
+      displayColor: const Color(0xFFFAFAFA),
     )),
+
+    /// Fondo de la aplicación
     scaffoldBackgroundColor: const Color(0xFF1E1E1E),
+
+    /// Tema de la barra de navegación
     navigationBarTheme: NavigationBarTheme.of(context).copyWith(
       backgroundColor: const Color(0xFF1A1A1A),
       indicatorColor: const Color(0xFF1D8E5C).withOpacity(.9),

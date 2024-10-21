@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/screens/home/actions/acceso_rapido.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido/card_acceso_rapido.dart';
 import 'package:miutem/widgets/icons.dart';
 
@@ -38,7 +39,7 @@ class AccesoRapido extends StatelessWidget {
                   label: 'Apuntes',
                   icon: AppIcons.subjectsMarker,
                   fill: 0,
-                  onTap: () => {}),
+                  onTap: () => visitarApuntes(context)),
             ],
           )
         ],
