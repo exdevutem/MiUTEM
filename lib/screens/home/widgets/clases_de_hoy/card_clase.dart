@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:miutem/core/utils/style_text.dart';
 
 class CardClase extends StatefulWidget {
   final String horaInicio;
@@ -67,8 +68,11 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) => Card(
+    elevation: 0,
     color: isCurrentClassActive() ? null : (MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6)),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)
+
+    ),
     margin: const EdgeInsets.only(bottom: 10),
     child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas
       child: Row(
