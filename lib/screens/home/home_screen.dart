@@ -5,7 +5,6 @@ import 'package:miutem/core/actions/get_student_or_login.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/screens/home/actions/cargar_clases_de_hoy.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido.dart';

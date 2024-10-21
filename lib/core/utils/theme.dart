@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
 
+  static Color get lightGrey => const Color(0xFFBBBBBB);
+  static Color get darkLightGrey => const Color(0xFF474747);
+
   static Color get lightBlueCard => const Color(0xFFB8E8FC);
   static Color get darkBlueCard => const Color(0xFF005C82);
 
@@ -16,12 +19,14 @@ class AppTheme {
   static Color get darkSalmonCard => const Color(0xFF8C3A3A);
 
   static ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
+    primary: const Color(0xFF1D8E5C),
     secondary: const Color(0xFF06607A),
   );
 
   static ThemeData getTheme(BuildContext context) => ThemeData.light().copyWith(
     /// Esquema de colores
     colorScheme: colorScheme,
+    canvasColor: colorScheme.surface,
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
@@ -50,7 +55,10 @@ class AppTheme {
 
   static ThemeData getThemeDark(BuildContext context) => ThemeData.dark().copyWith(
     /// Esquema de colores
-    colorScheme: colorScheme,
+    colorScheme: colorScheme.copyWith(
+      primary: const Color(0xFF009951)
+    ),
+    canvasColor: colorScheme.inverseSurface,
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme.copyWith(

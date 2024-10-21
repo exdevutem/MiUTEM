@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
+import 'package:miutem/core/utils/theme.dart';
 
 class CardClase extends StatefulWidget {
   final String horaInicio;
@@ -69,10 +69,8 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Card(
     elevation: 0,
-    color: isCurrentClassActive() ? null : (MediaQuery.of(context).platformBrightness == Brightness.light ? Theme.of(context).scaffoldBackgroundColor.withOpacity(.6) : Theme.of(context).scaffoldBackgroundColor.withOpacity(.6)),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)
-
-    ),
+    color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : const Color(0xFF171819),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: MediaQuery.of(context).platformBrightness == Brightness.light ? AppTheme.lightGrey : AppTheme.darkLightGrey)),
     margin: const EdgeInsets.only(bottom: 10),
     child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas
       child: Row(
@@ -80,11 +78,10 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
         children: [
           DecoratedBox(
             decoration: BoxDecoration(
-              color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : Theme.of(context).scaffoldBackgroundColor,
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
               border: Border(
                 right: BorderSide(
-                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.black12 : Colors.white54,
+                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? AppTheme.lightGrey : AppTheme.darkLightGrey,
                 ),
               ),
             ),
@@ -96,13 +93,15 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(formatTime(widget.horaInicio),
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: isCurrentClassActive() ? AppTheme.colorScheme.primary : null,
                         fontWeight: FontWeight.w700,
                         fontSize: 16,
                       ),
                     ),
                     Text(formatTime(widget.horaFin),
-                      style: const TextStyle(
+                      style: TextStyle(
+                        color: isCurrentClassActive() ? AppTheme.colorScheme.primary : null,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                       ),
@@ -117,19 +116,15 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(14),  // Ajuste de padding en la parte derecha
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 45,  // Espacio para el texto con 2 líneas
-                    child: Text(
-                      widget.nombreClase,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      maxLines: 2,
+                  Text(widget.nombreClase,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,

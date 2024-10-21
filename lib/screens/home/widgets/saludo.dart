@@ -1,15 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class Saludo extends StatelessWidget {
+class Saludo extends StatefulWidget {
   final Estudiante? estudiante;
 
   const Saludo({super.key, required this.estudiante});
+
+  @override
+  State<Saludo> createState() => _SaludoState();
+}
+
+class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: -0.2, end: 0.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _startAnimation() {
+    if (_controller.isAnimating) return;
+    _controller.repeat(reverse: true);
+    Future.delayed(const Duration(seconds: 2), () => _controller.stop());
+  }
 
   @override
   Widget build(BuildContext context) => Row(
@@ -22,16 +53,27 @@ class Saludo extends StatelessWidget {
             style: StyleText.headline,
           ),
           Skeletonizer(
-            enabled: estudiante == null,
-            child: Text(estudiante?.primerNombre ?? "John Doe",
+            enabled: widget.estudiante == null,
+            child: Text(widget.estudiante?.primerNombre ?? "John Doe",
               style: StyleText.headline,
             ),
           ),
         ],
       ),
       const Spacer(),
-      const Text("👋", style: TextStyle(fontSize: 40
-      )),
+      GestureDetector(
+        onTap: _startAnimation,
+        child: AnimatedBuilder(
+          animation: _animation,
+          child: const Text("👋", style: TextStyle(fontSize: 40)),
+          builder: (context, child) {
+            return Transform.rotate(
+              angle: _animation.value,
+              child: child,
+            );
+          },
+        ),
+      ),
     ],
   );
 }
