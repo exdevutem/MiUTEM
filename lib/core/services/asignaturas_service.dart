@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -28,6 +30,8 @@ class AsignaturasService {
       }
 
       return (data['response'] as List<dynamic>).map<Asignatura>((e) => Asignatura.fromJson(e)).groupListsBy((asignatura) => asignatura.uniqueId).values.map((list) => list.first).toList();
+    } on SocketException catch(e) {
+      throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
     } on DioError catch(e) {
       logger.e('Error al obtener asignaturas', error: e);
       final data = e.response?.data ?? {
@@ -37,7 +41,6 @@ class AsignaturasService {
 
       throw CustomException.fromSiga(data);
     } catch(e) {
-      logger.e('Error al obtener asignaturas', error: e);
       rethrow;
     }
   }

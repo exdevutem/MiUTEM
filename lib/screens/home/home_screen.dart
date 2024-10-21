@@ -30,8 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    getStudentOrLogin(context: context).then((estudiante) => setState(() => this.estudiante = estudiante));
-    _cargarHorario();
+    getStudentOrLogin(context: context).then((estudiante) {
+      setState(() => this.estudiante = estudiante);
+      _cargarHorario();
+    });
   }
 
   @override

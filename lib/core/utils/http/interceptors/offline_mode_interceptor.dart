@@ -18,6 +18,7 @@ class OfflineModeInterceptor extends Interceptor {
 
     // Revisa si sigue offline realizando solicitud a la API (solo head)
     offlineMode = await isOffline();
+    await Preferencia.isOffline.set(offlineMode ? 'true' : 'false');
 
     if(!offlineMode) { // Si vuelve la conexión
       return handler.next(options);
