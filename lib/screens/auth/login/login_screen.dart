@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
           ),
           Spacer(),
           Padding(
-            padding: EdgeInsets.fromLTRB(24,0,24,20),
+            padding: EdgeInsets.only(left: 24, right: 24, bottom: 20),
             child: Text("Hecho con ❤️ por el Club de Desarrollo Experimental junto a SISEI",
               style: TextStyle(color: Colors.white, fontSize: 15),
               textAlign: TextAlign.center,

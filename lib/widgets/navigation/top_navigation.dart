@@ -21,7 +21,6 @@ class TopNavigation extends StatelessWidget {
         MemoryImage(base64Decode(fotoUrl)),
       )) ?? const Skeleton.keep(child: CircleAvatar(child: Icon(AppIcons.profile, fill: 1, size: 40))),
       const Spacer(),
-      // const Skeleton.keep(child: Icon(AppIcons.more, size: 30)),
       Skeleton.keep(child: IconButton(onPressed: (){}, icon: const Icon(AppIcons.more,weight: 900,))),
     ],
   );

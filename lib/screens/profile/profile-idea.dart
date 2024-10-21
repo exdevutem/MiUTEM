@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
+import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/style_text.dart';
 
 // Esta Screen está hecha a modo de prueba con IA, para sacar una idea inicial
@@ -10,14 +12,12 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          // Queda vacío para dejar el espacio
-          ),
+      appBar: AppBar(), // Queda vacío para dejar el espacio
       body: SingleChildScrollView(
         child: Column(
           children: [
             _buildProfileHeader(),
-            _buildActionButtons(),
+            _buildActionButtons(context),
           ],
         ),
       ),
@@ -33,21 +33,17 @@ class ProfileScreen extends StatelessWidget {
             radius: 50,
           ),
           const SizedBox(height: 16),
-          Text(
-            'Apodo',
+          Text('Apodo',
             style: StyleText.headline,
           ),
-          Text(
-            'Nombre Apellido',
+          Text('Nombre Apellido',
             style: StyleText.label,
           ),
-          Text(
-            'correo@utem.cl',
+          Text('correo@utem.cl',
             style: StyleText.description
           ),
           const SizedBox(height: 8),
-          Text(
-            'Nombre de la carrera',
+          Text('Nombre de la carrera',
             textAlign: TextAlign.center,
             style: StyleText.description,
           ),
@@ -56,7 +52,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -75,15 +71,12 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: ElevatedButton(
               style: const ButtonStyle(
-                  foregroundColor:
-                      WidgetStatePropertyAll(Color.fromARGB(255, 104, 7, 0)),
-                  backgroundColor: WidgetStatePropertyAll(
-                      Color.fromARGB(255, 250, 186, 181)),
-                  elevation: WidgetStatePropertyAll(0)),
+                foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 104, 7, 0)),
+                backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 250, 186, 181)),
+                elevation: WidgetStatePropertyAll(0),
+              ),
               child: const Text('Cerrar Sesión'),
-              onPressed: () {
-                // Cerrar la sesion
-              },
+              onPressed: () => Get.find<AuthService>().logout(context: context),
             ),
           ),
         ],
