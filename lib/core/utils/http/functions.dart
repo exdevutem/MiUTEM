@@ -60,7 +60,7 @@ Future<bool> isOffline() async {
   bool offlineMode = (await Preferencia.isOffline.getAsBool(defaultValue: false, guardar: true));
 
   try {
-    final response = await HttpClient.dioClient.head(sigaServiceUri);
+    final response = await HttpClient.dioClient.head(sigaHost);
     offlineMode = !"${response.statusCode}".startsWith("2");
   } catch (e) {
     logger.e("[HttpRequest#isOffline]: Error al conectar con la API", error: e);
