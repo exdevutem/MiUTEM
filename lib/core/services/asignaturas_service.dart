@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
@@ -26,7 +27,7 @@ class AsignaturasService {
         throw CustomException.fromSiga(data);
       }
 
-      return (data['response'] as List<dynamic>).map<Asignatura>((e) => Asignatura.fromJson(e)).toList();
+      return (data['response'] as List<dynamic>).map<Asignatura>((e) => Asignatura.fromJson(e)).groupListsBy((asignatura) => asignatura.uniqueId).values.map((list) => list.first).toList();
     } on DioError catch(e) {
       logger.e('Error al obtener asignaturas', error: e);
       final data = e.response?.data ?? {

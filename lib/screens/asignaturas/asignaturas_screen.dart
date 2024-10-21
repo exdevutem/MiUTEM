@@ -1,37 +1,32 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/actions/get_student_or_login.dart';
-import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
+import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
-import 'package:miutem/screens/home/actions/cargar_clases_de_hoy.dart';
-import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
-import 'package:miutem/screens/home/widgets/clases_de_hoy/clases_de_hoy.dart';
-import 'package:miutem/screens/home/widgets/saludo.dart';
+import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
+import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class AsignaturasScreen extends StatefulWidget {
+  const AsignaturasScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<AsignaturasScreen> createState() => _AsignaturasScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _AsignaturasScreenState extends State<AsignaturasScreen> {
 
-  String? errorAlCargarHorario;
   Estudiante? estudiante;
-  List<BloqueHorario>? bloques;
+  List<Asignatura>? asignaturas;
 
   @override
   void initState() {
     super.initState();
-
     getStudentOrLogin(context: context).then((estudiante) => setState(() => this.estudiante = estudiante));
-    _cargarHorario();
+    Get.find<AsignaturasService>().getAsignaturas().then((asignaturas) => setState(() => this.asignaturas = asignaturas));
   }
 
   @override
@@ -41,12 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
       onRefresh: () async {
         setState(() {
           this.estudiante = null;
-          bloques = null;
+          this.asignaturas = null;
         });
-        await HttpClient.clearCache();
+
         final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
-        await _cargarHorario(forceRefresh: true);
-        setState(() => this.estudiante = estudiante);
+        final asignaturas = await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true);
+        setState(() {
+          this.estudiante = estudiante;
+          this.asignaturas = asignaturas;
+        });
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -56,25 +54,16 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             TopNavigation(estudiante: estudiante),
             const SizedBox(height: 20),
-            Saludo(estudiante: estudiante),
+            Text("Asignaturas", style: Theme.of(context).textTheme.headlineMedium),
+            Text("En Curso", style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 20),
             const AccesoRapido(),
             const SizedBox(height: 20),
-            ClasesDeHoy(error: errorAlCargarHorario, bloques: bloques, onRefresh: () => _cargarHorario(forceRefresh: true)),
+            AsignaturasEnCurso(asignaturas: asignaturas),
           ],
         ),
       ),
     ),
   );
-
-  _cargarHorario({ bool forceRefresh = false }) async {
-    setState(() {
-      errorAlCargarHorario = null;
-      bloques = null;
-    });
-    await cargarClasesDeHoy(forceRefresh: forceRefresh).then((bloques) => setState(() {
-      errorAlCargarHorario = null;
-      this.bloques = bloques;
-    }), onError: (err) => setState(() => errorAlCargarHorario = err));
-  }
 }
+

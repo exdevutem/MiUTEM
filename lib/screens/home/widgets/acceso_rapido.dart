@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/screens/home/actions/acceso_rapido.dart';
-import 'package:miutem/screens/home/widgets/acceso_rapido/card_acceso_rapido.dart';
+import 'package:miutem/widgets/cards/card_acceso_rapido.dart';
 import 'package:miutem/widgets/icons.dart';
 
 class AccesoRapido extends StatelessWidget {
@@ -14,10 +14,11 @@ class AccesoRapido extends StatelessWidget {
     children: [
       //todo: Formatear los textos y transformarlos en un theme
       Text("¿Que quieres hacer hoy?", style: GoogleFonts.roboto(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0.01,
-  ),),
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.01,
+      )),
+      const SizedBox(height: 10),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

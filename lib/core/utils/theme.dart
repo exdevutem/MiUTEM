@@ -12,6 +12,9 @@ class AppTheme {
   static Color get lightYellowCard => const Color(0xFFFCF7BB);
   static Color get darkYellowCard => const Color(0xFF6D660A);
 
+  static Color get lightSalmonCard => const Color(0xFFFFBDBD);
+  static Color get darkSalmonCard => const Color(0xFF8C3A3A);
+
   static ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
     secondary: const Color(0xFF06607A),
   );

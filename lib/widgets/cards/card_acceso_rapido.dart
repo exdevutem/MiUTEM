@@ -55,7 +55,7 @@ class _CardAccesoRapidoState extends State<CardAccesoRapido> with WidgetsBinding
               const Spacer(),
               //todo: Formatear los textos y transformarlos en un theme
               Text(widget.label, style: GoogleFonts.inter(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                 ),),
             ],

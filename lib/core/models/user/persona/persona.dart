@@ -19,6 +19,9 @@ class Persona {
     rut: json.containsKey("rut") ? Rut.fromString(json['rut'] as String) : null,
     nombreCompleto: json['nombreCompleto'],
   );
+
+  @override
+  String toString() => "$rut - $nombreCompleto";
 }
 
 class PersonaUtem extends Persona {
