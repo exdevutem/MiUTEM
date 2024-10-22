@@ -5,33 +5,33 @@ import 'package:miutem/widgets/error/error_refresh.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 const List<String> timeSlots = [
-    "8:00 - 8:45",
-    "8:45 - 9:30",
-    "9:40 - 10:25",
-    "10:25 - 11:10",
-    "11:20 - 12:05",
-    "12:05 - 12:50",
-    "13:00 - 13:45",
-    "13:45 - 14:30",
-    "14:40 - 15:25",
-    "15:25 - 16:10",
-    "16:20 - 17:05",
-    "17:05 - 17:50",
-    "18:00 - 18:45",
-    "18:45 - 19:30",
-    "19:40 - 20:25",
-    "20:25 - 21:10",
-    "21:20 - 21:05",
-    "22:05 - 22:50",
-  ];
+  "8:00 - 8:45",
+  "8:45 - 9:30",
+  "9:40 - 10:25",
+  "10:25 - 11:10",
+  "11:20 - 12:05",
+  "12:05 - 12:50",
+  "13:00 - 13:45",
+  "13:45 - 14:30",
+  "14:40 - 15:25",
+  "15:25 - 16:10",
+  "16:20 - 17:05",
+  "17:05 - 17:50",
+  "18:00 - 18:45",
+  "18:45 - 19:30",
+  "19:40 - 20:25",
+  "20:25 - 21:10",
+  "21:20 - 21:05",
+  "22:05 - 22:50",
+];
 
-class AsignaturasDeHoy extends StatelessWidget {
+class ListaClases extends StatelessWidget {
 
   final String? error;
   final List<BloqueHorario>? bloques;
   final Function() onRefresh;
 
-  const AsignaturasDeHoy({super.key, required this.error, required this.bloques, required this.onRefresh});
+  const ListaClases({super.key, required this.error, required this.bloques, required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/asignaturas_inscritas.dart';
+import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/lista_asignaturas.dart';
 
 class AsignaturasEnCurso extends StatelessWidget {
 
@@ -21,7 +21,7 @@ class AsignaturasEnCurso extends StatelessWidget {
         letterSpacing: 0.01,
       )),
       const SizedBox(height: 10),
-      AsignaturasInscritas(asignaturas: asignaturas),
+      ListaAsignaturas(asignaturas: asignaturas),
     ],
   );
 

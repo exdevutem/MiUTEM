@@ -6,9 +6,10 @@ import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/home/actions/cargar_clases_de_hoy.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
-import 'package:miutem/screens/home/widgets/clases_de_hoy/clases_de_hoy.dart';
+import 'package:miutem/screens/home/widgets/clases_de_hoy/lista_clases.dart';
 import 'package:miutem/screens/home/widgets/saludo.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 
@@ -61,7 +62,19 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             const AccesoRapido(),
             const SizedBox(height: 20),
-            ClasesDeHoy(error: errorAlCargarHorario, bloques: bloques, onRefresh: () => _cargarHorario(forceRefresh: true)),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Clases de Hoy", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(getToday(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                ListaClases(error: errorAlCargarHorario, bloques: bloques, onRefresh: () => _cargarHorario(forceRefresh: true)),
+              ],
+            ),
           ],
         ),
       ),
