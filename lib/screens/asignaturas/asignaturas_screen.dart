@@ -6,6 +6,7 @@ import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
@@ -56,8 +57,7 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
           children: [
             TopNavigation(estudiante: estudiante),
             const SizedBox(height: 20),
-            Text("Asignaturas", style: Theme.of(context).textTheme.headlineMedium),
-            Text("En Curso", style: Theme.of(context).textTheme.headlineMedium),
+            Text("Asignaturas", style: StyleText.headline),
             const SizedBox(height: 20),
             const AccesoRapido(),
             const SizedBox(height: 20),

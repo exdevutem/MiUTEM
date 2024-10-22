@@ -81,7 +81,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
               border: Border(
                 right: BorderSide(
-                  color: MediaQuery.of(context).platformBrightness == Brightness.light ? AppTheme.lightGrey : AppTheme.darkLightGrey,
+                  color: Theme.of(context).dividerColor,
                 ),
               ),
             ),

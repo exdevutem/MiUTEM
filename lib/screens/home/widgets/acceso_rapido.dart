@@ -12,9 +12,7 @@ class AccesoRapido extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("¿Que quieres hacer hoy?",
-        style: StyleText.description,
-      ),
+      Text("¿Que quieres hacer hoy?", style: StyleText.description),
       const SizedBox(height: 10),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

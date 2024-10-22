@@ -18,7 +18,8 @@ class AppTheme {
   static Color get lightSalmonCard => const Color(0xFFFFBDBD);
   static Color get darkSalmonCard => const Color(0xFF8C3A3A);
 
-  static ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: const Color(0xFF1D8E5C)).copyWith(
+  static ColorScheme get colorScheme => ColorScheme.fromSeed(
+    seedColor: const Color(0xFF1D8E5C),
     primary: const Color(0xFF1D8E5C),
     secondary: const Color(0xFF06607A),
   );
@@ -27,6 +28,7 @@ class AppTheme {
     /// Esquema de colores
     colorScheme: colorScheme,
     canvasColor: colorScheme.surface,
+    dividerColor: lightGrey,
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
@@ -59,6 +61,7 @@ class AppTheme {
       primary: const Color(0xFF009951)
     ),
     canvasColor: colorScheme.inverseSurface,
+    dividerColor: darkLightGrey,
 
     /// Tema de texto
     textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme.copyWith(
