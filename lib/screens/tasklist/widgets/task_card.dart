@@ -12,8 +12,8 @@ class TaskCard extends StatelessWidget {
   const TaskCard({
     required this.taskList,
     required this.onDelete,
-    Key? key,
-  }): super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

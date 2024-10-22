@@ -58,7 +58,7 @@ Future<Response> sigaClientRequest(String path, {
         ),
       ),
     );
-  } on SocketException catch (e) {
+  } on SocketException {
     throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
   } catch (e) {
     rethrow;

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/card_asignatura.dart';
-import 'package:miutem/widgets/error/error_refresh.dart';
-import 'package:miutem/widgets/icons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class AsignaturasInscritas extends StatelessWidget {

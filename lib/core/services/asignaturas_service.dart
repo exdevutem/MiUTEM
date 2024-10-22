@@ -30,7 +30,7 @@ class AsignaturasService {
       }
 
       return (data['response'] as List<dynamic>).map<Asignatura>((e) => Asignatura.fromJson(e)).groupListsBy((asignatura) => asignatura.uniqueId).values.map((list) => list.first).toList();
-    } on SocketException catch(e) {
+    } on SocketException {
       throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
     } on DioError catch(e) {
       logger.e('Error al obtener asignaturas', error: e);
