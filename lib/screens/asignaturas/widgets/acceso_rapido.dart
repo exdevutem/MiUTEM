@@ -13,13 +13,16 @@ class AccesoRapido extends StatelessWidget {
     children: [
       Text("Accesos rápidos", style: StyleText.description),
       const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardAccesoRapido(color: AppTheme.lightBlueCard, colorDark: AppTheme.darkBlueCard, label: 'Horario', icon: AppIcons.timetable, onTap: () => {}),
-          CardAccesoRapido(color: AppTheme.lightSalmonCard, colorDark: AppTheme.darkSalmonCard, label: 'Malla Histórica', icon: AppIcons.historicTimetable, fill: 0, onTap: () => {}),
-          CardAccesoRapido(color: AppTheme.lightPurpleCard, colorDark: AppTheme.darkPurpleCard, label: 'Cálculo de Notas', icon: AppIcons.calculator, fill: 0, onTap: () => {}),
-        ],
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child:       Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CardAccesoRapido(color: AppTheme.lightBlueCard, colorDark: AppTheme.darkBlueCard, label: 'Horario', icon: AppIcons.timetable, onTap: () => {}),
+            CardAccesoRapido(color: AppTheme.lightSalmonCard, colorDark: AppTheme.darkSalmonCard, label: 'Malla Histórica', icon: AppIcons.historicTimetable, fill: 0, onTap: () => {}),
+            CardAccesoRapido(color: AppTheme.lightPurpleCard, colorDark: AppTheme.darkPurpleCard, label: 'Cálculo de Notas', icon: AppIcons.calculator, fill: 0, onTap: () => {}),
+          ],
+        ),
       )
     ],
   );

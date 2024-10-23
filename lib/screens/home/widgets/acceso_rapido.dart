@@ -14,33 +14,36 @@ class AccesoRapido extends StatelessWidget {
     children: [
       Text("¿Que quieres hacer hoy?", style: StyleText.description),
       const SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CardAccesoRapido(
-            color: AppTheme.lightBlueCard,
-            colorDark: AppTheme.darkBlueCard,
-            label: 'Horario',
-            icon: AppIcons.timetable,
-            onTap: () => {},
-          ),
-          CardAccesoRapido(
-            color: AppTheme.lightPurpleCard,
-            colorDark: AppTheme.darkPurpleCard,
-            label: 'Notas',
-            icon: AppIcons.calculator,
-            fill: 0,
-            onTap: () => {},
-          ),
-          CardAccesoRapido(
-            color: AppTheme.lightYellowCard,
-            colorDark: AppTheme.darkYellowCard,
-            label: 'Apuntes',
-            icon: AppIcons.subjectsMarker,
-            fill: 0,
-            onTap: () => visitarApuntes(context),
-          ),
-        ],
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CardAccesoRapido(
+              color: AppTheme.lightBlueCard,
+              colorDark: AppTheme.darkBlueCard,
+              label: 'Horario',
+              icon: AppIcons.timetable,
+              onTap: () => {},
+            ),
+            CardAccesoRapido(
+              color: AppTheme.lightPurpleCard,
+              colorDark: AppTheme.darkPurpleCard,
+              label: 'Notas',
+              icon: AppIcons.calculator,
+              fill: 0,
+              onTap: () => {},
+            ),
+            CardAccesoRapido(
+              color: AppTheme.lightYellowCard,
+              colorDark: AppTheme.darkYellowCard,
+              label: 'Apuntes',
+              icon: AppIcons.subjectsMarker,
+              fill: 0,
+              onTap: () => visitarApuntes(context),
+            ),
+          ],
+        ),
       )
     ],
   );
