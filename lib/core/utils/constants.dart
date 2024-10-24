@@ -5,7 +5,8 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final apiUrl = !kDebugMode ? 'https://api.exdev.cl' : (dotenv.env['MI_UTEM_API_DEBUG'] ?? 'https://api.exdev.cl');
-const sigaServiceUri = 'https://siga.utem.cl/servicios'; // UTEM SIGA API URL
+const sigaHost = 'https://siga.utem.cl';
+const sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
 
 const String sentryDsn = 'https://c03edae5839c62f95de91c1cbabb65d7@o4506938204553216.ingest.us.sentry.io/4506938205470720';
 const String uxCamDevKey = '0y6p88obpgiug1g';
