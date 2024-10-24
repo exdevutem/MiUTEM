@@ -25,4 +25,5 @@ class AppIcons {
   static const IconData close = Symbols.close_rounded;
   static const IconData more = Symbols.more_vert_rounded;
   static const IconData edit = Symbols.edit_rounded;
+  static const IconData refresh = Symbols.refresh_rounded;
 }

@@ -24,11 +24,11 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.1
   video_player: ^2.9.2
-  flutter_spinkit: ^5.2.1
   url_launcher: ^6.3.0
   skeletonizer: ^1.4.2
   material_symbols_icons: ^4.2785.1
   uuid: ^4.5.1
+  collection: ^1.18.0
 
 dev_dependencies:
   flutter_test:

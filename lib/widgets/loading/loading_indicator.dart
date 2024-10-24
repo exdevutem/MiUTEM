@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  final Color color;
-  final AnimationController? controller;
+  final Color? color;
   final EdgeInsetsGeometry padding;
   final String? message;
 
   const LoadingIndicator({
     super.key,
-    this.color = const Color(0xFF009d9b),
-    this.controller,
+    this.color,
     this.padding = const EdgeInsets.all(20),
     this.message,
   });
@@ -24,11 +21,7 @@ class LoadingIndicator extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SpinKitDoubleBounce(
-              controller: controller,
-              color: color,
-              size: 40.0,
-            ),
+            CircularProgressIndicator(color: color),
             if (message != null) const SizedBox(height: 10),
             if (message != null) Text("$message"),
           ],

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/constants.dart';
@@ -30,30 +33,36 @@ Future<Response> sigaClientRequest(String path, {
   Map<String, dynamic>? queryParameters,
   Map<String, dynamic> sigaParams = const {},
 }) async {
-  Map<String, dynamic> params = {
-    ...sigaParams
-  };
-  if((extra?['noToken'] ?? false) != true) {
-    params['token'] = await Get.find<AuthService>().activeToken();
-  }
+  try {
+    Map<String, dynamic> params = {
+      ...sigaParams
+    };
+    if((extra?['noToken'] ?? false) != true) {
+      params['token'] = await Get.find<AuthService>().activeToken();
+    }
 
-  return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
-    data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&"),
-    queryParameters: queryParameters,
-    options: options ?? buildCacheOptions(ttl,
-      forceRefresh: forceRefresh,
-      primaryKey: 'api_siga.miutem',
-      subKey: path,
-      maxStale: const Duration(days: 14),
-      options: (options ?? Options()).copyWith(
-        method: method,
-        headers: headers,
-        contentType: contentType,
-        responseType: responseType,
-        extra: extra,
+    return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
+      data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&"),
+      queryParameters: queryParameters,
+      options: options ?? buildCacheOptions(ttl,
+        forceRefresh: forceRefresh,
+        primaryKey: 'api_siga.miutem',
+        subKey: path,
+        maxStale: const Duration(days: 14),
+        options: (options ?? Options()).copyWith(
+          method: method,
+          headers: headers,
+          contentType: contentType,
+          responseType: responseType,
+          extra: extra,
+        ),
       ),
-    ),
-  );
+    );
+  } on SocketException {
+    throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
+  } catch (e) {
+    rethrow;
+  }
 }
 
 Future<bool> isOffline() async {

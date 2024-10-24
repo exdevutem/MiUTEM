@@ -12,7 +12,9 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(), // Queda vacío para dejar el espacio
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+      ), // Queda vacío para dejar el espacio
       body: SingleChildScrollView(
         child: Column(
           children: [

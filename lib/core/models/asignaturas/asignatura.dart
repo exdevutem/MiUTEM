@@ -43,6 +43,8 @@ class Asignatura {
     this.tipoSala,
   });
 
+  String get uniqueId => "$codigo/$sala/$seccion/$tipoHora/$nombre/$docente/$estado";
+
   Color get colorPorEstado {
     switch (estado) {
       case "Aprobado":

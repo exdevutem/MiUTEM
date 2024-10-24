@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/service_manager.dart';
+import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/widgets/navigation/bottom_navbar.dart';
 
@@ -9,18 +11,27 @@ void main() async {
   runApp(const MiUTEMApp());
 }
 
-class MiUTEMApp extends StatelessWidget {
+class MiUTEMApp extends StatefulWidget {
   const MiUTEMApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mi UTEM',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.getTheme(context),
-      darkTheme: AppTheme.getThemeDark(context),
-      home: const BottomNavBar(),
-    );
+  State<MiUTEMApp> createState() => _MiUTEMAppState();
+}
+
+class _MiUTEMAppState extends State<MiUTEMApp> {
+
+  @override
+  void initState() {
+    isOffline().then((isOffline) => Preferencia.isOffline.set(isOffline ? 'true' : 'false'), onError: (err) => Preferencia.isOffline.set('true'));
+    super.initState();
   }
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'Mi UTEM',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.getTheme(context),
+    darkTheme: AppTheme.getThemeDark(context),
+    home: const BottomNavBar(),
+  );
 }

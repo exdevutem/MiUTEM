@@ -10,7 +10,7 @@ class StyleText {
   );
 
   static TextStyle label = GoogleFonts.inter(
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w700,
     height: 1.2,
   );

@@ -22,7 +22,7 @@ class AuthService {
     final credentials = await _secureStorageRepository.getCredentials();
     if(credentials == null) {
       logger.d("[AuthService#isLoggedIn]: No se encontraron credenciales.");
-      throw CustomException.custom();
+      throw CustomException.custom(message: "No se encontraron credenciales. Por favor intenta más tarde.");
     }
 
     Estudiante? estudiante = await _secureStorageRepository.getEstudiante();
