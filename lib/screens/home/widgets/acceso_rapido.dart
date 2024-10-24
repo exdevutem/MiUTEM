@@ -6,6 +6,7 @@ import 'package:miutem/widgets/cards/card_acceso_rapido.dart';
 import 'package:miutem/widgets/icons.dart';
 
 class AccesoRapido extends StatelessWidget {
+
   const AccesoRapido({super.key});
 
   @override
@@ -14,10 +15,11 @@ class AccesoRapido extends StatelessWidget {
     children: [
       Text("¿Que quieres hacer hoy?", style: StyleText.description),
       const SizedBox(height: 10),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      SizedBox(
+        height: 130,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          scrollDirection: Axis.horizontal,
           children: [
             CardAccesoRapido(
               color: AppTheme.lightBlueCard,
@@ -26,6 +28,7 @@ class AccesoRapido extends StatelessWidget {
               icon: AppIcons.timetable,
               onTap: () => {},
             ),
+            const SizedBox(width: 10), // Add space between cards
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,
@@ -34,6 +37,7 @@ class AccesoRapido extends StatelessWidget {
               fill: 0,
               onTap: () => {},
             ),
+            const SizedBox(width: 10), // Add space between cards
             CardAccesoRapido(
               color: AppTheme.lightYellowCard,
               colorDark: AppTheme.darkYellowCard,
@@ -44,7 +48,7 @@ class AccesoRapido extends StatelessWidget {
             ),
           ],
         ),
-      )
+      ),
     ],
   );
 }
