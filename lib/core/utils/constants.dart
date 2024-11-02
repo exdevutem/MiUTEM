@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
@@ -25,3 +26,27 @@ const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "
 
 /// Meses del año.
 const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+/// Formatea una nota en formato de 1 o 2 decimales dependiendo de si es un 3.95 o no.
+final notaInputFormatter = TextInputFormatter.withFunction((prev, input) {
+  final val = input.text;
+  if(val.isEmpty) { // Si está vacío, no hacer nada
+    return input;
+  }
+
+  final firstDigit = int.tryParse(val[0]);
+  if(firstDigit != null && (firstDigit < 1 || firstDigit > 7)) { // Si el primer dígito es menor a 1 o mayor a 7, no hacer nada
+    return prev;
+  }
+
+  if(val.length == 1) {
+    return input;
+  }
+
+  final secondDigit = int.tryParse(val[1]);
+  if(secondDigit != null && ((secondDigit < 0 || secondDigit > 9) || (firstDigit == 7 && secondDigit > 0)) || val.length > 3) { // Si el segundo dígito es menor a 0 o mayor a 9, o si el primer dígito es 7 y el segundo dígito es mayor a 0, no hacer nada
+    return prev;
+  }
+
+  return input;
+});

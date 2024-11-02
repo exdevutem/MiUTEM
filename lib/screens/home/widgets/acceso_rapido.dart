@@ -35,7 +35,7 @@ class AccesoRapido extends StatelessWidget {
               label: 'Notas',
               icon: AppIcons.calculator,
               fill: 0,
-              onTap: () => {},
+              onTap: () => visitarNotas(context),
             ),
             const SizedBox(width: 10), // Add space between cards
             CardAccesoRapido(

@@ -20,6 +20,11 @@ class Persona {
     nombreCompleto: json['nombreCompleto'],
   );
 
+  toJson() => {
+    "rut": rut?.toString(),
+    "nombreCompleto": nombreCompleto,
+  };
+
   @override
   String toString() => "$rut - $nombreCompleto";
 }

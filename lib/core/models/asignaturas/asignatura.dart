@@ -62,7 +62,7 @@ class Asignatura {
     nombre: capitalize(json['nombre_asignatura'] ?? ''),
     tipoHora: capitalize(json['tipo_hora'] ?? ''),
     estado: '', // TODO: Agregar estado de aprobado, reprobado o inscrito.
-    docente: let<String, Persona?>(json['profesor'], (String? docente) {
+    docente: let<String, Persona?>(json['profesor'] ?? json['docente'], (String? docente) {
       final partes = (docente ?? '').split("-").map((it) => it.trim());
       if(partes.isEmpty) {
         return null;
