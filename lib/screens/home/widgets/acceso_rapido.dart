@@ -39,10 +39,10 @@ class AccesoRapido extends StatelessWidget {
             ),
             const SizedBox(width: 10), // Add space between cards
             CardAccesoRapido(
-              color: AppTheme.lightYellowCard,
-              colorDark: AppTheme.darkYellowCard,
-              label: 'Apuntes',
-              icon: AppIcons.subjectsMarker,
+              color: AppTheme.lightGreenCard,
+              colorDark: AppTheme.darkGreenCard,
+              label: 'Novedades',
+              icon: AppIcons.updates,
               fill: 0,
               onTap: () => visitarApuntes(context),
             ),
