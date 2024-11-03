@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// todo Agregar fecha limite para la alarma
 
 class Task extends ChangeNotifier {
   final String id;
