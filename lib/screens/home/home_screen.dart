@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/actions/get_student_or_login.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/core/utils/utils.dart';
+import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/screens/home/actions/cargar_clases_de_hoy.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/lista_clases.dart';
@@ -30,9 +30,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    getStudentOrLogin(context: context).then((estudiante) {
+    Get.find<AuthService>().login().then((estudiante) {
       setState(() => this.estudiante = estudiante);
       _cargarHorario();
+    }, onError: (err) {
+      if(mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+      }
     });
   }
 
