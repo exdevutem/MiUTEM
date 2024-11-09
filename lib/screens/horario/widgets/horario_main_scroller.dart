@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miutem/core/models/horario.dart';
 
 import '../controller/horario_controller.dart';
+import 'package:miutem/screens/horario/widgets/widgets.dart';
 
 
 class HorarioMainScroller extends StatefulWidget {
@@ -35,6 +37,7 @@ class HorarioMainScroller extends StatefulWidget {
   static double get totalWidth => daysWidth + periodWidth;
   static double get totalHeight => periodsHeight + dayHeight;
 
+  /// TODO AQUI QUEDE 09/11/2024 GGONU20
   Widget get _horarioBlocksContent => HorarioBlocksContent(horario: horario, blockHeight: blockHeight, blockWidth: blockWidth, blockInternalMargin: blockInternalMargin);
   Widget get _horarioDaysHeader => HorarioDaysHeader(horario: horario, height: dayHeight, dayWidth: dayWidth, showActiveDay: showActive);
   Widget get _horarioPeriodsHeader => HorarioPeriodsHeader(horario: horario, width: periodWidth, periodHeight: periodHeight, showActivePeriod: showActive);

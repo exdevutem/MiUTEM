@@ -100,6 +100,7 @@ class HorarioController{
     final viewportWidth = MediaQuery.of(context).size.width - MediaQuery.of(context).padding.horizontal;
     final viewportHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.vertical;
 
+    /// TODO AQUI QUEDE PERO NECESITABA EL HorarioMainScroller
     x = (x + (HorarioMainScroller.))
 
   }
