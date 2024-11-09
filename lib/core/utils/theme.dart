@@ -18,6 +18,12 @@ class AppTheme {
   static Color get lightSalmonCard => const Color(0xFFFFBDBD);
   static Color get darkSalmonCard => const Color(0xFF8C3A3A);
 
+  /// Divider de horario
+  ///
+  static const Color mediumGrey = Color(0xFF999999);
+  static const Color dividerColor = mediumGrey;
+
+
   static ColorScheme get colorScheme => ColorScheme.fromSeed(
     seedColor: const Color(0xFF1D8E5C),
     primary: const Color(0xFF1D8E5C),

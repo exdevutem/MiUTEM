@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../core/models/horario.dart';
-import '../../core/models/preferencia.dart';
-import '../../core/services/horario_service.dart';
-import '../../core/utils/constants.dart';
-import '../../core/utils/http/functions.dart';
+import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/core/services/horario_service.dart';
+import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/http/functions.dart';
+import 'package:miutem/core/models/preferencia.dart';
 
 class HorarioScreen extends StatefulWidget {
     const HorarioScreen({super.key});
@@ -46,6 +46,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
         await _loadHorario();
     }
 
+    /// Testing como recibo los datos
     void _logHorario() {
         final _horario = this._horario;
         if(_horario != null) {
