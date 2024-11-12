@@ -21,6 +21,7 @@ class AppTheme {
   /// themes horario
   static const Color mediumGrey = Color(0xFFBDBDBD);
   static const Color greyligth = Color(0xfff1f1f1);
+  static const Color grey = Color(0xff7f7f7f);
   static const Color dividerColor = mediumGrey;
 
 
