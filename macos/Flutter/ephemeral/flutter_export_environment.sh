@@ -1,6 +1,6 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/Users/fran/fvm/versions/3.24.3"
+export "FLUTTER_ROOT=/Users/fran/.sdk/flutter"
 export "FLUTTER_APPLICATION_PATH=/Users/fran/Development/Apps/miutem"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=/Users/fran/Development/Apps/miutem/lib/main.dart"
