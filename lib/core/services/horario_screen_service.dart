@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:miutem/core/services/carrera_service.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
+import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/core/services/horario_service.dart';
+import 'package:miutem/core/utils/utils.dart';
+import 'package:miutem/screens/horario/service/remote_config.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
-import '../../../core/models/asignaturas/asignatura.dart';
-import '../../../core/models/horario.dart';
-import '../../../core/services/horario_service.dart';
-import '../../../core/utils/utils.dart';
-import '../service/remote_config.dart';
 
 
-
-class HorarioController{
+class HorarioScreenService{
   final _storage = GetStorage();
   final _randomColors = Colors.primaries.toList()..shuffle();
   final _now = DateTime.now();

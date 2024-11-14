@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/utils/theme.dart';
-import 'package:miutem/screens/horario/controller/horario_controller.dart';
+import 'package:miutem/core/services/horario_screen_service.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 
 class HorarioDaysHeader extends StatelessWidget {
@@ -31,7 +31,7 @@ class HorarioDaysHeader extends StatelessWidget {
         day: entry.value,
         height: height,
         width: dayWidth,
-        active: showActiveDay && entry.key == Get.find<HorarioController>().indexOfCurrentDayStartingAtMonday,
+        active: showActiveDay && entry.key == Get.find<HorarioScreenService>().indexOfCurrentDayStartingAtMonday,
         backgroundColor: backgroundColor,
       )).toList(),
     ),

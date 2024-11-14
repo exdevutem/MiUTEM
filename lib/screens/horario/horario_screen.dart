@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 
 import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/screens/horario/controller/horario_controller.dart';
+import 'package:miutem/core/services/horario_screen_service.dart';
 import 'package:miutem/screens/horario/widgets/custom_app_bar.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 import 'package:miutem/widgets/error/custom_error.dart';
@@ -28,7 +28,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
     final ScreenshotController _screenshotController = ScreenshotController();
 
     bool _forceRefresh = false;
-    final horarioController = Get.find<HorarioController>();
+    final horarioController = Get.find<HorarioScreenService>();
 
     @override
     void initState() {

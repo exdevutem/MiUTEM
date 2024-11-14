@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/utils/theme.dart';
-import 'package:miutem/screens/horario/controller/horario_controller.dart';
+import 'package:miutem/core/services/horario_screen_service.dart';
 
-import 'widgets.dart';
+import '../widgets.dart';
 
 
 class HorarioPeriodsHeader extends StatelessWidget {
@@ -48,7 +48,7 @@ class HorarioPeriodsHeader extends StatelessWidget {
           inicio: horario.horasInicio[e.key],
           intermedio: horario.horasIntermedio[e.key],
           fin: horario.horasTermino[e.key],
-          active: showActivePeriod && Get.find<HorarioController>().indexOfCurrentPeriod == e.key,
+          active: showActivePeriod && Get.find<HorarioScreenService>().indexOfCurrentPeriod == e.key,
           height: periodHeight,
           width: width,
           backgroundColor: backgroundColor,
