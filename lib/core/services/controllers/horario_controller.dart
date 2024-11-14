@@ -10,9 +10,7 @@ import 'package:miutem/screens/horario/service/remote_config.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 
-
-
-class HorarioScreenService{
+class HorarioController {
   final _storage = GetStorage();
   final _randomColors = Colors.primaries.toList()..shuffle();
   final _now = DateTime.now();
@@ -64,21 +62,15 @@ class HorarioScreenService{
   }
 
   Future<Horario?> getHorario({ bool forceRefresh = false }) async{
-    /// TODO aqui en miutem se ocupaba el carreraId, pero nosotros no lo ocupamos asi que deberia borrar esto
-    // final carreraId = (await Get.find<CarreraService>().getCarrera(forceRefresh: forceRefresh))?.id;
-    // if(carreraId == null) return null;
-
     final horario = await Get.find<HorarioService>().getHorario(forceRefresh: forceRefresh);
-    if (horario != null) _setRandomColorsByHorario(horario);
+    _setRandomColorsByHorario(horario);
     return horario;
   }
 
-  ///
   /// Funciones para manejo de colores
-  ///
   void _setRandomColorsByHorario(Horario horario) => horario.horario?.forEach((dia)=> dia.forEach((bloque){
-    final _asignatura = bloque.asignatura;
-    if(_asignatura == null) return;
+    final asignatura = bloque.asignatura;
+    if(asignatura == null) return;
 
     addAsignaturaAndSetColor(bloque.asignatura!);
   }));
@@ -87,10 +79,10 @@ class HorarioScreenService{
     bool hasColor = getColor(asignatura) != null;
     if(hasColor) return;
 
-    final _newColor = color ?? unusedColors.first;
-    final _key = '${asignatura.codigo}_${asignatura.tipoHora}';
-    usedColors.add(_newColor);
-    _storage.write(_key, _newColor.value);
+    final newColor = color ?? unusedColors.first;
+    final key = '${asignatura.codigo}_${asignatura.tipoHora}';
+    usedColors.add(newColor);
+    _storage.write(key, newColor.value);
   }
 
   Color? getColor(Asignatura? asignatura){

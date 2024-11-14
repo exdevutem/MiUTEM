@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/services/horario_screen_service.dart';
+import 'package:miutem/core/services/controllers/horario_controller.dart';
 
 import '../widgets.dart';
 
@@ -44,7 +44,7 @@ class _HorarioIndicatorState extends State<HorarioIndicator> {
     super.dispose();
   }
 
-  HorarioScreenService _horarioController = Get.find<HorarioScreenService>();
+  HorarioController _horarioController = Get.find<HorarioController>();
 
   double get _centerLineYPosition => (_horarioController.minutesFromStart * widget.heightByMinute);
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 
-import '../../../../core/services/horario_screen_service.dart';
+import '../../../../core/services/controllers/horario_controller.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 
 
@@ -31,8 +31,8 @@ class HorarioMainScroller extends StatefulWidget {
   @override
   _HorarioMainScrollerState createState() => _HorarioMainScrollerState();
 
-  static double get daysWidth => dayWidth * Get.find<HorarioScreenService>().daysCount;
-  static double get periodsHeight => periodHeight * Get.find<HorarioScreenService>().periodsCount;
+  static double get daysWidth => dayWidth * Get.find<HorarioController>().daysCount;
+  static double get periodsHeight => periodHeight * Get.find<HorarioController>().periodsCount;
 
   static double get totalWidth => daysWidth + periodWidth;
   static double get totalHeight => periodsHeight + dayHeight;
@@ -61,7 +61,7 @@ class HorarioMainScroller extends StatefulWidget {
 
 class _HorarioMainScrollerState extends State<HorarioMainScroller> {
 
-  final controller = Get.find<HorarioScreenService>();
+  final controller = Get.find<HorarioController>();
 
   @override
   void initState() {

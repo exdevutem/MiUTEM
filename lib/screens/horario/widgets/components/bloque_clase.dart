@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/horario_screen_service.dart';
+import 'package:miutem/core/services/controllers/horario_controller.dart';
 
 
 class BloqueClase extends StatelessWidget {
@@ -27,7 +27,7 @@ class BloqueClase extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DecoratedBox(
     decoration: BoxDecoration(
-      color: Get.find<HorarioScreenService>().getColor(block.asignatura) ?? this.color,
+      color: Get.find<HorarioController>().getColor(block.asignatura) ?? this.color,
       borderRadius: BorderRadius.circular(15),
     ),
     child: Material(

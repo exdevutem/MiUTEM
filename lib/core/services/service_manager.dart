@@ -10,7 +10,7 @@ import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/core/utils/firebase_options.dart';
-import 'package:miutem/core/services/horario_screen_service.dart';
+import 'package:miutem/core/services/controllers/horario_controller.dart';
 
 /// Inicializa los servicios y los registra en GetX
 Future<void> initServices() async {
@@ -32,6 +32,6 @@ Future<void> initServices() async {
 
   // Controladores (lógica de la app)
   Get.lazyPut(() => NotasController(), fenix: true);
-  Get.lazyPut(() => HorarioScreenService());
+  Get.lazyPut(() => HorarioController());
 
 }
