@@ -7,6 +7,7 @@ import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/screens/horario/controller/horario_controller.dart';
 
 /// Inicializa los servicios y los registra en GetX
 Future<void> initServices() async {
@@ -20,4 +21,8 @@ Future<void> initServices() async {
   Get.lazyPut(() => AsignaturasService());
   Get.lazyPut(() => GradesService());
   Get.lazyPut(() => HorarioService());
+
+  // Horario
+  Get.lazyPut(() => HorarioController());
+
 }
