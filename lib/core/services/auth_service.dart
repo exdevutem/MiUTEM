@@ -21,7 +21,6 @@ class AuthService {
   Future<Estudiante> login({ bool forceRefresh = false }) async {
     final credentials = await _secureStorageRepository.getCredentials();
     if(credentials == null) {
-      logger.d("[AuthService#isLoggedIn]: No se encontraron credenciales.");
       throw CustomException.custom(message: "No se encontraron credenciales. Por favor intenta más tarde.");
     }
 

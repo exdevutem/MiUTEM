@@ -1,16 +1,23 @@
-
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
+import 'package:miutem/core/services/firebase/remote_config_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/core/utils/firebase_options.dart';
 
 /// Inicializa los servicios y los registra en GetX
 Future<void> initServices() async {
+  // Inicializar Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  Get.lazyPut(() => RemoteConfigService());
+  await Get.find<RemoteConfigService>().initialize();
+
   // Repositorios (procesamiento de datos)
   Get.lazyPut(() => SecureStorageRepository());
   Get.lazyPut(() => TasksRepository());

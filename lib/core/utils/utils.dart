@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:miutem/core/utils/constants.dart';
 
 /// Esta función ejecuta la función `op` si es que el objeto no es nulo, además retorna lo que retorne la función op.
@@ -65,3 +64,6 @@ String getToday() {
   final now = DateTime.now();
   return "${days[now.weekday - 1]}, ${now.day} de ${months[now.month - 1]}";
 }
+
+/// Devuelve un color dependiendo si es modo oscuro o no.
+Color themedColor(BuildContext context, {required Color light, required Color dark}) => MediaQuery.of(context).platformBrightness == Brightness.light ? light : dark;

@@ -1,4 +1,4 @@
-import 'package:flutter/src/widgets/icon_data.dart';
+import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class AppIcons {
@@ -27,4 +27,33 @@ class AppIcons {
   static const IconData more = Symbols.more_vert_rounded;
   static const IconData edit = Symbols.edit_rounded;
   static const IconData refresh = Symbols.refresh_rounded;
+  static const IconData error = Symbols.error_rounded;
+
+  static const _iconMap = {
+    'home': home,
+    'subjects': subjects,
+    'subjectsMarker': subjectsMarker,
+    'updates': updates,
+    'profile': profile,
+    'notes': notes,
+    'timetable': timetable,
+    'historicTimetable': historicTimetable,
+    'grades': grades,
+    'calculator': calculator,
+    'idea': idea,
+    'location': location,
+    'mail': mail,
+    'password': password,
+    'delete': delete,
+    'settings': settings,
+    'dropdown': dropdown,
+    'add': add,
+    'close': close,
+    'more': more,
+    'edit': edit,
+    'refresh': refresh,
+    'error': error,
+  };
+
+  static IconData getIcon(String name) => _iconMap[name] ?? error;
 }

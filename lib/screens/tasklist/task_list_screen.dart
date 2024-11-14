@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/tasklist.dart';
+import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/core/services/auth_service.dart';
+import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
 import 'package:miutem/screens/tasklist/widgets/task_card.dart';
+import 'package:miutem/widgets/navigation/top_navigation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -18,12 +22,22 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   bool loading = false;
   List<TaskList> _taskLists = [];
+  Estudiante? estudiante;
 
   @override
   void initState(){
     _taskLists.clear();
     refreshTasks().then((tasks) => setState(() => _taskLists = tasks));
     super.initState();
+
+    Get.find<AuthService>().login().then((estudiante) {
+      setState(() => this.estudiante = estudiante);
+    }, onError: (err) {
+      if(mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+      }
+    });
   }
 
   Future<void> _refresh() async {
@@ -37,9 +51,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    body: SafeArea(child: Column(
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
       children: [
+        TopNavigation(estudiante: estudiante),
+        const SizedBox(height: 20),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _refresh,
@@ -66,6 +83,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
           ),
         )
       ],
-    )),
+    ),
   );
 }

@@ -33,10 +33,11 @@ class Estudiante extends PersonaUtem with TokenizedObject {
       correoPersonal: datosPersona['correo_personal'],
       correoUtem: datosPersona['correo_utem'],
       fotoUrl: datosPersona['foto'],
-      perfiles: Perfil.values.where((perfil) => (datosPersona['perfiles'] as List).contains(perfil.name)).toList(),
+      perfiles: Perfil.values.where((perfil) => (datosPersona['perfiles'] as List).map((perfil) => (perfil as String).toLowerCase()).contains(perfil.name)).toList(),
     );
   }
 
+  @override
   Map<String, dynamic> toJson() => {
     'token': token,
     'datos_persona': {
