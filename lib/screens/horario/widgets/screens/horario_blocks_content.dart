@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
