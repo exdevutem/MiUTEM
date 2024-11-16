@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/core/services/firebase/remote_config_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/horario/service/remote_config.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 

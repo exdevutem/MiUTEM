@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:miutem/core/services/firebase/keys.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/home/models/novedad.dart';
 
@@ -15,6 +16,8 @@ final remoteConfigDefaults = {
 class RemoteConfigService {
 
   final remoteConfig = FirebaseRemoteConfig.instance;
+
+  static double get horarioZoom => FirebaseRemoteConfig.instance.getDouble(RemoteConfigServiceKeys.horarioZoom);
 
   Future initialize() async {
     try {
