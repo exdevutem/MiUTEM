@@ -33,6 +33,13 @@ dependencies:
   firebase_core: ^3.7.0
   firebase_remote_config: ^5.1.4
   firebase_analytics: ^11.3.4
+  flutter_colorpicker: ^1.1.0
+  get_storage: ^2.1.1
+  vector_math: ^2.1.4
+  dotted_border: ^2.1.0
+  screenshot: ^3.0.0
+  path_provider: ^2.1.5
+  share_plus: ^10.1.2
 
 dev_dependencies:
   flutter_test:
