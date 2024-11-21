@@ -37,45 +37,47 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(16),
-    child: RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          this.estudiante = null;
-          bloques = null;
-        });
-        await HttpClient.clearCache();
-        final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
-        await _cargarHorario(forceRefresh: true);
-        setState(() => this.estudiante = estudiante);
-      },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        clipBehavior: Clip.none,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TopNavigation(estudiante: estudiante),
-            const SizedBox(height: 20),
-            Saludo(estudiante: estudiante),
-            const SizedBox(height: 20),
-            const AccesoRapido(),
-            const SizedBox(height: 20),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Clases de Hoy", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(getToday(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                ListaClases(error: errorAlCargarHorario, bloques: bloques, onRefresh: () => _cargarHorario(forceRefresh: true)),
-              ],
-            ),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: TopNavigation(estudiante: estudiante, isMainScreen: true, title: 'Inicio', actions: const []),
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            this.estudiante = null;
+            bloques = null;
+          });
+          await HttpClient.clearCache();
+          final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
+          await _cargarHorario(forceRefresh: true);
+          setState(() => this.estudiante = estudiante);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          clipBehavior: Clip.none,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Saludo(estudiante: estudiante),
+              const SizedBox(height: 20),
+              const AccesoRapido(),
+              const SizedBox(height: 20),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("Clases de Hoy", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(getToday(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ListaClases(error: errorAlCargarHorario, bloques: bloques, onRefresh: () => _cargarHorario(forceRefresh: true)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     ),

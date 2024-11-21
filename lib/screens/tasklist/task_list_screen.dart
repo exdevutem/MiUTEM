@@ -5,6 +5,8 @@ import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
 import 'package:miutem/screens/tasklist/widgets/task_card.dart';
+import 'package:miutem/widgets/icons.dart';
+import 'package:miutem/widgets/navigation/top_navigation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -38,6 +40,11 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    appBar: const TopNavigation(
+      title: 'Apuntes',
+      isMainScreen: true,
+      actions: [],
+    ),
     body: SafeArea(child: Column(
       children: [
         Expanded(

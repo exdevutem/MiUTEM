@@ -19,53 +19,64 @@ class AsignaturasScreen extends StatefulWidget {
 }
 
 class _AsignaturasScreenState extends State<AsignaturasScreen> {
-
   Estudiante? estudiante;
   List<Asignatura>? asignaturas;
 
   @override
   void initState() {
     super.initState();
-    getStudentOrLogin(context: context).then((estudiante) => setState(() => this.estudiante = estudiante));
-    Get.find<AsignaturasService>().getAsignaturas().then((asignaturas) => setState(() => this.asignaturas = asignaturas), onError: (err) {
+    getStudentOrLogin(context: context)
+        .then((estudiante) => setState(() => this.estudiante = estudiante));
+    Get.find<AsignaturasService>()
+        .getAsignaturas()
+        .then((asignaturas) => setState(() => this.asignaturas = asignaturas),
+            onError: (err) {
       logger.e('Error al cargar asignaturas', error: err);
     });
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(16),
-    child: RefreshIndicator(
-      onRefresh: () async {
-        setState(() {
-          this.estudiante = null;
-          this.asignaturas = null;
-        });
-
-        final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
-        final asignaturas = await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true);
-        setState(() {
-          this.estudiante = estudiante;
-          this.asignaturas = asignaturas;
-        });
-      },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        clipBehavior: Clip.none,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TopNavigation(estudiante: estudiante),
-            const SizedBox(height: 20),
-            Text("Asignaturas", style: StyleText.headline),
-            const SizedBox(height: 20),
-            const AccesoRapido(),
-            const SizedBox(height: 20),
-            AsignaturasEnCurso(asignaturas: asignaturas),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+        appBar: TopNavigation(
+          estudiante: estudiante,
+          isMainScreen: true,
+          title: 'Asignaturas',
+          actions: const [],
         ),
-      ),
-    ),
-  );
-}
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {
+                this.estudiante = null;
+                this.asignaturas = null;
+              });
 
+              final estudiante =
+                  await Get.find<AuthService>().login(forceRefresh: true);
+              final asignaturas = await Get.find<AsignaturasService>()
+                  .getAsignaturas(forceRefresh: true);
+              setState(() {
+                this.estudiante = estudiante;
+                this.asignaturas = asignaturas;
+              });
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              clipBehavior: Clip.none,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  Text("Asignaturas", style: StyleText.headline),
+                  const SizedBox(height: 20),
+                  const AccesoRapido(),
+                  const SizedBox(height: 20),
+                  AsignaturasEnCurso(asignaturas: asignaturas),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+}

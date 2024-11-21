@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:miutem/core/utils/style_text.dart';
 
@@ -64,6 +65,10 @@ class AppTheme {
     /// Tema de la barra superior
     appBarTheme: AppBarTheme.of(context).copyWith(
       backgroundColor: white,
+      systemOverlayStyle: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: white,
+        statusBarIconBrightness: Brightness.dark,
+      ),
       actionsIconTheme: const IconThemeData(
         color: Color(0xFF333333),
       ),
@@ -168,6 +173,10 @@ class AppTheme {
     /// Tema de la barra superior
     appBarTheme: AppBarTheme.of(context).copyWith(
       backgroundColor: const Color(0xFF1D1B20),
+      systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+      ),
       actionsIconTheme: const IconThemeData(
         color: Color(0xFFFAFAFA),
       ),
@@ -179,8 +188,6 @@ class AppTheme {
       toolbarTextStyle: GoogleFonts.roboto(
         color: const Color(0xFFFAFAFA),
         fontSize: 20,
-
-
         fontWeight: FontWeight.w600,
       ),
       foregroundColor: const Color(0xFFFAFAFA),
