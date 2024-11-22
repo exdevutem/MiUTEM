@@ -20,7 +20,7 @@ dependencies:
   package_info_plus: ^8.0.2
   shared_preferences: ^2.3.2
   dart_jsonwebtoken: ^2.14.1
-  cloud_firestore: ^5.4.4
+  cloud_firestore: ^5.4.5
   google_fonts: ^6.2.1
   flutter_native_splash: ^2.4.1
   video_player: ^2.9.2
@@ -30,6 +30,16 @@ dependencies:
   uuid: ^4.5.1
   collection: ^1.18.0
   extended_masked_text: ^3.0.1
+  firebase_core: ^3.7.0
+  firebase_remote_config: ^5.1.4
+  firebase_analytics: ^11.3.4
+  flutter_colorpicker: ^1.1.0
+  get_storage: ^2.1.1
+  vector_math: ^2.1.4
+  dotted_border: ^2.1.0
+  screenshot: ^3.0.0
+  path_provider: ^2.1.5
+  share_plus: ^10.1.2
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,7 @@ import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
 import 'package:miutem/widgets/loading/loading_dialog.dart';
 import 'package:miutem/widgets/navigation/bottom_navbar.dart';
 import 'package:miutem/widgets/snackbar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -92,9 +93,7 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     },
                   ),
                   TextButton(
-                    onPressed: () {
-                      // launchURL('https://pasaporte.utem.cl/reset');
-                    },
+                    onPressed: () => launchUrl(Uri.https('pasaporte.utem.cl', 'reset')),
                     style: TextButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.secondary,
                     ),

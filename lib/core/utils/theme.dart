@@ -26,6 +26,12 @@ class AppTheme {
   static Color get lightGreenCard => const Color(0xFFB3E6CC);
   static Color get darkGreenCard => const Color(0xFF0A693C);
 
+  /// themes horario
+  static const Color mediumGrey = Color(0xFFBDBDBD);
+  static const Color greyligth = Color(0xfff1f1f1);
+  static const Color grey = Color(0xff7f7f7f);
+  static const Color dividerColor = mediumGrey;
+
   static ColorScheme get colorScheme => ColorScheme.fromSeed(
     seedColor: const Color(0xFF1D8E5C),
     primary: const Color(0xFF1D8E5C),

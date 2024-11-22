@@ -26,7 +26,7 @@ class AccesoRapido extends StatelessWidget {
               colorDark: AppTheme.darkBlueCard,
               label: 'Horario',
               icon: AppIcons.timetable,
-              onTap: () => {},
+              onTap: () => visitarHorario(context),
             ),
             const SizedBox(width: 10), // Add space between cards
             CardAccesoRapido(

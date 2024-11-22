@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/actions/get_student_or_login.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
@@ -9,6 +8,7 @@ import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
+import 'package:miutem/screens/auth/login/login_screen.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 
 class AsignaturasScreen extends StatefulWidget {
@@ -25,8 +25,13 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
   @override
   void initState() {
     super.initState();
-    getStudentOrLogin(context: context)
-        .then((estudiante) => setState(() => this.estudiante = estudiante));
+    Get.find<AuthService>().login()
+        .then((estudiante) => setState(() => this.estudiante = estudiante), onError: (err) {
+      if(mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+      }
+    });
     Get.find<AsignaturasService>()
         .getAsignaturas()
         .then((asignaturas) => setState(() => this.asignaturas = asignaturas),
