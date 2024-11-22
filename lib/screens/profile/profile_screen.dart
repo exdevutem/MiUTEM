@@ -24,7 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopNavigation(estudiante: estudiante),
+              TopNavigation(title: "Perfil", estudiante: estudiante, isMainScreen: true, actions: [],),
               const SizedBox(height: 20),
               const SizedBox(height: 20),
               const SizedBox(height: 20),
