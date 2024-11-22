@@ -43,7 +43,6 @@ class _MiUTEMAppState extends State<MiUTEMApp> {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    
     title: 'Mi UTEM',
     debugShowCheckedModeBanner: false,
     theme: AppTheme.getTheme(context),
