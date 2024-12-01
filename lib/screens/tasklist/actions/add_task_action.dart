@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
 
 import '../models/task_model.dart';
-import '../widgets/add_task_screen.dart';
 
 Future<void> addTask(BuildContext context, Function() onFinish) async {
   final result = await showDialog<Task>(context: context, builder: (BuildContext context) => const AddTaskScreen());

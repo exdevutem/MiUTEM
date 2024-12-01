@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
-import 'package:miutem/screens/tasklist/widgets/task_card.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../core/repositories/tasks_repository.dart';
@@ -65,7 +65,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       ),
                       itemCount: _taskList.length,
                       itemBuilder: (context, index) => TaskCard(
-                        taskList: _taskList[index],
+                        task: _taskList[index],
                         onDelete: () async {
                           await Get.find<TasksRepository>().saveTaskLists(_taskList.where((taskList)=> taskList.id != _taskList[index].id).map((it) => it.toJson()).toList());
                           _refresh();

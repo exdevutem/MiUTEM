@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:miutem/screens/tasklist/models/task_model.dart';
-import 'package:miutem/screens/tasklist/widgets/task_card.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -46,6 +46,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     ),
     body: SafeArea(child: Column(
       children: [
+        const MessageCard(),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _refresh,
@@ -54,7 +55,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               child: ListView.builder(
                 itemCount: _taskLists.length,
                 itemBuilder: (context, index) => TaskCard(
-                  taskList: _taskLists[index],
+                  task: _taskLists[index],
                   onDelete: () async {
                     await Get.find<TasksRepository>().saveTaskLists(_taskLists.where((taskList)=> taskList.id != _taskLists[index].id).map((it) => it.toJson()).toList());
                     refreshTasks();
