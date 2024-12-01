@@ -64,5 +64,19 @@ class DatabaseHelper {
     return result;
   }
 
+  // Update Operation: Update a Note object and save it to database
+  Future<int> updateTask(Task task) async {
+    var db = await database;
+    var result = await db.update(noteTable, task.toMap(), where: '$colId = ?', whereArgs: [task.id]);
+    return result;
+  }
+
+  // Delete Operation: Delete a Note object from database
+  Future<int> deleteTask(int id) async {
+    var db = await database;
+    int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colId = $id');
+    return result;
+  }
+
 
 }

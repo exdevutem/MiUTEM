@@ -4,6 +4,7 @@ import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
+import 'package:miutem/screens/tasklist/task_list_screen.dart';
 import 'package:miutem/screens/tasklist/task_screen.dart';
 import 'package:miutem/widgets/loading/loading_dialog.dart';
 
@@ -62,7 +63,7 @@ class ClassBlockCard extends StatelessWidget {
     // });
 
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => TaskScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (ctx) => TaskListScreen()));
     // Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaDetalleScreen(
     //   carrera: carrera,
     //   asignatura: asignatura.copyWith(grades: grades),

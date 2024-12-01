@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:miutem/core/models/Task/task.dart';
 
 
@@ -15,12 +14,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  final _uuid = const Uuid();
 
   Color _color = const Color(0xFFFCF7BB);
   TaskState _state = TaskState.unspecified;
   final DateTime _createdAt = DateTime.now();
-  DateTime _modifiedAt = DateTime.now();
+  final DateTime _modifiedAt = DateTime.now();
 
   @override
   void dispose() {

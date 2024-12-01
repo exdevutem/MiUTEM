@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 
@@ -27,6 +28,12 @@ class TaskCard extends StatelessWidget {
     String mensaje = task.content;
     return GestureDetector(
       onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditTaskScreen(task: task),
+          ),
+        );
       },
       child: Card(
         shape: RoundedRectangleBorder(

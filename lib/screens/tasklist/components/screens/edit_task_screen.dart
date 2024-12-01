@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final Task task;
@@ -28,7 +29,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     _color = widget.task.color;
     _state = widget.task.state;
     _createdAt = widget.task.createdAt;
-    _modifiedAt = DateTime.now();
+    _modifiedAt = widget.task.modifiedAt;
   }
 
   @override
@@ -47,10 +48,15 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         color: _color,
         state: _state,
         createdAt: _createdAt,
-        modifiedAt: _modifiedAt,
+        modifiedAt: DateTime.now(),
       );
       Navigator.of(context).pop(updatedTask);
     }
+  }
+
+  void _deleteTask() async {
+    await DatabaseHelper().deleteTask(widget.task.id!);
+    Navigator.of(context).pop(widget.task);
   }
 
   @override
@@ -58,6 +64,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Task'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: _deleteTask,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

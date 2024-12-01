@@ -8,7 +8,7 @@ import 'package:miutem/core/services/controllers/notas_controller.dart';
 import 'package:miutem/core/services/firebase/remote_config_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
-import 'package:miutem/core/repositories/tasks_repository.dart';
+// import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/core/utils/firebase_options.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
 
@@ -21,7 +21,7 @@ Future<void> initServices() async {
 
   // Repositorios (procesamiento de datos)
   Get.lazyPut(() => SecureStorageRepository());
-  Get.lazyPut(() => TasksRepository());
+  // Get.lazyPut(() => TasksRepository());
 
   // Servicios (solicitud de datos de las APIs)
   Get.lazyPut(() => AuthService());

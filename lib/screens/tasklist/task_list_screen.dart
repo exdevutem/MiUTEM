@@ -1,10 +1,9 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/repositories/tasks_repository.dart';
-import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
-import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
-import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/screens/tasklist/actions/actions.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -30,7 +29,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Future<void> _refresh() async {
     setState(() => loading = true);
     final tasks = await refreshTasks();
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _taskLists = tasks;
       loading = false;
@@ -57,8 +56,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 itemBuilder: (context, index) => TaskCard(
                   task: _taskLists[index],
                   onDelete: () async {
-                    await Get.find<TasksRepository>().saveTaskLists(_taskLists.where((taskList)=> taskList.id != _taskLists[index].id).map((it) => it.toJson()).toList());
-                    refreshTasks();
+                    // await Get.find<TasksRepository>().saveTaskLists(_taskLists.where((taskList)=> taskList.id != _taskLists[index].id).map((it) => it.toJson()).toList());
+                    // await DatabaseHelper().deleteTask(_taskLists[index].id!);
+                    _refresh();
                   },
                 ),
               ),
