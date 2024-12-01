@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:miutem/core/models/Task/enums/task_state.dart';
 
 /// todo Agregar fecha limite para la alarma
 
 class Task extends ChangeNotifier {
-  final String id;
+  final int? id;
   String title;
   String content;
   Color color;
@@ -27,7 +28,7 @@ class Task extends ChangeNotifier {
 
   /// SERIALIZE THE NOTE INTO JSON OBJECT
   Map<String, dynamic> toJson() => {
-    'id': id,
+    'id': id?.toInt(),
     'title': title,
     'content': content,
     'color': color.value,
@@ -46,14 +47,18 @@ class Task extends ChangeNotifier {
     createdAt: DateTime.parse(map['createdAt']),
     modifiedAt: DateTime.parse(map['modifiedAt']),
   );
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'color': color.value,
+      'state': state.index,
+      'createdAt': createdAt.toIso8601String(),
+      'modifiedAt': modifiedAt.toIso8601String(),
+    };
+  }
+
 }
 
-///
-/// Set enum for state
-///
-enum TaskState {
-  unspecified,
-  pinned,
-  archived,
-  deleted,
-}

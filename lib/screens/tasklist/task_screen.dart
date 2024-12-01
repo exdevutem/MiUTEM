@@ -7,7 +7,8 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../core/repositories/tasks_repository.dart';
 import 'actions/add_task_action.dart';
-import 'models/task_model.dart';
+import 'package:miutem/core/models/Task/task.dart';
+
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});

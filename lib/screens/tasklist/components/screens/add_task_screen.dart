@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:uuid/uuid.dart';
-import 'package:miutem/screens/tasklist/models/task_model.dart';
+import 'package:miutem/core/models/Task/task.dart';
+
 
 class AddTaskScreen extends StatefulWidget {
   const AddTaskScreen({super.key});
@@ -28,11 +29,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
-  /// todo ver si tengo que crear esto o algunas cosas de aqui como action
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
       final newTask = Task(
-        id: _uuid.v4(),
+        id: null,
         title: _titleController.text,
         content: _contentController.text,
         color: _color,

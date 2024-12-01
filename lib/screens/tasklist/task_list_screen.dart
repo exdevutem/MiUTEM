@@ -4,7 +4,7 @@ import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
-import 'package:miutem/screens/tasklist/models/task_model.dart';
+import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

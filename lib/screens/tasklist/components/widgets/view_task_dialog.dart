@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
-import 'package:miutem/screens/tasklist/models/task_model.dart';
+import 'package:miutem/core/models/Task/task.dart';
+
 
 class ViewTaskDialog extends StatelessWidget {
   final Task task;
