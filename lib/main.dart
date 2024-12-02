@@ -7,6 +7,7 @@ import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/widgets/navigation/bottom_navbar.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
