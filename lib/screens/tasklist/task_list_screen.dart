@@ -55,11 +55,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 itemCount: _taskLists.length,
                 itemBuilder: (context, index) => TaskCard(
                   task: _taskLists[index],
-                  onDelete: () async {
-                    // await Get.find<TasksRepository>().saveTaskLists(_taskLists.where((taskList)=> taskList.id != _taskLists[index].id).map((it) => it.toJson()).toList());
-                    // await DatabaseHelper().deleteTask(_taskLists[index].id!);
-                    _refresh();
-                  },
+                  onTap: () => updateTask(context, _taskLists[index], _refresh),
                 ),
               ),
             ),

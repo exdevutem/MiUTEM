@@ -55,8 +55,9 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   }
 
   void _deleteTask() async {
-    await DatabaseHelper().deleteTask(widget.task.id!);
-    Navigator.of(context).pop(widget.task);
+    // await DatabaseHelper().deleteTask(widget.task.id!);
+    Navigator.of(context).pop(true);
+    // Navigator.of(context).pop(widget.task);
   }
 
   @override

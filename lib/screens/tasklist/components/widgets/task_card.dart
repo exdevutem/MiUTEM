@@ -8,11 +8,11 @@ import 'package:skeletonizer/skeletonizer.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
-  final VoidCallback onDelete;
+  final VoidCallback onTap;
 
   const TaskCard({
     required this.task,
-    required this.onDelete,
+    required this.onTap,
     super.key,
   });
 
@@ -27,14 +27,7 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String mensaje = task.content;
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditTaskScreen(task: task),
-          ),
-        );
-      },
+      onTap: onTap,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
