@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
+import 'package:miutem/core/services/asignaturas_service.dart';
 
 
 class AddTaskScreen extends StatefulWidget {
@@ -19,6 +21,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   TaskState _state = TaskState.unspecified;
   final DateTime _createdAt = DateTime.now();
   final DateTime _modifiedAt = DateTime.now();
+
+  // Asignatura
+  Asignatura? _selectedAsignatura;
+
+
 
   @override
   void dispose() {

@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
+import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/screens/tasklist/actions/actions.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
@@ -23,6 +25,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   void initState(){
     _taskLists.clear();
     refreshTasks().then((tasks) => setState(() => _taskLists = tasks));
+    _fetchAsignaturas();
     super.initState();
   }
 
@@ -35,6 +38,21 @@ class _TaskListScreenState extends State<TaskListScreen> {
       loading = false;
     });
   }
+
+  /// Lista asignaturas
+  final AsignaturasService _asignaturaService = AsignaturasService();
+  List<Asignatura> asignaturas = [];
+  Future<void> _fetchAsignaturas() async {
+    try {
+      final asignaturas = await _asignaturaService.getAsignaturas();
+      setState(() {
+        this.asignaturas = asignaturas;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) => Scaffold(
