@@ -43,6 +43,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     if (_formKey.currentState!.validate()) {
       final updatedTask = Task(
         id: widget.task.id,
+        category: widget.task.category,
         title: _titleController.text,
         content: _contentController.text,
         color: _color,

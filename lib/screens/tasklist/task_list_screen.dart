@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
+import 'package:miutem/core/services/controllers/task_controller.dart';
+import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/actions/actions.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
 import 'package:miutem/widgets/navigation/top_navigation.dart';
@@ -26,6 +28,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     _taskLists.clear();
     refreshTasks().then((tasks) => setState(() => _taskLists = tasks));
     _fetchAsignaturas();
+    _fetchCategorys();
     super.initState();
   }
 
@@ -49,7 +52,21 @@ class _TaskListScreenState extends State<TaskListScreen> {
         this.asignaturas = asignaturas;
       });
     } catch (e) {
-      print(e);
+      logger.e('Error al obtener asignaturas para Tasks', error: e);
+    }
+  }
+
+  final TaskController _taskController = TaskController();
+  List<String> categorys = [];
+  Future<void> _fetchCategorys() async {
+    try {
+      final categorys = await _taskController.asignaturasCategory();
+      setState(() {
+        logger.i('Categorias: $categorys');
+        this.categorys = categorys;
+      });
+    } catch (e) {
+      logger.e('Error al obtener categorias para Tasks', error: e);
     }
   }
 

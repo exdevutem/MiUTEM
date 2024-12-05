@@ -38,6 +38,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (_formKey.currentState!.validate()) {
       final newTask = Task(
         id: null,
+        category: 'hola mundo',
         title: _titleController.text,
         content: _contentController.text,
         color: _color,

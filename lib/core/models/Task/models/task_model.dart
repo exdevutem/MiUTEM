@@ -5,6 +5,7 @@ import 'package:miutem/core/models/Task/enums/task_state.dart';
 
 class Task extends ChangeNotifier {
   final int? id;
+  String category;
   String title;
   String content;
   Color color;
@@ -16,6 +17,7 @@ class Task extends ChangeNotifier {
   /// INIT TASK
   Task({
     required this.id,
+    required this.category,
     required this.title,
     required this.content,
     required this.color,
@@ -29,6 +31,7 @@ class Task extends ChangeNotifier {
   /// SERIALIZE THE NOTE INTO JSON OBJECT
   Map<String, dynamic> toJson() => {
     'id': id?.toInt(),
+    'category': category,
     'title': title,
     'content': content,
     'color': color.value,
@@ -40,6 +43,7 @@ class Task extends ChangeNotifier {
   /// TO MAP
   factory Task.fromMap(Map<String, dynamic> map) => Task(
     id: map['id'],
+    category: map['category'],
     title: map['title'],
     content: map['content'],
     color: Color(map['color']),
@@ -51,6 +55,7 @@ class Task extends ChangeNotifier {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'category': category,
       'title': title,
       'content': content,
       'color': color.value,

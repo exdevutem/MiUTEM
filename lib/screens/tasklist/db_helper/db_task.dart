@@ -14,6 +14,7 @@ class DatabaseHelper {
   static const String noteTable = 'task_table';
 
   String colId = 'id';
+  String colCategory = 'category';
   String colTitle = 'title';
   String colDescription = 'content';
   String colColor = 'color';
@@ -39,6 +40,7 @@ class DatabaseHelper {
     await db.execute(
         'CREATE TABLE $noteTable'
             '($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
+            '$colCategory TEXT, '
             '$colTitle TEXT, '
             '$colDescription TEXT, '
             '$colColor INTEGER, '
@@ -77,6 +79,14 @@ class DatabaseHelper {
     int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colId = $id');
     return result;
   }
-
+  
+  Future<List<String>> getCategorys() async {
+    Database db = await database;
+    List<String> categorys = [];
+    var result = await db.query(noteTable, columns: [colCategory]);
+    if(result.isEmpty) return categorys;
+    categorys = result.map((category) => category[colCategory] as String).toSet().toList();
+    return categorys;
+  }
 
 }
