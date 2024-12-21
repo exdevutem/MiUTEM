@@ -56,6 +56,7 @@ class HorarioController {
 
   void init(BuildContext context){
     zoom.value = RemoteConfigService.horarioZoom;
+    zoom.value = 0.5;
     moveViewportToCurrentPeriodAndDay(context);
     setZoom(zoom.value);
     _setScrollControllerListeners();
