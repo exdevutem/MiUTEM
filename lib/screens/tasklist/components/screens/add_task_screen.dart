@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/services/asignaturas_service.dart';
 
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  final List<String> categorys;
+  
+  const AddTaskScreen({super.key, required this.categorys});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -16,6 +17,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
+  final _categoryController = TextEditingController();
 
   Color _color = const Color(0xFFFCF7BB);
   TaskState _state = TaskState.unspecified;
@@ -38,7 +40,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     if (_formKey.currentState!.validate()) {
       final newTask = Task(
         id: null,
-        category: 'hola mundo',
+        category: _categoryController.text,
         title: _titleController.text,
         content: _contentController.text,
         color: _color,
@@ -104,6 +106,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       onChanged: (newValue) {
                         setState(() {
                           _state = newValue!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(labelText: 'Category'),
+                      items: [...widget.categorys].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _categoryController.text = newValue!;
                         });
                       },
                     ),

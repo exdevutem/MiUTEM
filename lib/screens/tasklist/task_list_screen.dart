@@ -56,6 +56,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     }
   }
 
+  
   final TaskController _taskController = TaskController();
   List<String> categorys = [];
   Future<void> _fetchCategorys() async {
@@ -99,7 +100,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
-            onPressed: () => addTask(context, _refresh),
+            onPressed: () => addTask(context, categorys, _refresh),
             child: const Text('Agregar Nota'),
           ),
         )
