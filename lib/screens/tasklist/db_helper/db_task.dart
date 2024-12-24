@@ -21,6 +21,7 @@ class DatabaseHelper {
   String colState = 'state';
   String colCreatedAt = 'createdAt';
   String colModifiedAt = 'modifiedAt';
+  String colReminder = 'reminder';
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -46,7 +47,8 @@ class DatabaseHelper {
             '$colColor INTEGER, '
             '$colState INTEGER,'
             '$colCreatedAt TEXT, '
-            '$colModifiedAt TEXT)'
+            '$colModifiedAt TEXT,'
+            '$colReminder TEXT)'
     );
   }
 

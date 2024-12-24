@@ -12,6 +12,7 @@ class Task extends ChangeNotifier {
   TaskState state;
   final DateTime createdAt;
   DateTime modifiedAt;
+  DateTime? reminder;
 
   ///
   /// INIT TASK
@@ -24,6 +25,7 @@ class Task extends ChangeNotifier {
     required this.state,
     required DateTime createdAt,
     required DateTime modifiedAt,
+    this.reminder,
   }) : this.createdAt = createdAt ?? DateTime.now(),
        this.modifiedAt = modifiedAt ?? DateTime.now();
 
@@ -38,6 +40,7 @@ class Task extends ChangeNotifier {
     'state': state.index,
     'createdAt': createdAt.toIso8601String(),
     'modifiedAt': modifiedAt.toIso8601String(),
+    'reminder': reminder?.toIso8601String(),
   };
 
   /// TO MAP
@@ -50,6 +53,7 @@ class Task extends ChangeNotifier {
     state: TaskState.values[map['state']],
     createdAt: DateTime.parse(map['createdAt']),
     modifiedAt: DateTime.parse(map['modifiedAt']),
+    reminder: map['reminder'] != null ? DateTime.parse(map['reminder']) : null,
   );
 
   Map<String, dynamic> toMap() {
@@ -62,6 +66,7 @@ class Task extends ChangeNotifier {
       'state': state.index,
       'createdAt': createdAt.toIso8601String(),
       'modifiedAt': modifiedAt.toIso8601String(),
+      'reminder': reminder?.toIso8601String(),
     };
   }
 
