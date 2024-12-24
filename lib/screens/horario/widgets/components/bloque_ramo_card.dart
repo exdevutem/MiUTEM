@@ -4,7 +4,7 @@ import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
-import 'package:miutem/screens/tasklist/task_screen.dart';
+import 'package:miutem/screens/tasklist/task_list_screen.dart';
 import 'package:miutem/styles/loading/loading_dialog.dart';
 
 class ClassBlockCard extends StatelessWidget {
@@ -69,7 +69,7 @@ class ClassBlockCard extends StatelessWidget {
     // });
 
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => TaskScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (ctx) => TaskListScreen()));
     // Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaDetalleScreen(
     //   carrera: carrera,
     //   asignatura: asignatura.copyWith(grades: grades),
@@ -94,7 +94,6 @@ class ClassBlockCard extends StatelessWidget {
     //   "codigo": block.asignatura?.codigo,
     // });
     Navigator.pop(context);
-
     /// TODO
     // showModalBottomSheet(context: context, builder: (ctx) => AsignaturaVistaPreviaModal(asignatura: asignatura, bloque: block), shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))));
   }

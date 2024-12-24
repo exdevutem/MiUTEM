@@ -6,6 +6,7 @@ import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/styles/styles.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
