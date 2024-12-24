@@ -1,8 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/screens/tasklist/components/components.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 

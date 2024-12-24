@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/navigation/navigation_item.dart';
 import 'package:miutem/screens/asignaturas/asignaturas_screen.dart';
 import 'package:miutem/screens/home/home_screen.dart';
-import 'package:miutem/screens/profile/profile-idea.dart';
 import 'package:miutem/screens/profile/profile_screen.dart'; //TODO cambiar de profile-idea.dart
 import 'package:miutem/screens/tasklist/task_list_screen.dart';
-import 'package:miutem/screens/tasklist/task_screen.dart';
 import 'package:miutem/styles/theme/icons.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -21,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<NavigationItem> screens = [
     NavigationItem(destination: const HomeScreen(), label: "Inicio", icon: AppIcons.home),
     NavigationItem(destination: const AsignaturasScreen(), label: "Asignaturas", icon: AppIcons.subjects),
-    NavigationItem(destination: const TaskScreen(), label: "Apuntes", icon: AppIcons.notes),
+    NavigationItem(destination: const TaskListScreen(), label: "Apuntes", icon: AppIcons.notes),
     NavigationItem(destination: const ProfileScreen(), label: "Perfil", icon: AppIcons.profile),
   ];
 

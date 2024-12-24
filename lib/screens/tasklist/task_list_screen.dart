@@ -2,13 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/controllers/task_controller.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/actions/actions.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
-import 'package:miutem/widgets/navigation/top_navigation.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class TaskListScreen extends StatefulWidget {
@@ -64,7 +62,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
     appBar: const TopNavigation(
       title: 'Apuntes',
       isMainScreen: true,
-      actions: [],
     ),
     body: SafeArea(child: Column(
       children: [

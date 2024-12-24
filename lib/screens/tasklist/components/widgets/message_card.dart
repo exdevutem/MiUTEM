@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/styles/styles.dart';
 
 class MessageCard extends StatelessWidget {
   const MessageCard({super.key});
