@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:miutem/core/models/carrera.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/carrera_service.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:logger/logger.dart';
 
 class ProfileHeader extends StatefulWidget {
   final Estudiante? estudiante;
@@ -16,20 +18,15 @@ class ProfileHeader extends StatefulWidget {
 }
 
 class _ProfileHeaderState extends State<ProfileHeader> {
+  final Logger _logger = Logger();
   Carrera? carrera;
   bool _showElements = false;
-  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
+    _logger.d("ProfileHeader initialized");
     _loadData();
-    // Stop loading after a certain time
-    Future.delayed(const Duration(seconds: 5), () {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
-    });
   }
 
   Future<void> _loadData() async {
@@ -38,10 +35,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     // Small delay to show skeleton before fade in
     await Future.delayed(const Duration(milliseconds: 80));
     if (mounted) {
-      setState(() {
-        _showElements = true;
-        _loading = false;
-      });
+      setState(() => _showElements = true);
     }
   }
 
@@ -52,8 +46,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         if (mounted) {
           setState(() => carrera = loadedCarrera);
         }
-      // ignore: empty_catches
       } catch (e) {
+        _logger.e('Error loading carrera: $e');
+       
       }
     }
   }
@@ -68,26 +63,25 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final String firstName = widget.estudiante?.nombreCompleto
+    final String firstName = capitalize(widget.estudiante!.nombreCompleto
         .split(' ')
         .firstWhere((word) => word.isNotEmpty, orElse: () => 'Nombre')
-        .toLowerCase() ?? 'Nombre';
+        .toLowerCase());
 
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AnimatedOpacity(
-            opacity: _showElements ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Skeletonizer(
-              enabled: _loading,
+          Skeletonizer(
+            enabled: widget.estudiante == null,
+            child: AnimatedOpacity(
+              opacity: _showElements ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
               child: CircleAvatar(
                 radius: 50,
                 backgroundColor: AppTheme.colorScheme.primary.withOpacity(0.1),
                 child: Text(
-                  firstName.isNotEmpty ? firstName[0].toUpperCase() : '',
+                  firstName[0].toUpperCase(),
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -98,11 +92,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ),
           ),
           const SizedBox(height: 12),
-          AnimatedOpacity(
-            opacity: _showElements ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Skeletonizer(
-              enabled: _loading,
+          Skeletonizer(
+            enabled: widget.estudiante == null,
+            child: AnimatedOpacity(
+              opacity: _showElements ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
               child: Text(
                 firstName,
                 style: StyleText.headline,
@@ -110,11 +104,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ),
           ),
           const SizedBox(height: 8),
-          AnimatedOpacity(
-            opacity: _showElements ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Skeletonizer(
-              enabled: _loading,
+          Skeletonizer(
+            enabled: widget.estudiante == null,
+            child: AnimatedOpacity(
+              opacity: _showElements ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
               child: Text(
                 widget.estudiante?.nombreCompleto
                   .split(' ')
@@ -126,11 +120,11 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               ),
             ),
           ),
-          AnimatedOpacity(
-            opacity: _showElements ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Skeletonizer(
-              enabled: _loading,
+          Skeletonizer(
+            enabled: widget.estudiante == null,
+            child: AnimatedOpacity(
+              opacity: _showElements ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
               child: Text(
                 (widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
                 style: StyleText.description
@@ -138,15 +132,15 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             ),
           ),
           const SizedBox(height: 8),
-          AnimatedOpacity(
-            opacity: _showElements ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 200),
-            child: Skeletonizer(
-              enabled: _loading,
+          Skeletonizer(
+            enabled: carrera == null,
+            child: AnimatedOpacity(
+              opacity: _showElements ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
               child: SizedBox(
-                height: 40, // Adjust this value if needed for 2 lines
+                height: 40, 
                 child: Text(
-                  carrera?.nombre ?? 'Carrera\nen Curso',  // Default text with 2 lines
+                  carrera?.nombre ?? 'Carrera\nen Curso',  
                   textAlign: TextAlign.center,
                   style: StyleText.description,
                   maxLines: 2,
@@ -155,7 +149,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );
