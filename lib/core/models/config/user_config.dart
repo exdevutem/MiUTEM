@@ -34,8 +34,4 @@ class UserConfig extends GetxController {
     await _storage.write(key: 'themeMode', value: mode.toString());
   }
 
-  Future<void> changeLanguage(String newLanguage) async {
-    language.value = newLanguage;
-    await _storage.write(key: 'language', value: newLanguage);
-  }
 }

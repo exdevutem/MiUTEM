@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class ProfileActions extends StatefulWidget {
-  const ProfileActions({super.key});
+class LogOutButton extends StatefulWidget {
+  const LogOutButton({super.key});
 
   @override
-  State<ProfileActions> createState() => _ProfileActionsState();
+  State<LogOutButton> createState() => _LogOutButtonState();
 }
 
-class _ProfileActionsState extends State<ProfileActions> {
+class _LogOutButtonState extends State<LogOutButton> {
   bool _showElements = false;
 
   @override
@@ -21,7 +21,6 @@ class _ProfileActionsState extends State<ProfileActions> {
 
   Future<void> _loadData() async {
     setState(() => _showElements = false);
-    // Small delay to show skeleton before fade in
     await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
       setState(() => _showElements = true);
@@ -40,16 +39,6 @@ class _ProfileActionsState extends State<ProfileActions> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: const ButtonStyle(elevation: WidgetStatePropertyAll(0)),
-                  child: const Text('Editar Perfil'),
-                  onPressed: () {
-                    //TODO Editar Perfil (APODO, y lo que se pueda)
-                  },
-                ),
-              ),
-              const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
                   style: const ButtonStyle(
