@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/utils/http/functions.dart';
-import 'package:miutem/widgets/snackbar.dart';
+import 'package:miutem/styles/styles.dart';
 
 class OfflineModeInterceptor extends Interceptor {
 

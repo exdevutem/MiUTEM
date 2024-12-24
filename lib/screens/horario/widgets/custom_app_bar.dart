@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-
-import 'package:miutem/core/utils/theme.dart';
-
+import 'package:miutem/styles/styles.dart';
 class CustomAppBar extends AppBar {
   CustomAppBar({
-    Key? key,
+    super.key,
     this.leading,
     this.automaticallyImplyLeading = true,
     this.title,
@@ -29,7 +27,6 @@ class CustomAppBar extends AppBar {
   })  : preferredSize = Size.fromHeight(toolbarHeight ??
             kToolbarHeight + (bottom?.preferredSize.height ?? 0.0)),
         super(
-          key: key,
           leading: leading,
           automaticallyImplyLeading: automaticallyImplyLeading,
           title: title,

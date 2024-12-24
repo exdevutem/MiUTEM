@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/utils/style_text.dart';
+import 'package:miutem/screens/profile/widgets/profile_header.dart';
+import 'package:miutem/styles/theme/style_text.dart';
 
 // Esta Screen está hecha a modo de prueba con IA, para sacar una idea inicial
-class ProfileScreen extends StatelessWidget {
+class ProfileScreenIdea extends StatelessWidget {
   final Estudiante? estudiante;
-  const ProfileScreen({super.key, this.estudiante});
+  const ProfileScreenIdea({super.key, this.estudiante});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,7 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          ProfileHeader(estudiante: estudiante),
           const CircleAvatar(
             radius: 50,
           ),

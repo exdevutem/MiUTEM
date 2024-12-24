@@ -1,17 +1,13 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
-
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
 import 'package:miutem/screens/horario/widgets/custom_app_bar.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
-import 'package:miutem/widgets/error/custom_error.dart';
-import 'package:miutem/widgets/loading/loading_dialog.dart';
-import 'package:miutem/widgets/loading/loading_indicator.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';

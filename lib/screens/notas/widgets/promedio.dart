@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/notas/widgets/nota_examen.dart';
 import 'package:miutem/screens/notas/widgets/nota_presentacion.dart';

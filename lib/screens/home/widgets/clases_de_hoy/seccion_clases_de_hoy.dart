@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/utils/utils.dart';
+import 'package:miutem/core/utils/utilities.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/lista_clases.dart';
 
 class SeccionClasesDeHoy extends StatefulWidget {
@@ -24,7 +24,7 @@ class _SeccionClasesDeHoyState extends State<SeccionClasesDeHoy> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 30), (timer) {
+    Timer.periodic(const Duration(seconds: 60), (timer) {
       final today = getToday();
 
       // Se verifica que sea la hora de inicio (o la de fin) para actualizar la tarjeta.
