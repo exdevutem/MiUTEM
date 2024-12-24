@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/screens/profile/widgets/profile_actions.dart';

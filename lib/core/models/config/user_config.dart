@@ -1,32 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserConfig extends GetxController {
   static UserConfig get to => Get.find();
 
-  // Theme mode (light or dark)
-  final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
-
-  // Other configurations can be added here
   final RxBool notificationsEnabled = true.obs;
+  final Rx<ThemeMode> themeMode = ThemeMode.system.obs;
   final RxString language = 'en'.obs;
 
-  // Method to toggle theme mode
-  void toggleThemeMode() {
-    if (themeMode.value == ThemeMode.light) {
-      themeMode.value = ThemeMode.dark;
-    } else {
-      themeMode.value = ThemeMode.light;
-    }
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadPreferences();
   }
 
-  // Method to enable/disable notifications
-  void toggleNotifications() {
+  Future<void> _loadPreferences() async {
+    notificationsEnabled.value = (await _storage.read(key: 'notificationsEnabled')) == 'true';
+    String userTheme = await _storage.read(key: 'themeMode') ?? ThemeMode.system.toString();
+    themeMode.value = ThemeMode.values.firstWhere((e) => e.toString() == userTheme);
+    language.value = await _storage.read(key: 'language') ?? 'en';
+  }
+
+  Future<void> toggleNotifications() async {
     notificationsEnabled.value = !notificationsEnabled.value;
+    await _storage.write(key: 'notificationsEnabled', value: notificationsEnabled.value.toString());
   }
 
-  // Method to change language
-  void changeLanguage(String newLanguage) {
+  Future<void> changeThemeMode(ThemeMode mode) async {
+    themeMode.value = mode;
+    await _storage.write(key: 'themeMode', value: mode.toString());
+  }
+
+  Future<void> changeLanguage(String newLanguage) async {
     language.value = newLanguage;
+    await _storage.write(key: 'language', value: newLanguage);
   }
 }
