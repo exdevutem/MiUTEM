@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/widgets/loading/loading_indicator.dart';
+import 'package:miutem/styles/styles.dart';
 
 class LoadingDialog extends StatelessWidget {
 

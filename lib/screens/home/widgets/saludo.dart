@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/utils/style_text.dart';
 import 'package:miutem/core/utils/utils.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Saludo extends StatefulWidget {
