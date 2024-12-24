@@ -1,14 +1,9 @@
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
 class TaskController {
   final AsignaturasService _asignaturaService = AsignaturasService();
-
-  List<String> getCategorys() {
-    return [];
-  }
 
   Future<List<String>> asignaturasCategory() async {
     List<String> asignaturasNames = [];
@@ -25,7 +20,6 @@ class TaskController {
     } catch (e) {
       logger.e('Error al obtener categorias para Tasks', error: e);
     }
-
     return asignaturasNames;
   }
 }

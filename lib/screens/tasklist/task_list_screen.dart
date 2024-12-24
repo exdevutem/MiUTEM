@@ -19,15 +19,16 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
+  final TaskController _taskController = TaskController();
 
   bool loading = false;
   List<Task> _taskLists = [];
+  List<String> categorys = [];
 
   @override
   void initState(){
     _taskLists.clear();
     refreshTasks().then((tasks) => setState(() => _taskLists = tasks));
-    _fetchAsignaturas();
     _fetchCategorys();
     super.initState();
   }
@@ -42,23 +43,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     });
   }
 
-  /// Lista asignaturas
-  final AsignaturasService _asignaturaService = AsignaturasService();
-  List<Asignatura> asignaturas = [];
-  Future<void> _fetchAsignaturas() async {
-    try {
-      final asignaturas = await _asignaturaService.getAsignaturas();
-      setState(() {
-        this.asignaturas = asignaturas;
-      });
-    } catch (e) {
-      logger.e('Error al obtener asignaturas para Tasks', error: e);
-    }
-  }
 
-  
-  final TaskController _taskController = TaskController();
-  List<String> categorys = [];
   Future<void> _fetchCategorys() async {
     try {
       final categorys = await _taskController.asignaturasCategory();
@@ -70,6 +55,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
       logger.e('Error al obtener categorias para Tasks', error: e);
     }
   }
+
+
 
 
   @override
