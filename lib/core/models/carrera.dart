@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:miutem/core/utils/utils.dart';
 
 class Carrera {

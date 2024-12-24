@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/screens/home/actions/acceso_rapido.dart';
-import 'package:miutem/widgets/cards/card_acceso_rapido.dart';
-import 'package:miutem/widgets/icons.dart';
-
+import 'package:miutem/styles/styles.dart'; 
 class AccesoRapido extends StatelessWidget {
 
   const AccesoRapido({super.key});

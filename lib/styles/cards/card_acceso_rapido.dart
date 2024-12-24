@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
+import 'package:miutem/styles/styles.dart';
 
 class CardAccesoRapido extends StatefulWidget {
   final Color color, colorDark;

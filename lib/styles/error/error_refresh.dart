@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/widgets/icons.dart';
+import 'package:miutem/styles/styles.dart';
 
 /// Widget diseñado para mostrar error y ofrecer recarga
 /// de datos. Diseñado para ser utilizado dentro de listas

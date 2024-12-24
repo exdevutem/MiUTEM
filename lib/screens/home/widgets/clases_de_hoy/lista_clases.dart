@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/horario.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/card_clase.dart';
-import 'package:miutem/widgets/error/error_refresh.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 const List<String> timeSlots = [

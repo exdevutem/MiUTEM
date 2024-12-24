@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/service_manager.dart';
 import 'package:miutem/core/utils/http/functions.dart';
-import 'package:miutem/core/utils/theme.dart';
-import 'package:miutem/widgets/navigation/bottom_navbar.dart';
+import 'package:miutem/styles/styles.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

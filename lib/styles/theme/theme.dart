@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:miutem/core/utils/style_text.dart';
+import 'package:miutem/styles/styles.dart';
 
 class AppTheme {
 

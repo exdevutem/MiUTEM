@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/core/utils/utils.dart';
 
 class NotaExamen extends StatelessWidget {

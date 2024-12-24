@@ -13,8 +13,7 @@ import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/seccion_clases_de_hoy.dart';
 import 'package:miutem/screens/home/widgets/novedades/lista_novedades.dart';
 import 'package:miutem/screens/home/widgets/saludo.dart';
-import 'package:miutem/widgets/navigation/top_navigation.dart';
-
+import 'package:miutem/styles/styles.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -48,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: TopNavigation(estudiante: estudiante, isMainScreen: true, title: 'Inicio', actions: const []),
+    appBar: TopNavigation(estudiante: estudiante, isMainScreen: true, title: 'Inicio'),
     body: Padding(
       padding: const EdgeInsets.all(16),
       child: RefreshIndicator(
@@ -77,9 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 20),
               const AccesoRapido(),
               const SizedBox(height: 20),
-              const SizedBox(height: 20),
-                    ListaNovedades(novedades: novedades
-                  ),
+              //const SizedBox(height: 20),
+              //      ListaNovedades(novedades: novedades
+              //    ),
                   const SizedBox(height: 20),
                   SeccionClasesDeHoy(errorAlCargarHorario: errorAlCargarHorario, bloques: bloques, cargarHorario: _cargarHorario
               ),

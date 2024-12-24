@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
-import 'package:miutem/widgets/loading/loading_dialog.dart';
-import 'package:miutem/widgets/navigation/bottom_navbar.dart';
-import 'package:miutem/widgets/snackbar.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginForm extends StatefulWidget {

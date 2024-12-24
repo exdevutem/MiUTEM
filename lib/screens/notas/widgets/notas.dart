@@ -3,12 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/evaluacion/evaluacion.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/widgets/icons.dart';
-import 'package:miutem/widgets/snackbar.dart';
+import 'package:miutem/styles/styles.dart';
 
 class Notas extends StatelessWidget {
 

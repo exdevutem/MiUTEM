@@ -5,7 +5,7 @@ import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/screens/tasklist/task_list_screen.dart';
-import 'package:miutem/widgets/loading/loading_dialog.dart';
+import 'package:miutem/styles/loading/loading_dialog.dart';
 
 class ClassBlockCard extends StatelessWidget {
   final BloqueHorario? block;
@@ -25,33 +25,40 @@ class ClassBlockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: height,
-    width: width,
-    child: Padding(
-      padding: EdgeInsets.all(internalMargin),
-      child: block?.asignatura == null ? const SizedBox() : GestureDetector(
-        onTap: () => _onTap(block!, context),
-        onLongPress: () => _onLongPress(block!, context),
-        child: Container(
-          width: width,
-          height: height,
-          color: Colors.blue, // Example color
-          child: Center(
-            child: Text(
-              block!.asignatura!.nombre,
-              style: TextStyle(color: textColor),
-            ),
-          ),
+        height: height,
+        width: width,
+        child: Padding(
+          padding: EdgeInsets.all(internalMargin),
+          child: block?.asignatura == null
+              ? const SizedBox()
+              : GestureDetector(
+                  onTap: () => _onTap(block!, context),
+                  onLongPress: () => _onLongPress(block!, context),
+                  child: Container(
+                    width: width,
+                    height: height,
+                    color: Colors.blue, // Example color
+                    child: Center(
+                      child: Text(
+                        block!.asignatura!.nombre,
+                        style: TextStyle(color: textColor),
+                      ),
+                    ),
+                  ),
+                ),
         ),
-      ),
-    ),
-  );
+      );
 
   _onTap(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final carrera = await Get.find<CarreraService>().getCarrera();
-    final asignatura = (await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true)).firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
-    final grades = await Get.find<GradesService>().getGrades(asignatura!);    if(carrera == null || asignatura == null) {
+    final asignatura = (await Get.find<AsignaturasService>()
+            .getAsignaturas(forceRefresh: true))
+        .firstWhereOrNull((asignatura) =>
+            asignatura.id == block.asignatura?.id ||
+            asignatura.codigo == block.asignatura?.codigo);
+    final grades = await Get.find<GradesService>().getGrades(asignatura!);
+    if (carrera == null || asignatura == null) {
       Navigator.pop(context);
       return;
     }
@@ -72,8 +79,12 @@ class ClassBlockCard extends StatelessWidget {
   _onLongPress(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final carrera = await Get.find<CarreraService>().getCarrera();
-    final asignatura = (await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true)).firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
-    if(carrera == null || asignatura == null) {
+    final asignatura = (await Get.find<AsignaturasService>()
+            .getAsignaturas(forceRefresh: true))
+        .firstWhereOrNull((asignatura) =>
+            asignatura.id == block.asignatura?.id ||
+            asignatura.codigo == block.asignatura?.codigo);
+    if (carrera == null || asignatura == null) {
       Navigator.pop(context);
       return;
     }
