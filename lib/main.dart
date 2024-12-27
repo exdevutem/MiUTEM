@@ -23,7 +23,6 @@ void main() async {
   );
   
   WidgetsFlutterBinding.ensureInitialized();
-  Get.put(UserConfig()); // Inicializa las configuraciones del usuario
   await initServices();
   runApp(const MiUTEMApp());
 }

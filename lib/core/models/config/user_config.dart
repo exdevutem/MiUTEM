@@ -14,10 +14,10 @@ class UserConfig extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadPreferences();
+    initialize();
   }
 
-  Future<void> _loadPreferences() async {
+  Future<void> initialize() async {
     notificationsEnabled.value = (await _storage.read(key: 'notificationsEnabled')) == 'true';
     String userTheme = await _storage.read(key: 'themeMode') ?? ThemeMode.system.toString();
     themeMode.value = ThemeMode.values.firstWhere((e) => e.toString() == userTheme);
