@@ -70,5 +70,10 @@ class Task extends ChangeNotifier {
     };
   }
 
+  @override
+  String toString() {
+    return 'Task(id: $id, category: $category, title: $title, content: $content, color: $color, state: $state, createdAt: $createdAt, modifiedAt: $modifiedAt, reminder: $reminder)';
+  }
+
 }
 

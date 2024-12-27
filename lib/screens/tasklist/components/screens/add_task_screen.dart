@@ -47,6 +47,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         state: _state,
         createdAt: _createdAt,
         modifiedAt: _modifiedAt,
+        reminder: DateTime.now().add(const Duration(minutes: 1)),  
       );
       Navigator.of(context).pop(newTask);
     }
