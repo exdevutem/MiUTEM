@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
+
 
 
 class AddTaskScreen extends StatefulWidget {
@@ -18,14 +17,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   final _categoryController = TextEditingController();
+  final _reminderController = TextEditingController();
 
   Color _color = const Color(0xFFFCF7BB);
-  TaskState _state = TaskState.unspecified;
   final DateTime _createdAt = DateTime.now();
-  final DateTime _modifiedAt = DateTime.now();
-
-  // Asignatura
-  Asignatura? _selectedAsignatura;
+  DateTime? _reminder;
 
 
 
@@ -33,23 +29,50 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    _categoryController.dispose();
+    _reminderController.dispose();
     super.dispose();
   }
 
+  Future<void> _selectDateTime(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          _reminder = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+          _reminderController.text = _reminder!.toIso8601String();
+        });
+      }
+    }
+  }
+
+  /// cambiar a que lo haga el controller
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
-      final newTask = Task(
-        id: null,
-        category: _categoryController.text,
-        title: _titleController.text,
-        content: _contentController.text,
-        color: _color,
-        state: _state,
-        createdAt: _createdAt,
-        modifiedAt: _modifiedAt,
-        reminder: DateTime.now().add(const Duration(minutes: 1)),  
-      );
-      Navigator.of(context).pop(newTask);
+      final Map<String, dynamic> partialTask = {
+        'category': _categoryController.text,
+        'title': _titleController.text,
+        'content': _contentController.text,
+        'color': _color.value,
+        'createdAt': _createdAt.toIso8601String(),
+        'reminder': _reminder?.toIso8601String(),
+      };
+      Navigator.of(context).pop(partialTask);
     }
   }
 
@@ -94,21 +117,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                         ),
                         maxLines: 7,
                       ),
-                    ),
-                    DropdownButtonFormField<TaskState>(
-                      value: _state,
-                      decoration: const InputDecoration(labelText: 'Estado'),
-                      items: TaskState.values.map((TaskState value) {
-                        return DropdownMenuItem<TaskState>(
-                          value: value,
-                          child: Text(value.toString().split('.').last),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          _state = newValue!;
-                        });
-                      },
                     ),
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String>(
@@ -180,6 +188,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _reminderController,
+                      decoration: const InputDecoration(labelText: 'Reminder'),
+                      readOnly: true,
+                      onTap: () => _selectDateTime(context),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(

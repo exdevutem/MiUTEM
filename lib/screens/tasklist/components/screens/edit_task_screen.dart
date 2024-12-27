@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final Task task;
@@ -29,7 +28,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     _color = widget.task.color;
     _state = widget.task.state;
     _createdAt = widget.task.createdAt;
-    _modifiedAt = widget.task.modifiedAt;
+    _modifiedAt = widget.task.modifiedAt!;
   }
 
   @override

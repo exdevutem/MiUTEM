@@ -1,6 +1,7 @@
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:miutem/core/models/Task/task.dart';
 
 class NotificationController {
 
@@ -16,11 +17,13 @@ class NotificationController {
               channelName: 'Test notifications',
               channelDescription: 'Notification tests para tasks',
               playSound: true,
-              onlyAlertOnce: true,
-              defaultColor: Colors.deepPurple,
-              ledColor: Colors.deepPurple)
+              defaultColor: const Color(0xFF9D50DD),
+              enableVibration: true,
+              importance: NotificationImportance.High,
+          )
         ],
-        debug: true);
+        // debug: true
+    );
   }
 
   // TODO Esto pedira al usuario el uso de notificaciones cada vez que se logee en la app
@@ -51,16 +54,17 @@ class NotificationController {
 
   // TODO Modificar la logica para que se cree el scheduleReminderTask solo si la preferencia de notificaciones esta activada
   // TODO Modificar la logica para que se reciba un task y se cree con los campos importantes de este y su fecha y hora asignada.
-  static Future<void> scheduleReminderTask() async {
+  static Future<void> scheduleReminderTask(Task task ) async {
+    int notificationId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
-        id: 20,
+        id: notificationId,
         channelKey: 'Test notifications alertas',
-        title: 'Scheduled Notification',
-        body: 'This notification was scheduled to appear at a specific time',
+        title: task.title,
+        body: task.content,
       ),
       schedule: NotificationCalendar.fromDate(
-        date: DateTime.now().add(Duration(minutes: 2)),
+        date: task.reminder!,
       ),
     );
   }

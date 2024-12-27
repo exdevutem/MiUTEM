@@ -11,10 +11,9 @@ class Task extends ChangeNotifier {
   Color color;
   TaskState state;
   final DateTime createdAt;
-  DateTime modifiedAt;
+  DateTime? modifiedAt;
   DateTime? reminder;
 
-  ///
   /// INIT TASK
   Task({
     required this.id,
@@ -23,11 +22,10 @@ class Task extends ChangeNotifier {
     required this.content,
     required this.color,
     required this.state,
-    required DateTime createdAt,
-    required DateTime modifiedAt,
+    required this.createdAt,
+    this.modifiedAt,
     this.reminder,
-  }) : this.createdAt = createdAt ?? DateTime.now(),
-       this.modifiedAt = modifiedAt ?? DateTime.now();
+  });
 
 
   /// SERIALIZE THE NOTE INTO JSON OBJECT
@@ -39,7 +37,7 @@ class Task extends ChangeNotifier {
     'color': color.value,
     'state': state.index,
     'createdAt': createdAt.toIso8601String(),
-    'modifiedAt': modifiedAt.toIso8601String(),
+    'modifiedAt': modifiedAt?.toIso8601String(),
     'reminder': reminder?.toIso8601String(),
   };
 
@@ -52,7 +50,7 @@ class Task extends ChangeNotifier {
     color: Color(map['color']),
     state: TaskState.values[map['state']],
     createdAt: DateTime.parse(map['createdAt']),
-    modifiedAt: DateTime.parse(map['modifiedAt']),
+    modifiedAt: map['modifiedAt'] != null ? DateTime.parse(map['modifiedAt']) : null,
     reminder: map['reminder'] != null ? DateTime.parse(map['reminder']) : null,
   );
 
@@ -65,7 +63,7 @@ class Task extends ChangeNotifier {
       'color': color.value,
       'state': state.index,
       'createdAt': createdAt.toIso8601String(),
-      'modifiedAt': modifiedAt.toIso8601String(),
+      'modifiedAt': modifiedAt?.toIso8601String(),
       'reminder': reminder?.toIso8601String(),
     };
   }

@@ -37,7 +37,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Future<void> _refresh() async {
     setState(() => loading = true);
     final tasks = await refreshTasks();
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _taskLists = tasks;
       loading = false;
@@ -50,7 +50,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
       final categorys = await _taskController.asignaturasCategory();
       setState(() {
         logger.i('Categorias: $categorys');
-        this.categorys = categorys;
+        this.categorys = categorys.toList();
       });
     } catch (e) {
       logger.e('Error al obtener categorias para Tasks', error: e);
