@@ -12,7 +12,9 @@ class DatabaseHelper {
 
   static const String _databaseName = 'tasks.db';
   static const String noteTable = 'task_table';
+  static const String fileTable = 'file_table';
 
+  // TASK COLUMNS
   String colId = 'id';
   String colCategory = 'category';
   String colTitle = 'title';
@@ -22,6 +24,14 @@ class DatabaseHelper {
   String colCreatedAt = 'createdAt';
   String colModifiedAt = 'modifiedAt';
   String colReminder = 'reminder';
+
+  // FILE COLUMNS
+  String colFileId = 'id';
+  String colTaskId = 'task_id';
+  String colFileName = 'name';
+  String colFileType = 'type';
+  String colFilePath = 'path';
+
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -50,6 +60,53 @@ class DatabaseHelper {
             '$colModifiedAt TEXT,'
             '$colReminder TEXT)'
     );
+
+    await db.execute(
+        'CREATE TABLE $fileTable'
+            '($colFileId INTEGER PRIMARY KEY AUTOINCREMENT, '
+            '$colTaskId INTEGER, '
+            '$colFileName TEXT, '
+            '$colFileType TEXT, '
+            '$colFilePath TEXT, '
+            'FOREIGN KEY($colTaskId) REFERENCES $noteTable($colId) ON DELETE CASCADE)'
+    );
+  }
+
+
+
+
+  // Insert Operation: Insert a Note object to database
+  Future<int> insertTask(Task task) async {
+    Database db = await database;
+    var result = await db.insert(noteTable, task.toMap());
+    for (var taskFile in task.files) {
+      await db.insert(fileTable, {
+        colTaskId: result,
+        colFileName: taskFile.name,
+        colFileType: taskFile.type,
+        colFilePath: taskFile.path,
+      });
+    }
+
+    return result;
+  }
+
+  // Update Operation: Update a Note object and save it to database
+  Future<int> updateTask(Task task) async {
+    var db = await database;
+    var result = await db.update(noteTable, task.toMap(), where: '$colId = ?', whereArgs: [task.id]);
+
+    await db.delete(fileTable, where: '$colTaskId = ?', whereArgs: [task.id]);
+    for (var taskFile in task.files) {
+      await db.insert(fileTable, {
+        colTaskId: task.id,
+        colFileName: taskFile.name,
+        colFileType: taskFile.type,
+        colFilePath: taskFile.path,
+      });
+    }
+
+    return result;
   }
 
 
@@ -61,17 +118,10 @@ class DatabaseHelper {
     return result;
   }
 
-  // Insert Operation: Insert a Note object to database
-  Future<int> insertTask(Task task) async {
+  // Fetch Operation: Get all File objects for a specific Task from database
+  Future<List<Map<String, dynamic>>> getFileMapList(int taskId) async {
     Database db = await database;
-    var result = await db.insert(noteTable, task.toMap());
-    return result;
-  }
-
-  // Update Operation: Update a Note object and save it to database
-  Future<int> updateTask(Task task) async {
-    var db = await database;
-    var result = await db.update(noteTable, task.toMap(), where: '$colId = ?', whereArgs: [task.id]);
+    var result = await db.query(fileTable, where: '$colTaskId = ?', whereArgs: [taskId]);
     return result;
   }
 

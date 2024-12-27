@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/models/Task/enums/task_state.dart';
+import 'package:miutem/core/models/Task/task.dart';
+
 
 /// todo Agregar fecha limite para la alarma
 
@@ -13,6 +14,7 @@ class Task extends ChangeNotifier {
   final DateTime createdAt;
   DateTime? modifiedAt;
   DateTime? reminder;
+  List<TaskFile> files;
 
   /// INIT TASK
   Task({
@@ -25,6 +27,7 @@ class Task extends ChangeNotifier {
     required this.createdAt,
     this.modifiedAt,
     this.reminder,
+    this.files = const [],
   });
 
 
@@ -39,6 +42,7 @@ class Task extends ChangeNotifier {
     'createdAt': createdAt.toIso8601String(),
     'modifiedAt': modifiedAt?.toIso8601String(),
     'reminder': reminder?.toIso8601String(),
+    'files': files.map((e) => e.toJson()).toList(),
   };
 
   /// TO MAP
@@ -52,6 +56,7 @@ class Task extends ChangeNotifier {
     createdAt: DateTime.parse(map['createdAt']),
     modifiedAt: map['modifiedAt'] != null ? DateTime.parse(map['modifiedAt']) : null,
     reminder: map['reminder'] != null ? DateTime.parse(map['reminder']) : null,
+    files: map['files'] != null ? List<TaskFile>.from(map['files'].map((x) => TaskFile.fromJson(x))) : [],
   );
 
   Map<String, dynamic> toMap() {
@@ -70,7 +75,7 @@ class Task extends ChangeNotifier {
 
   @override
   String toString() {
-    return 'Task(id: $id, category: $category, title: $title, content: $content, color: $color, state: $state, createdAt: $createdAt, modifiedAt: $modifiedAt, reminder: $reminder)';
+    return 'Task(id: $id, category: $category, title: $title, content: $content, color: $color, state: $state, createdAt: $createdAt, modifiedAt: $modifiedAt, reminder: $reminder, files: $files)';
   }
 
 }
