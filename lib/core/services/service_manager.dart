@@ -4,11 +4,11 @@ import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
+import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
 import 'package:miutem/core/services/firebase/remote_config_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
-// import 'package:miutem/core/repositories/tasks_repository.dart';
 import 'package:miutem/core/utils/firebase_options.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
 
@@ -33,5 +33,8 @@ Future<void> initServices() async {
   // Controladores (lógica de la app)
   Get.lazyPut(() => NotasController(), fenix: true);
   Get.lazyPut(() => HorarioController());
+  Get.lazyPut(() => NotificationController());
+  await Get.find<NotificationController>().initialize();
+
 
 }

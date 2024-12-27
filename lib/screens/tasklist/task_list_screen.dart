@@ -1,7 +1,10 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
+import 'package:miutem/core/services/controllers/task_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
 import 'package:miutem/core/services/controllers/task_controller.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/actions/actions.dart';
@@ -85,6 +88,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
             onPressed: () => addTask(context, categorys, _refresh),
+            // onPressed: () => NotificationController.createNotification(),
             child: const Text('Agregar Nota'),
           ),
         )
