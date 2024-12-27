@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/screens/profile/widgets/profile_logout.dart';
@@ -26,31 +27,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: const TopNavigation(isMainScreen: true, title: ''),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (estudiante != null) ProfileHeader(estudiante: estudiante),
-              Space.small,
-              const LogOutButton(),
-              Space.medium,
-              const Divider(),
-              Space.medium,
-              const ProfileSettings(),
-              Space.medium,
-              ListTile(
-                title: Text('Versión de la Aplicación',
-                    style: StyleText.description),
-                subtitle: Text(
-                  '4.0.0',
-                  style: StyleText.body,
-                ),
+  Widget build(BuildContext context) => Obx(() {
+        final userTheme = UserConfig.to.themeMode.value;
+        final isDarkMode = userTheme == ThemeMode.dark;
+        final textColor = isDarkMode ? AppTheme.white : AppTheme.black;
+        return Scaffold(
+          appBar: const TopNavigation(isMainScreen: true, title: ''),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              setState(() => estudiante = null);
+              final newEstudiante = await Get.find<AuthService>().login(forceRefresh: true);
+              setState(() => estudiante = newEstudiante);
+            },
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (estudiante != null) ProfileHeader(estudiante: estudiante),
+                  Space.xSmall,
+                  const LogOutButton(),
+                  Space.small,
+                  const Divider(thickness: 0.5),
+                  Space.small,
+                  const ProfileSettings(),
+                  Space.small,
+                  ListTile(
+                    leading: Image.asset('assets/launcher_icons/prod/icon_splash.png', width: 36),
+                    title: Text('Versión de la Aplicación',
+                        style: StyleText.description.copyWith(color: textColor)),
+                    subtitle: Text(
+                      '4.0.0',
+                      style: StyleText.body.copyWith(color: textColor),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      );
+        );
+      });
 }

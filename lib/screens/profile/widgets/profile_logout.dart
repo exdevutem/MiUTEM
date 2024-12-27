@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:miutem/styles/styles.dart';
 
 class LogOutButton extends StatefulWidget {
   const LogOutButton({super.key});
@@ -29,11 +30,12 @@ class _LogOutButtonState extends State<LogOutButton> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      opacity: _showElements ? 1.0 : 0.0,
-      duration: const Duration(milliseconds: 300),
-      child: Skeletonizer(
-        enabled: !_showElements,
+    return Obx(() {
+      final userTheme = UserConfig.to.themeMode.value;
+      final isDarkMode = userTheme == ThemeMode.dark;
+      return AnimatedOpacity(
+        opacity: _showElements ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 300),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -41,10 +43,14 @@ class _LogOutButtonState extends State<LogOutButton> {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  style: const ButtonStyle(
-                    foregroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 104, 7, 0)),
-                    backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 250, 186, 181)),
-                    elevation: WidgetStatePropertyAll(0),
+                  style: ButtonStyle(
+                    foregroundColor: WidgetStateProperty.all(
+                      isDarkMode ? AppTheme.white : const Color.fromARGB(255, 104, 7, 0),
+                    ),
+                    backgroundColor: WidgetStateProperty.all(
+                      isDarkMode ? AppTheme.darkGreenCard : AppTheme.lightSalmonCard,
+                    ),
+                    elevation: WidgetStateProperty.all(0),
                   ),
                   child: const Text('Cerrar Sesión'),
                   onPressed: () => Get.find<AuthService>().logout(context: context),
@@ -53,7 +59,7 @@ class _LogOutButtonState extends State<LogOutButton> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

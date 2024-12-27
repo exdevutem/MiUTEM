@@ -20,7 +20,6 @@ class ProfileHeader extends StatefulWidget {
 class _ProfileHeaderState extends State<ProfileHeader> {
   final Logger _logger = Logger();
   Carrera? carrera;
-  bool _showElements = false;
 
   @override
   void initState() {
@@ -30,12 +29,10 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _showElements = false);
     await _loadCarrera();
     // Small delay to show skeleton before fade in
     await Future.delayed(const Duration(milliseconds: 80));
     if (mounted) {
-      setState(() => _showElements = true);
     }
   }
 
@@ -74,78 +71,59 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         children: [
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: AnimatedOpacity(
-              opacity: _showElements ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: AppTheme.colorScheme.primary.withOpacity(0.1),
-                child: Text(
-                  firstName[0].toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.colorScheme.primary,
-                  ),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: AppTheme.colorScheme.primary.withOpacity(0.2),
+              child: Text(
+                firstName[0].toUpperCase(),
+                style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.colorScheme.primary,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          Space.small,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: AnimatedOpacity(
-              opacity: _showElements ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                firstName,
-                style: StyleText.headline,
-              ),
+            child: Text(
+              firstName,
+              style: StyleText.headline,
             ),
           ),
-          const SizedBox(height: 8),
+          Space.xSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: AnimatedOpacity(
-              opacity: _showElements ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                widget.estudiante?.nombreCompleto
-                  .split(' ')
-                  .map((word) => word.isNotEmpty 
-                    ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
-                    : '')
-                  .join(' ') ?? 'Nombre Apellido',
-                style: StyleText.label,
-              ),
+            child: Text(
+              widget.estudiante?.nombreCompleto
+                .split(' ')
+                .map((word) => word.isNotEmpty 
+                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+                  : '')
+                .join(' ') ?? 'Nombre Apellido',
+              style: StyleText.label,
             ),
           ),
+          Space.xSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: AnimatedOpacity(
-              opacity: _showElements ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                (widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
-                style: StyleText.description
-              ),
+            child: Text(
+              (widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
+              style: StyleText.description
             ),
           ),
-          const SizedBox(height: 8),
+          Space.xSmall,
           Skeletonizer(
             enabled: carrera == null,
-            child: AnimatedOpacity(
-              opacity: _showElements ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: SizedBox(
-                height: 40, 
-                child: Text(
-                  carrera?.nombre ?? 'Carrera\nen Curso',  
-                  textAlign: TextAlign.center,
-                  style: StyleText.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+            child: SizedBox(
+              height: 40, 
+              child: Text(
+                carrera?.nombre ?? 'Carrera\nen Curso',  
+                textAlign: TextAlign.center,
+                style: StyleText.description,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
