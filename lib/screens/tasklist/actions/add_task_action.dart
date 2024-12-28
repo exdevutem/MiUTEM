@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/services/controllers/task_controller.dart';
+import 'package:miutem/core/services/controllers/Task/task_controller.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
 
 Future<void> addTask(BuildContext context, List<String> categorys, Function() onFinish) async {

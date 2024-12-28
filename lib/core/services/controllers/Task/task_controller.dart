@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
+import 'package:miutem/core/services/controllers/Task/file_controller.dart';
 import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
 class TaskController {
   final AsignaturasService _asignaturaService = AsignaturasService();
+  final FileController _fileController = FileController();
 
   /// Obtiene las asignaturas inscritas y las categorias de las tareas en apuntes guardados
   Future<Set<String>> asignaturasCategory() async {
@@ -29,7 +31,6 @@ class TaskController {
   }
 
   /// Agrega un apunte a la base de datos
-
   Future<void> addTask(Map<String, dynamic> task) async {
     logger.i('Agregando tarea: $task');
     if (!isValidTask(task)) {
@@ -76,5 +77,18 @@ class TaskController {
 
     return true;
   }
+
+  // Save a file and create a TaskFile object
+  Future<TaskFile> saveTaskFile(String fileName, List<int> fileBytes, String fileType) async {
+    final filePath = await _fileController.saveFile(fileName, fileBytes);
+    return TaskFile(name: fileName, type: fileType, path: filePath);
+  }
+
+  // Open a file
+  Future<void> openTaskFile(TaskFile taskFile) async {
+    await _fileController.openFile(taskFile.path);
+  }
+
+
 }
 

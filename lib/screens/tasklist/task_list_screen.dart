@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
-import 'package:miutem/core/services/controllers/task_controller.dart';
+import 'package:miutem/core/services/controllers/Task/task_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
-import 'package:miutem/core/services/controllers/task_controller.dart';
+import 'package:miutem/core/services/controllers/Task/task_controller.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/tasklist/actions/actions.dart';
 import 'package:miutem/screens/tasklist/components/components.dart';
