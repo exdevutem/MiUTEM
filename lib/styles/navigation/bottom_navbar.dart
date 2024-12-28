@@ -19,7 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final List<NavigationItem> screens = [
     NavigationItem(destination: const HomeScreen(), label: "Inicio", icon: AppIcons.home),
     NavigationItem(destination: const AsignaturasScreen(), label: "Asignaturas", icon: AppIcons.subjects),
-    NavigationItem(destination: const TaskScreen(), label: "Apuntes", icon: AppIcons.notes),
+    NavigationItem(destination: const TaskListScreen(), label: "Apuntes", icon: AppIcons.notes),
     NavigationItem(destination: const ProfileScreen(), label: "Perfil", icon: AppIcons.profile),
   ];
 

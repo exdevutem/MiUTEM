@@ -5,6 +5,7 @@ import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
 import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
 import 'package:miutem/screens/tasklist/models/task_model.dart';
 import 'package:miutem/screens/tasklist/widgets/task_card.dart';
+
 import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -16,26 +17,45 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
+  final TaskController _taskController = TaskController();
 
   bool loading = false;
   List<Task> _taskLists = [];
+  List<String> categorys = [];
 
   @override
   void initState(){
     _taskLists.clear();
     refreshTasks().then((tasks) => setState(() => _taskLists = tasks));
+    _fetchCategorys();
     super.initState();
   }
 
   Future<void> _refresh() async {
     setState(() => loading = true);
     final tasks = await refreshTasks();
-    await Future.delayed(const Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 1));
     setState(() {
       _taskLists = tasks;
       loading = false;
     });
   }
+
+
+  Future<void> _fetchCategorys() async {
+    try {
+      final categorys = await _taskController.asignaturasCategory();
+      setState(() {
+        logger.i('Categorias: $categorys');
+        this.categorys = categorys;
+      });
+    } catch (e) {
+      logger.e('Error al obtener categorias para Tasks', error: e);
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -45,6 +65,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
     ),
     body: SafeArea(child: Column(
       children: [
+        const MessageCard(),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _refresh,
@@ -53,11 +74,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
               child: ListView.builder(
                 itemCount: _taskLists.length,
                 itemBuilder: (context, index) => TaskCard(
-                  taskList: _taskLists[index],
-                  onDelete: () async {
-                    await Get.find<TasksRepository>().saveTaskLists(_taskLists.where((taskList)=> taskList.id != _taskLists[index].id).map((it) => it.toJson()).toList());
-                    refreshTasks();
-                  },
+                  task: _taskLists[index],
+                  onTap: () => updateTask(context, _taskLists[index], _refresh),
                 ),
               ),
             ),
@@ -66,7 +84,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
-            onPressed: () => addTask(context, _refresh),
+            onPressed: () => NotificationController.createNotification(),
+            //onPressed: () => addTask(context, categorys, _refresh),
             child: const Text('Agregar Nota'),
           ),
         )

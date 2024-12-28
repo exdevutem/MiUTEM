@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:uuid/uuid.dart';
-import 'package:miutem/screens/tasklist/models/task_model.dart';
+import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/core/models/asignaturas/asignatura.dart';
+
 
 class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+  final List<String> categorys;
+  
+  const AddTaskScreen({super.key, required this.categorys});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -14,12 +17,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
-  final _uuid = const Uuid();
+  final _categoryController = TextEditingController();
 
   Color _color = const Color(0xFFFCF7BB);
   TaskState _state = TaskState.unspecified;
   final DateTime _createdAt = DateTime.now();
-  DateTime _modifiedAt = DateTime.now();
+  final DateTime _modifiedAt = DateTime.now();
+
+  // Asignatura
+  Asignatura? _selectedAsignatura;
+
+
 
   @override
   void dispose() {
@@ -28,11 +36,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
-  /// todo ver si tengo que crear esto o algunas cosas de aqui como action
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
       final newTask = Task(
-        id: _uuid.v4(),
+        id: null,
+        category: _categoryController.text,
         title: _titleController.text,
         content: _contentController.text,
         color: _color,
@@ -98,6 +106,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       onChanged: (newValue) {
                         setState(() {
                           _state = newValue!;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(labelText: 'Category'),
+                      items: [...widget.categorys].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          _categoryController.text = newValue!;
                         });
                       },
                     ),

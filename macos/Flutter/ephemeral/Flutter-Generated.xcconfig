@@ -1,13 +1,11 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/fran/.sdk/flutter
-FLUTTER_APPLICATION_PATH=/Users/fran/Development/Apps/miutem
+FLUTTER_ROOT=C:\SDKFlutter\flutter
+FLUTTER_APPLICATION_PATH=D:\GitHub\MiUTEM
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=/Users/fran/Development/Apps/miutem/lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=3.0.0
 FLUTTER_BUILD_NUMBER=142
-DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/fran/Development/Apps/miutem/.dart_tool/package_config.json
+PACKAGE_CONFIG=.dart_tool/package_config.json
