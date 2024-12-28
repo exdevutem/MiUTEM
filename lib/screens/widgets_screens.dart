@@ -9,7 +9,7 @@ export 'asignaturas/asignaturas_screen.dart';
 export 'tasklist/task_list_screen.dart';
 
 // PERFIL
-export 'profile/profile-idea.dart';
+export 'profile/profile_screen.dart';
 
 // NOTAS
 export 'notas/notas_screen.dart';

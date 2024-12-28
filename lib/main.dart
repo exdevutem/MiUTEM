@@ -1,6 +1,8 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
 import 'package:miutem/core/services/service_manager.dart';
@@ -46,11 +48,28 @@ class _MiUTEMAppState extends State<MiUTEMApp> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Mi UTEM',
-    debugShowCheckedModeBanner: false,
-    theme: AppTheme.getTheme(context),
-    darkTheme: AppTheme.getThemeDark(context),
-    home: const BottomNavBar(),
-  );
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final userConfig = UserConfig.to;
+      return MaterialApp(
+        title: 'Mi UTEM',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.getTheme(context),
+        darkTheme: AppTheme.getThemeDark(context),
+        themeMode: userConfig.themeMode.value,
+        home: const MainScreen(),
+      );
+    });
+  }
+}
+
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: BottomNavBar(),
+    );
+  }
 }

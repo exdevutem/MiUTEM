@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/navigation/navigation_item.dart';
 import 'package:miutem/screens/asignaturas/asignaturas_screen.dart';
 import 'package:miutem/screens/home/home_screen.dart';
-import 'package:miutem/screens/profile/profile_screen.dart'; //TODO cambiar de profile-idea.dart
-import 'package:miutem/screens/tasklist/task_list_screen.dart';
+import 'package:miutem/screens/profile/profile_screen.dart'; 
+import 'package:miutem/screens/tasklist/task_screen.dart';
 import 'package:miutem/styles/theme/icons.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -34,6 +34,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
         label: e.label,
       )).toList(),
     ),
-    body: screens.isNotEmpty ? screens[idx].destination : Container(),
+    body: Expanded(
+      child: IndexedStack(
+        index: idx,
+        children: screens.map((e) => e.destination).toList(),
+      ),
+    ),
   );
 }

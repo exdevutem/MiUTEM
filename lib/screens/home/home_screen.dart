@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
@@ -14,6 +13,8 @@ import 'package:miutem/screens/home/widgets/clases_de_hoy/seccion_clases_de_hoy.
 import 'package:miutem/screens/home/widgets/novedades/lista_novedades.dart';
 import 'package:miutem/screens/home/widgets/saludo.dart';
 import 'package:miutem/styles/styles.dart';
+import 'package:logger/logger.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -22,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final Logger _logger = Logger();
 
   String? errorAlCargarHorario;
   Estudiante? estudiante;
@@ -31,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _logger.d("HomeScreen initialized");
 
     novedades = Get.find<RemoteConfigService>().fetchNovedades().toList();
 
@@ -97,6 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
     await cargarClasesDeHoy(forceRefresh: forceRefresh).then((bloques) => setState(() {
       errorAlCargarHorario = null;
       this.bloques = bloques;
-    }), onError: (err) => setState(() => errorAlCargarHorario = err));
+    }), onError: (err) {
+      _logger.e("Error loading schedule: $err");
+      setState(() => errorAlCargarHorario = err);
+    });
   }
 }

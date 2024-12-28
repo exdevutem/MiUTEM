@@ -1,12 +1,11 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
-import 'package:miutem/core/services/controllers/task_controller.dart';
-import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/screens/tasklist/actions/actions.dart';
-import 'package:miutem/screens/tasklist/components/components.dart';
+import 'package:get/get.dart';
+import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/screens/tasklist/actions/add_task_action.dart';
+import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
+import 'package:miutem/screens/tasklist/models/task_model.dart';
+import 'package:miutem/screens/tasklist/widgets/task_card.dart';
+
 import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 

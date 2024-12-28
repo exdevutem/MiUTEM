@@ -3,6 +3,7 @@
 export '../../styles/theme/theme.dart'; 
 export '../../styles/theme/style_text.dart';
 export '../../styles/theme/icons.dart';
+export '../../styles/theme/space.dart';
 
 // Cards
 export 'cards/card_acceso_rapido.dart';
@@ -19,4 +20,4 @@ export './loading/progress_button.dart';
 
 // Navegación
 export 'navigation/bottom_navbar.dart';
-export 'navigation/top_navigation.dart'; 
+export 'navigation/top_navigation.dart';

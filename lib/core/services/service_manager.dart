@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
+import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/auth_service.dart';
@@ -36,5 +37,9 @@ Future<void> initServices() async {
   Get.lazyPut(() => NotificationController());
   await Get.find<NotificationController>().initialize();
   
+
+  // Inicializar preferencias de usuario
+  Get.lazyPut(() => UserConfig());
+  Get.put(UserConfig()); 
 
 }
