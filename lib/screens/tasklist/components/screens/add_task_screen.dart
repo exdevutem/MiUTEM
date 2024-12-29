@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:miutem/core/utils/constants.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 
@@ -19,8 +24,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _categoryController = TextEditingController();
   final _reminderController = TextEditingController();
 
+  List<XFile> _selectedFiles = [];
+  
   Color _color = const Color(0xFFFCF7BB);
   final DateTime _createdAt = DateTime.now();
+  // TODO CREO QUE ES INNECESARIO TENER DEFINIDO EL _reminder AQUI
   DateTime? _reminder;
 
 
@@ -31,9 +39,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     _contentController.dispose();
     _categoryController.dispose();
     _reminderController.dispose();
+    _selectedFiles.clear();
     super.dispose();
   }
 
+  // TODO MOVER A UN ACTIONS
   Future<void> _selectDateTime(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -60,7 +70,33 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       }
     }
   }
+  
+  // TODO MOVER A UN ACTIONS
+  Future<void> _pickFiles() async {
+    final List<XFile> files = await openFiles(acceptedTypeGroups: [
+      const XTypeGroup(
+        label: 'images',
+        extensions: ['jpg', 'png'],
+      ),
+      const XTypeGroup(
+        label: 'documents',
+        extensions: ['pdf', 'docx'],
+      ),
+    ]);
+    if (files.isNotEmpty) {
+      final directory = await getApplicationDocumentsDirectory();
+      logger.i('Application Dcoments directory: ${directory.path}');
+      for (var file in files) {
+        final newPath = '${directory.path}/${file.name}';
+        await File(file.path).copy(newPath);
+        setState(() {
+          _selectedFiles.add(XFile(newPath));
+        });
+      }
+    }
+  }
 
+  // TODO MOVER A UN ACTIONS
   /// cambiar a que lo haga el controller
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
@@ -72,6 +108,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         'createdAt': _createdAt.toIso8601String(),
         'reminder': _reminder?.toIso8601String(),
       };
+      logger.i('files: $_selectedFiles');
+      logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
       Navigator.of(context).pop(partialTask);
     }
   }
@@ -195,6 +233,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       decoration: const InputDecoration(labelText: 'Reminder'),
                       readOnly: true,
                       onTap: () => _selectDateTime(context),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _pickFiles,
+                      child: const Text('Seleccionar Archivos'),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
