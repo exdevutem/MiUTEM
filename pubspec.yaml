@@ -43,6 +43,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   path_provider: ^2.1.5
   file_selector: ^1.0.3
+  open_file: ^3.5.10
   # Awesome-notifications LOCAL
   awesome_notifications_core: ^0.10.0
   awesome_notifications: ^0.10.0

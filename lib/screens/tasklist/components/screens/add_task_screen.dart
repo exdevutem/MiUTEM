@@ -4,6 +4,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/utils/constants.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -96,6 +97,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
+  Future<void> openDocument(String filePath) async {
+    final result = await OpenFile.open(filePath);
+    if (result.type != ResultType.done) {
+      // Handle error if the file could not be opened
+      print('Error opening file: ${result.message}');
+    }
+  }
+
   // TODO MOVER A UN ACTIONS
   /// cambiar a que lo haga el controller
   void _saveTask() {
@@ -110,6 +119,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       };
       logger.i('files: $_selectedFiles');
       logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
+      openDocument(_selectedFiles[0].path);
       Navigator.of(context).pop(partialTask);
     }
   }
