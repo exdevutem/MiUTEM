@@ -42,6 +42,7 @@ dependencies:
   sqflite: ^2.4.1
   flutter_secure_storage: ^9.2.2
   path_provider: ^2.1.5
+  file_selector: ^1.0.3
   # Awesome-notifications LOCAL
   awesome_notifications_core: ^0.10.0
   awesome_notifications: ^0.10.0
