@@ -7,6 +7,8 @@ import 'package:miutem/core/utils/constants.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../actions/add_task_screen/select_actions.dart';
+
 
 
 class AddTaskScreen extends StatefulWidget {
@@ -44,69 +46,28 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     super.dispose();
   }
 
-  // TODO MOVER A UN ACTIONS
   Future<void> _selectDateTime(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.now(),
-      );
-      if (pickedTime != null) {
-        setState(() {
-          _reminder = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-          _reminderController.text = _reminder!.toIso8601String();
-        });
-      }
+    final DateTime? selectedDateTime = await SelectActions.selectDateTime(context);
+    if (selectedDateTime != null) {
+      setState(() {
+        _reminder = selectedDateTime;
+        _reminderController.text = _reminder!.toIso8601String();
+      });
     }
   }
-  
-  // TODO MOVER A UN ACTIONS
+
   Future<void> _pickFiles() async {
-    final List<XFile> files = await openFiles(acceptedTypeGroups: [
-      const XTypeGroup(
-        label: 'images',
-        extensions: ['jpg', 'png'],
-      ),
-      const XTypeGroup(
-        label: 'documents',
-        extensions: ['pdf', 'docx'],
-      ),
-    ]);
-    if (files.isNotEmpty) {
-      final directory = await getApplicationDocumentsDirectory();
-      logger.i('Application Dcoments directory: ${directory.path}');
-      for (var file in files) {
-        final newPath = '${directory.path}/${file.name}';
-        await File(file.path).copy(newPath);
-        setState(() {
-          _selectedFiles.add(XFile(newPath));
-        });
-      }
-    }
+    final files = await SelectActions.pickFiles();
+    setState(() {
+      _selectedFiles = files;
+    });
   }
 
   Future<void> openDocument(String filePath) async {
-    final result = await OpenFile.open(filePath);
-    if (result.type != ResultType.done) {
-      // Handle error if the file could not be opened
-      print('Error opening file: ${result.message}');
-    }
+    await SelectActions.openDocument(filePath);
   }
 
-  // TODO MOVER A UN ACTIONS
-  /// cambiar a que lo haga el controller
+  // TODO DOCUMENTAR
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> partialTask = {
@@ -119,7 +80,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       };
       logger.i('files: $_selectedFiles');
       logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
-      openDocument(_selectedFiles[0].path);
+      // openDocument(_selectedFiles[0].path);
       Navigator.of(context).pop(partialTask);
     }
   }
