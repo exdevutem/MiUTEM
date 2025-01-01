@@ -7,7 +7,7 @@ import 'package:miutem/core/utils/constants.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../actions/add_task_screen/select_actions.dart';
+import '../../actions/add_task_screen/file_actions.dart';
 
 
 
@@ -28,11 +28,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   final _reminderController = TextEditingController();
 
   List<XFile> _selectedFiles = [];
-  
   Color _color = const Color(0xFFFCF7BB);
-  final DateTime _createdAt = DateTime.now();
-  // TODO CREO QUE ES INNECESARIO TENER DEFINIDO EL _reminder AQUI
-  DateTime? _reminder;
 
 
 
@@ -47,27 +43,29 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   Future<void> _selectDateTime(BuildContext context) async {
-    final DateTime? selectedDateTime = await SelectActions.selectDateTime(context);
+    final DateTime? selectedDateTime = await FileActions.selectDateTime(context);
     if (selectedDateTime != null) {
       setState(() {
-        _reminder = selectedDateTime;
-        _reminderController.text = _reminder!.toIso8601String();
+        _reminderController.text = selectedDateTime.toIso8601String();
       });
     }
   }
 
+  /// METODO PARA SELECCIONAR ARCHIVOS 
   Future<void> _pickFiles() async {
-    final files = await SelectActions.pickFiles();
+    final files = await FileActions.pickFiles();
     setState(() {
       _selectedFiles = files;
     });
   }
-
+  
+  /// METODO PARA ABRIR UN DOCUMENTO
   Future<void> openDocument(String filePath) async {
-    await SelectActions.openDocument(filePath);
+    await FileActions.openDocument(filePath);
   }
 
-  // TODO DOCUMENTAR
+  /// METODO PARA GUARDAR LA TAREA
+  /// RECIBE LOS VALORES DE LOS CONTROLLERS Y LOS GUARDA EN UN MAPA
   void _saveTask() {
     if (_formKey.currentState!.validate()) {
       final Map<String, dynamic> partialTask = {
@@ -75,11 +73,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         'title': _titleController.text,
         'content': _contentController.text,
         'color': _color.value,
-        'createdAt': _createdAt.toIso8601String(),
-        'reminder': _reminder?.toIso8601String(),
+        'createdAt': DateTime.now().toIso8601String(), 
+        'reminder': _reminderController.text,
+        'files': _selectedFiles,
       };
-      logger.i('files: $_selectedFiles');
-      logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
+      // logger.i('files: $_selectedFiles');
+      // logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
       // openDocument(_selectedFiles[0].path);
       Navigator.of(context).pop(partialTask);
     }

@@ -6,7 +6,8 @@ import 'package:miutem/core/utils/utils.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
-class SelectActions {
+class FileActions {
+  
   static Future<List<XFile>> pickFiles() async {
     final List<XFile> files = await openFiles(acceptedTypeGroups: [
       const XTypeGroup(
