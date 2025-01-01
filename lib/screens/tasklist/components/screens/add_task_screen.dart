@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:miutem/core/services/controllers/Task/task_controller.dart';
 import 'package:miutem/core/utils/constants.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +31,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   List<XFile> _selectedFiles = [];
   Color _color = const Color(0xFFFCF7BB);
 
+  final TaskController _taskController = TaskController();
+
 
 
   @override
@@ -52,6 +55,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   }
 
   /// METODO PARA SELECCIONAR ARCHIVOS 
+  /// Si ya agregaste uno y apretas para agregar otro se sobre escribe el que 
+  /// ya habias agregado, no se si queremos que funcione asi
   Future<void> _pickFiles() async {
     final files = await FileActions.pickFiles();
     setState(() {
@@ -64,6 +69,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     await FileActions.openDocument(filePath);
   }
 
+  DateTime now = DateTime.now();
   /// METODO PARA GUARDAR LA TAREA
   /// RECIBE LOS VALORES DE LOS CONTROLLERS Y LOS GUARDA EN UN MAPA
   void _saveTask() {
@@ -73,11 +79,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         'title': _titleController.text,
         'content': _contentController.text,
         'color': _color.value,
-        'createdAt': DateTime.now().toIso8601String(), 
+        'createdAt': now.toIso8601String(), 
         'reminder': _reminderController.text,
-        'files': _selectedFiles,
       };
-      // logger.i('files: $_selectedFiles');
+
+      _taskController.transformXFilesToTaskFiles(_selectedFiles).then((taskFiles) {
+        partialTask['files'] = taskFiles;
+      });
+      
+      logger.i('files: $partialTask');
       // logger.i('files: ${_selectedFiles.map((file) => file.path).toList()}');
       // openDocument(_selectedFiles[0].path);
       Navigator.of(context).pop(partialTask);

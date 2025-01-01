@@ -1,3 +1,4 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
@@ -37,7 +38,7 @@ class TaskController {
       logger.e('Tarea invalida');
       return;
     }
-
+    
     final newTask = Task(
       id: null,
       category: task['category'],
@@ -47,10 +48,12 @@ class TaskController {
       state: TaskState.APUNTE,
       createdAt: DateTime.parse(task['createdAt']),
       modifiedAt: null,
-      reminder: task['reminder'] != null ? DateTime.parse(task['reminder']) : null,
+      reminder: (task['reminder']?.trim().isNotEmpty ?? false) ? DateTime.parse(task['reminder']) : null,    
     );
-
+    
     await createReminder(newTask);
+    // logger.i('Lista de archivos: ${task['files'].map((file) => file.toString()).join(', ')}');
+    // List<TaskFile> files = await createFilesList(task['files']);
     await DatabaseHelper().insertTask(newTask);
   }
 
@@ -78,6 +81,19 @@ class TaskController {
     return true;
   }
 
+  Future<List<TaskFile>> transformXFilesToTaskFiles(List<XFile> xFiles) async {
+    List<TaskFile> taskFiles = [];
+    for (var xFile in xFiles) {
+      final String name = xFile.name;
+      final String type = xFile.mimeType ?? 'application/octet-stream';
+      final String path = xFile.path;
+
+      final TaskFile taskFile = TaskFile(name: name, type: type, path: path);
+      taskFiles.add(taskFile);
+    }
+    return taskFiles;
+  }
+  
   // Save a file and create a TaskFile object
   Future<TaskFile> saveTaskFile(String fileName, List<int> fileBytes, String fileType) async {
     final filePath = await _fileController.saveFile(fileName, fileBytes);
@@ -88,6 +104,17 @@ class TaskController {
   Future<void> openTaskFile(TaskFile taskFile) async {
     await _fileController.openFile(taskFile.path);
   }
+  
+  Future<List<TaskFile>> createFilesList(List<dynamic> files) async {
+    List<TaskFile> taskFiles = [];
+    for (var file in files) {
+      final TaskFile taskFile = TaskFile.fromJson(file);
+      taskFiles.add(taskFile);
+    }
+    return taskFiles;
+  }
+
+  
 
 
 }
