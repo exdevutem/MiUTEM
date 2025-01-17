@@ -25,20 +25,29 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    bottomNavigationBar: NavigationBar(
-      onDestinationSelected: (idx) => setState(() => this.idx = idx),
-      selectedIndex: idx,
-      destinations: screens.map((e) => NavigationDestination(
-        selectedIcon: Icon(e.icon, fill: 1),
-        icon: Icon(e.icon, weight: 600),
-        label: e.label,
-      )).toList(),
-    ),
-    body: Expanded(
-      child: IndexedStack(
-        index: idx,
-        children: screens.map((e) => e.destination).toList(),
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    extendBody: true,
+    bottomNavigationBar: Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
+      child: NavigationBar(
+        height: 65,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        onDestinationSelected: (idx) => setState(() => this.idx = idx),
+        selectedIndex: idx,
+        destinations: screens.map((e) => NavigationDestination(
+          selectedIcon: Icon(e.icon, fill: 1),
+          icon: Icon(e.icon, weight: 600),
+          label: e.label,
+        )).toList(),
+      ),
+    ),
+    body: IndexedStack(
+      index: idx,
+      children: screens.map((e) => e.destination).toList(),
     ),
   );
 }
