@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    padding: const EdgeInsets.only(bottom: 20),
         appBar: TopNavigation(
             estudiante: estudiante, isMainScreen: true, title: 'Inicio'),
         body: RefreshIndicator(
