@@ -9,11 +9,13 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
   final Estudiante? estudiante;
   final bool isMainScreen;
   final String title;
-  const TopNavigation(
-      {super.key,
-      required this.isMainScreen,
-      required this.title,
-      this.estudiante});
+
+  const TopNavigation({
+    super.key,
+    required this.isMainScreen,
+    required this.title,
+    this.estudiante,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +28,27 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
             : Brightness.dark,
       ),
       leading: isMainScreen
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: CircleAvatar(
-                radius: 30, 
-                backgroundColor: Theme.of(context).colorScheme.primary, // Asegúrate de que se note
-                child: Text(
-                  estudiante?.primerNombre.substring(0, 1) ?? '',
-                  style: StyleText.headline.copyWith(
-                    fontSize: 24,
-                    color: Theme.of(context).colorScheme.onPrimary, // Asegúrate de que el texto sea visible
-                  ),
-                ),
+          ? FractionallySizedBox(
+              alignment: Alignment.center,
+              widthFactor: 0.7, // 70% del tamaño de su padre (ancho)
+              heightFactor: 0.7, // 70% del tamaño de su padre (alto)
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  double fontSize = (constraints.maxWidth * 0.6).clamp(
+                      0.0,
+                      constraints.maxHeight *
+                          0.6); // Aseguramos que el texto respete las dimensiones de su contenedor padre (FractionallySizedBox) tanto en ancho como en alto
+                  return CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Text(
+                      estudiante?.primerNombre.substring(0, 1) ?? '',
+                      style: StyleText.headline.copyWith(
+                        fontSize: fontSize,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  );
+                },
               ),
             )
           : BackButton(
@@ -46,13 +57,13 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         children: [
           if (isMainScreen)
-          Text(
-            title,
-            style: StyleText.label.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: 20,
+            Text(
+              title,
+              style: StyleText.label.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 20,
+              ),
             ),
-          ),
         ],
       ),
     );
