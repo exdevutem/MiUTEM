@@ -19,11 +19,11 @@ void main() async {
     ),
   );
   
-  // Esto hace que la app se construya debajo del status bar
+  /* Esto hace que la app se construya debajo del status bar
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
     overlays: [SystemUiOverlay.top],
-  );
+  );*/
   
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
