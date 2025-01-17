@@ -29,7 +29,7 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: isMainScreen
           ? FractionallySizedBox(
-              alignment: Alignment.center,
+              alignment: Alignment.centerRight,
               widthFactor: 0.7, // 70% del tamaño de su padre (ancho)
               heightFactor: 0.7, // 70% del tamaño de su padre (alto)
               child: LayoutBuilder(
