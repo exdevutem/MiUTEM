@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=C:\SDKFlutter\flutter
-FLUTTER_APPLICATION_PATH=D:\GitHub\MiUTEM
+FLUTTER_ROOT=C:\DevConfig\Flutter\flutter
+FLUTTER_APPLICATION_PATH=C:\Users\jesus\Documents\Development\Flutter\MiUTEM
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=3.0.0

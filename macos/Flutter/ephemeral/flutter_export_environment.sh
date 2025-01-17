@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\SDKFlutter\flutter"
-export "FLUTTER_APPLICATION_PATH=D:\GitHub\MiUTEM"
+export "FLUTTER_ROOT=C:\DevConfig\Flutter\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\jesus\Documents\Development\Flutter\MiUTEM"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=3.0.0"
