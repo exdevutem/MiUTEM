@@ -46,49 +46,50 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    padding: const EdgeInsets.only(bottom: 20),
-        appBar: TopNavigation(
-            estudiante: estudiante, isMainScreen: true, title: 'Inicio'),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              this.estudiante = null;
-              bloques = null;
-              novedades = null;
-            });
-            await Get.find<RemoteConfigService>().refresh();
-            await HttpClient.clearCache();
-            final estudiante =
-                await Get.find<AuthService>().login(forceRefresh: true);
-            await _cargarHorario(forceRefresh: true);
-            setState(() {
-              this.estudiante = estudiante;
-              novedades =
-                  Get.find<RemoteConfigService>().fetchNovedades().toList();
-            });
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            clipBehavior: Clip.none,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Saludo(estudiante: estudiante),
-                Space.large,
-                const AccesoRapido(),
-                Space.large,
-                SeccionClasesDeHoy(
-                    errorAlCargarHorario: errorAlCargarHorario,
-                    bloques: bloques,
-                    cargarHorario: _cargarHorario),
-                // Space.large,
-                //      ListaNovedades(novedades: novedades
-                //    ),
-              ],
-            ),
+    appBar: TopNavigation(estudiante: estudiante, isMainScreen: true, title: 'Inicio'),
+    body: Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            this.estudiante = null;
+            bloques = null;
+            novedades = null;
+          });
+          await Get.find<RemoteConfigService>().refresh();
+          await HttpClient.clearCache();
+          final estudiante =
+          await Get.find<AuthService>().login(forceRefresh: true);
+          await _cargarHorario(forceRefresh: true);
+          setState(() {
+            this.estudiante = estudiante;
+            novedades =
+                Get.find<RemoteConfigService>().fetchNovedades().toList();
+          });
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          clipBehavior: Clip.none,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Saludo(estudiante: estudiante),
+              Space.large,
+              const AccesoRapido(),
+              Space.large,
+              SeccionClasesDeHoy(
+                  errorAlCargarHorario: errorAlCargarHorario,
+                  bloques: bloques,
+                  cargarHorario: _cargarHorario),
+              // Space.large,
+              //      ListaNovedades(novedades: novedades
+              //    ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   _cargarHorario({bool forceRefresh = false}) async {
     setState(() {
