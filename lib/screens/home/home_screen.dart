@@ -96,11 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
       errorAlCargarHorario = null;
       bloques = null;
     });
-    await cargarClasesDeHoy(forceRefresh: forceRefresh).then(
-        (bloques) => setState(() {
-              errorAlCargarHorario = null;
-              this.bloques = bloques;
-            }),
-        onError: (err) => setState(() => errorAlCargarHorario = err));
+    await cargarClasesDeHoy(forceRefresh: forceRefresh).then((bloques) => setState(() {
+      errorAlCargarHorario = null;
+      this.bloques = bloques;
+    }), onError: (err) => setState(() => errorAlCargarHorario = err));
   }
 }
