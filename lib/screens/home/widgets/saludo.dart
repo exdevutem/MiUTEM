@@ -40,8 +40,6 @@ class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
   }
 
   void _startAnimation() {
-    MiUTEMCredencialService.get.getCredencialURL().then((it) => logger.d(it));
-
     if (_controller.isAnimating) return;
     _controller.repeat(reverse: true);
     Future.delayed(const Duration(seconds: 2), () => _controller.stop());
