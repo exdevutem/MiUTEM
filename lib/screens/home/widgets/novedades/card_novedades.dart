@@ -32,7 +32,7 @@ class CardNovedades extends StatelessWidget {
         ),
         child: ListTile(
           contentPadding: const EdgeInsets.all(16),
-          title: Text(novedad.title, style: StyleText.header.copyWith(color: AppTheme.colorScheme.primary)),
+          title: Text(novedad.title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppTheme.colorScheme.primary)),
           titleAlignment: ListTileTitleAlignment.top,
           subtitle: Text(novedad.subtitle, style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Theme.of(context).primaryTextTheme.titleMedium?.color)),
           leading: CircleAvatar(

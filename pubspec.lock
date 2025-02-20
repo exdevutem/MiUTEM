@@ -257,6 +257,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+  expressions:
+    dependency: transitive
+    description:
+      name: expressions
+      sha256: "308a621b602923dd8a0cf3072793b24850d06453eb49c6b698cbda41a282e904"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.5+2"
   extended_masked_text:
     dependency: "direct main"
     description:
@@ -497,7 +505,7 @@ packages:
     source: hosted
     version: "6.2.1"
   html:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: html
       sha256: "1fc58edeaec4307368c60d59b7e15b9d658b57d7f3125098b6294153c75337ec"
@@ -816,6 +824,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      sha256: "5c3004a4a8dbb94bd4bf5412a4def4acdaa12e12f269737a5751369e12d1a962"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.28.0"
   screenshot:
     dependency: "direct main"
     description:
@@ -1205,6 +1221,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  xpath_selector:
+    dependency: transitive
+    description:
+      name: xpath_selector
+      sha256: "6d8295565a34a6e2821a0721592e584c70421e52a0f54955e0c8e41963db7c90"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.2"
+  xpath_selector_html_parser:
+    dependency: "direct main"
+    description:
+      name: xpath_selector_html_parser
+      sha256: ebc562a07832a4062a2bc1c238fd59a81d31d841f15460caeed412ce078af9e0
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.1"
   yaml:
     dependency: transitive
     description:

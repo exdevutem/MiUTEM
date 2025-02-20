@@ -62,7 +62,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: const TopNavigation(
       title: 'Apuntes',
-      isMainScreen: true,
     ),
     body: SafeArea(child: Column(
       children: [

@@ -10,7 +10,7 @@ class HorarioCorner extends StatelessWidget {
     Key? key,
     required this.height,
     required this.width,
-    this.backgroundColor = AppTheme.greyligth,
+    this.backgroundColor = AppTheme.greyLight,
   });
 
   @override

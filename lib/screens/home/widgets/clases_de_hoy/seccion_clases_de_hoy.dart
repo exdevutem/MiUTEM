@@ -46,7 +46,9 @@ class _SeccionClasesDeHoyState extends State<SeccionClasesDeHoy> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Clases de Hoy", style: StyleText.descriptionBold),
+              Text("Clases de Hoy", style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              )),
               Text(today,
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.normal)),

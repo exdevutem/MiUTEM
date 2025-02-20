@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:miutem/styles/styles.dart';
 
 class AppTheme {
+
+  static Color get primary => const Color(0xFF1D8E5C);
+  static Color get primaryDark => const Color(0xFF009951);
+  static Color get secondary => const Color(0xFF06607A);
 
   static Color get white => const Color(0xFFFAFAFA);
   static Color get black => const Color(0xFF333333);
@@ -28,16 +31,41 @@ class AppTheme {
 
   /// themes horario
   static const Color mediumGrey = Color(0xFFBDBDBD);
-  static const Color greyligth = Color(0xfff1f1f1);
+  static const Color greyLight = Color(0xfff1f1f1);
   static const Color grey = Color(0xff7f7f7f);
   static const Color dividerColor = mediumGrey;
 
   static ColorScheme get colorScheme => ColorScheme.fromSeed(
-    seedColor: const Color(0xFF1D8E5C),
-    primary: const Color(0xFF1D8E5C),
-    secondary: const Color(0xFF06607A),
+    seedColor: primary,
+
+    primary: primary,
+    onPrimary: white,
+
+    secondary: secondary,
+    onSecondary: white,
+
+    surface: white,
+    onSurface: black,
+
+    onSurfaceVariant: lightGrey,
   );
 
+  static ColorScheme get darkColorScheme => ColorScheme.fromSeed(
+    seedColor: primaryDark,
+
+    primary: primaryDark,
+    onPrimary: white,
+
+    secondary: secondary,
+    onSecondary: white,
+
+    surface: black,
+    onSurface: white,
+
+    onSurfaceVariant: lightGrey,
+  );
+
+  /// Obtiene el tema para modo claro
   static ThemeData getTheme(BuildContext context) => ThemeData.light().copyWith(
     /// Esquema de colores
     colorScheme: colorScheme,
@@ -45,27 +73,18 @@ class AppTheme {
     dividerColor: lightGrey,
 
     /// Tema de texto
-    textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
-      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w900,
-        letterSpacing: 0.01,
-      )),
-      titleLarge: GoogleFonts.inter(),
-      titleMedium: GoogleFonts.inter(),
-      titleSmall: GoogleFonts.inter(),
-    ).apply(
-      bodyColor: const Color(0xFF333333),
-      displayColor: const Color(0xFF333333),
+    textTheme: textTheme(context).apply(
+      bodyColor: black,
+      displayColor: black,
     ),
 
     /// Fondo de la aplicación
-    scaffoldBackgroundColor: const Color(0xFFFAFAFA),
+    scaffoldBackgroundColor: white,
 
     /// Tema de la barra de navegación
-    navigationBarTheme: NavigationBarTheme.of(context).copyWith(
-      backgroundColor: const Color(0xFFFFFFFF),
-      elevation: 0,
+    navigationBarTheme: navigationBarTheme(context).copyWith(
+      backgroundColor: Colors.white,
+      iconTheme: WidgetStateProperty.all(IconThemeData(color: black)),
     ),
 
     /// Tema de la barra superior
@@ -75,105 +94,48 @@ class AppTheme {
         statusBarColor: white,
         statusBarIconBrightness: Brightness.dark,
       ),
-      actionsIconTheme: const IconThemeData(
-        color: Color(0xFF333333),
+      actionsIconTheme: IconThemeData(
+        color: black,
       ),
       titleTextStyle: GoogleFonts.inter(
-        color: const Color(0xFF333333),
+        color: black,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
       toolbarTextStyle: GoogleFonts.roboto(
-        color: const Color(0xFF333333),
+        color: black,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
-      foregroundColor: const Color(0xFF333333),
+      foregroundColor: black,
       elevation: 0,
     ),
 
     /// Tema de la decoración de los inputs
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: lightGrey),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: lightGrey),
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: lightGrey),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: colorScheme.primary),
-      ),
-      fillColor: white,
-      hintStyle: StyleText.body.copyWith(
-        color: AppTheme.lightGrey,
-      ),
-      labelStyle: StyleText.body,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-    ),
+    inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: white),
   );
 
+  /// Obtiene el tema para modo oscuro
   static ThemeData getThemeDark(BuildContext context) => ThemeData.dark().copyWith(
     /// Esquema de colores
-    colorScheme: colorScheme.copyWith(
-      primary: const Color(0xFF009951)
-    ),
+    colorScheme: darkColorScheme,
     canvasColor: colorScheme.inverseSurface,
     dividerColor: darkLightGrey,
 
     /// Tema de texto
-    textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme.copyWith(
-      headlineMedium: GoogleFonts.inter(textStyle: const TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w900,
-        letterSpacing: 0.01,
-      )),
-      titleLarge: GoogleFonts.inter(),
-      titleMedium: GoogleFonts.inter(),
-      titleSmall: GoogleFonts.inter(),
-    ).apply(
-      bodyColor: const Color(0xFFFAFAFA),
-      displayColor: const Color(0xFFFAFAFA),
-    )),
+    textTheme: textTheme(context).apply(
+      bodyColor: white,
+      displayColor: white,
+    ),
 
     /// Fondo de la aplicación
     scaffoldBackgroundColor: const Color(0xFF1D1B20),
 
     /// Tema de la barra de navegación
-    navigationBarTheme: NavigationBarTheme.of(context).copyWith(
+    navigationBarTheme: navigationBarTheme(context).copyWith(
+      indicatorColor: primary.withOpacity(.9),
       backgroundColor: const Color(0xFF1E1E1E),
-      indicatorColor: const Color(0xFF1D8E5C).withOpacity(.9),
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        if(states.contains(WidgetState.selected)) {
-          return const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-          );
-        }
-
-        return const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        );
-      }),
-      iconTheme: WidgetStateProperty.resolveWith((states) {
-        if(states.contains(WidgetState.selected)) {
-          return const IconThemeData(
-            color: Color(0xFFFAFAFA),
-          );
-        }
-
-        return const IconThemeData(
-          color: Color(0xFFFAFAFA),
-        );
-      }),
-      elevation: 0,
+      iconTheme: WidgetStateProperty.all(IconThemeData(color: white)),
     ),
 
     /// Tema de la barra superior
@@ -183,44 +145,86 @@ class AppTheme {
         statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
       ),
-      actionsIconTheme: const IconThemeData(
-        color: Color(0xFFFAFAFA),
+      actionsIconTheme: IconThemeData(
+        color: white,
       ),
       titleTextStyle: GoogleFonts.inter(
-        color: const Color(0xFFFAFAFA),
+        color: white,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
       toolbarTextStyle: GoogleFonts.roboto(
-        color: const Color(0xFFFAFAFA),
+        color: white,
         fontSize: 20,
         fontWeight: FontWeight.w600,
       ),
-      foregroundColor: const Color(0xFFFAFAFA),
+      foregroundColor: white,
       elevation: 0,
     ),
 
     /// Tema de la decoración de los inputs
-    inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: darkLightGrey),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: darkLightGrey),
-      ),
-      disabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: darkLightGrey),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: colorScheme.primary),
-      ),
-      fillColor: const Color(0xFF1D1B20),
-      hintStyle: StyleText.body.copyWith(color: AppTheme.lightGrey),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+    inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: const Color(0xFF1D1B20)),
+  );
+
+  /// Obtiene el tema de los textos, incluyendo fuentes de Google Fonts.
+  static TextTheme textTheme(BuildContext context) => GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
+    headlineMedium: GoogleFonts.inter(textStyle: const TextStyle( // Headline
+      fontSize: 30,
+      letterSpacing: 0,
+      height: 1.2
+    )),
+    headlineSmall: GoogleFonts.inter(textStyle: const TextStyle( // Header
+      fontSize: 18,
+      height: 1.5
+    )),
+    titleLarge: GoogleFonts.inter(),
+    titleMedium: GoogleFonts.inter(),
+    titleSmall: GoogleFonts.inter(),
+    labelMedium: GoogleFonts.inter(textStyle: const TextStyle( // Label
+      fontSize: 16,
+      height: 1.2
+    )),
+
+    bodySmall: GoogleFonts.roboto(textStyle: const TextStyle( // Caption
+      fontSize: 12,
+    )),
+
+    bodyMedium: GoogleFonts.roboto(textStyle: const TextStyle( // Body
+      fontSize: 14,
+    )),
+
+    bodyLarge: GoogleFonts.roboto(textStyle: const TextStyle( // Description
+      fontSize: 16,
+      height: 1.2
+    )),
+  );
+
+  /// Obtiene el tema de la decoración de los inputs.
+  static InputDecorationTheme inputDecorationTheme(BuildContext context) => InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Theme.of(context).dividerColor),
     ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+    ),
+    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: lightGrey),
+    labelStyle: Theme.of(context).textTheme.bodyMedium,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+  );
+
+  /// Obtiene el tema de la barra de navegación.
+  static NavigationBarThemeData navigationBarTheme(BuildContext context) => NavigationBarTheme.of(context).copyWith(
+    labelTextStyle: WidgetStateProperty.all(const TextStyle()),
+    elevation: 0,
   );
 }

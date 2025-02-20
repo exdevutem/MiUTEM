@@ -26,20 +26,18 @@ class MessageCard extends StatelessWidget {
               ),
               const SizedBox(width: 20.0),
               Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Organiza tu día a día',
-                        style: StyleText.header,
-                      ),
-                      const SizedBox(height: 2.0),
-                      Text(
-                        'Crea tareas y recordatorios. Mantén todo bajo control, directo desde tu App Mi UTEM',
-                        style: StyleText.description,
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Organiza tu día a día',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 2.0),
+                    Text('Crea tareas y recordatorios. Mantén todo bajo control, directo desde tu App Mi UTEM',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

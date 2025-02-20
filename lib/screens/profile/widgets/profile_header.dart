@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/carrera.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
+import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/styles/styles.dart';
@@ -60,11 +61,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
-    final String firstName = capitalize(widget.estudiante!.nombreCompleto
-        .split(' ')
-        .firstWhere((word) => word.isNotEmpty, orElse: () => 'Nombre')
-        .toLowerCase());
-
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -74,8 +70,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: AppTheme.colorScheme.primary.withOpacity(0.2),
-              child: Text(
-                firstName[0].toUpperCase(),
+              child: Text(widget.estudiante?.iniciales[0] ?? 'J',
                 style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
@@ -87,30 +82,22 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           Space.small,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text(
-              firstName,
-              style: StyleText.headline,
+            child: Text(widget.estudiante?.primerNombre ?? 'John',
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
           Space.xSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text(
-              widget.estudiante?.nombreCompleto
-                .split(' ')
-                .map((word) => word.isNotEmpty 
-                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
-                  : '')
-                .join(' ') ?? 'Nombre Apellido',
-              style: StyleText.label,
+            child: Text(capitalize(widget.estudiante?.nombreCompleto ?? 'John Doe'),
+              style: Theme.of(context).textTheme.labelMedium,
             ),
           ),
           Space.xSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text(
-              (widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
-              style: StyleText.description
+            child: Text((widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
+              style: Theme.of(context).textTheme.bodyLarge
             ),
           ),
           Space.xSmall,
@@ -118,10 +105,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             enabled: carrera == null,
             child: SizedBox(
               height: 40, 
-              child: Text(
-                carrera?.nombre ?? 'Carrera\nen Curso',  
+              child: Text(carrera?.nombre ?? 'Carrera\nen Curso',
                 textAlign: TextAlign.center,
-                style: StyleText.description,
+                style: Theme.of(context).textTheme.bodyLarge,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

@@ -9,7 +9,7 @@ class AccesoRapido extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("Accesos rápidos", style: StyleText.description),
+      Text("Accesos rápidos", style: Theme.of(context).textTheme.bodyLarge),
       const SizedBox(height: 10),
       SizedBox(
         height: 130,

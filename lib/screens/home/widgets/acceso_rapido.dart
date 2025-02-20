@@ -12,7 +12,7 @@ class AccesoRapido extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child:
-                Text("¿Que quieres hacer hoy?", style: StyleText.description),
+                Text("¿Que quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
           ),
           Space.xSmall,
           SizedBox(

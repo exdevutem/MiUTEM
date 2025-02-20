@@ -22,7 +22,7 @@ class Notas extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Text("Notas", style: StyleText.description),
+      Text("Notas", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 12),
       SizedBox(
         width: double.infinity,
@@ -93,7 +93,7 @@ class Notas extends StatelessWidget {
   }) => TextField(
     enabled: enabled,
     controller: controller,
-    style: StyleText.body,
+    style: Theme.of(context).textTheme.bodyMedium,
     decoration: InputDecoration(
       hintText: hintText ?? "--",
       filled: true,

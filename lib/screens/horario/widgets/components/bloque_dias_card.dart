@@ -16,7 +16,7 @@ class BloqueDiasCard extends StatelessWidget {
     required this.height,
     this.active = false,
     /// CAMBIAR POR EL LIGHTGREY
-    this.backgroundColor = AppTheme.greyligth,
+    this.backgroundColor = AppTheme.greyLight,
   }) : super(key: key);
 
   @override

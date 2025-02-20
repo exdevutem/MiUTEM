@@ -18,7 +18,7 @@ class SelectorAsignatura extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("Asignatura", style: StyleText.description),
+      Text("Asignatura", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 5),
       Row(
         mainAxisSize: MainAxisSize.max,
@@ -42,11 +42,11 @@ class SelectorAsignatura extends StatelessWidget {
                       value: asignatura,
                       child: Text(
                         asignatura.nombre,
-                        style: StyleText.body.copyWith(overflow: TextOverflow.ellipsis),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(overflow: TextOverflow.ellipsis),
                       ),
                     )).toList(),
-                    disabledHint: Text("Cargando asignaturas...", style: StyleText.body),
-                    hint: Text("Selecciona una asignatura", style: StyleText.body),
+                    disabledHint: Text("Cargando asignaturas...", style: Theme.of(context).textTheme.bodyMedium),
+                    hint: Text("Selecciona una asignatura", style: Theme.of(context).textTheme.bodyMedium),
                     value: asignatura,
                     onChanged: onChanged,
                     icon: const Icon(AppIcons.dropdown),

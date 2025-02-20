@@ -17,7 +17,7 @@ class BloquePeriodoCard extends StatelessWidget {
     required this.fin,
     required this.height,
     required this.width,
-    this.backgroundColor = AppTheme.greyligth,
+    this.backgroundColor = AppTheme.greyLight,
     this.active = false,
   });
 

@@ -64,7 +64,7 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            Text("Asignaturas", style: StyleText.headline),
+            Text("Asignaturas", style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 20),
             const AccesoRapido(),
             const SizedBox(height: 20),

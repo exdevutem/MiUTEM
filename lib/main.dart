@@ -19,12 +19,6 @@ void main() async {
     ),
   );
   
-  /* Esto hace que la app se construya debajo del status bar
-  SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.edgeToEdge,
-    overlays: [SystemUiOverlay.top],
-  );*/
-  
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   runApp(const MiUTEMApp());
@@ -48,28 +42,11 @@ class _MiUTEMAppState extends State<MiUTEMApp> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Obx(() {
-      final userConfig = UserConfig.to;
-      return MaterialApp(
-        title: 'Mi UTEM',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.getTheme(context),
-        darkTheme: AppTheme.getThemeDark(context),
-        themeMode: userConfig.themeMode.value,
-        home: const MainScreen(),
-      );
-    });
-  }
-}
-
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: BottomNavBar(),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'Mi UTEM',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.getTheme(context),
+    darkTheme: AppTheme.getThemeDark(context),
+    home: const Scaffold(body: BottomNavBar()),
+  );
 }

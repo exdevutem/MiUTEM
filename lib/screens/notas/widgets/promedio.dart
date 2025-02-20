@@ -20,7 +20,7 @@ class Promedio extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Text("Promedio", style: StyleText.description),
+      Text("Promedio", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 5),
       SizedBox(
         width: double.infinity,
@@ -46,7 +46,7 @@ class Promedio extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("Presentación", style: StyleText.description),
+                          Text("Presentación", style: Theme.of(context).textTheme.bodyMedium),
                           const Spacer(),
                           NotaPresentacion(notasController: notasController),
                         ],
@@ -54,7 +54,7 @@ class Promedio extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Text("Examen", style: StyleText.description),
+                          Text("Examen", style: Theme.of(context).textTheme.bodyMedium),
                           const Spacer(),
                           NotaExamen(notasController: notasController),
                         ],

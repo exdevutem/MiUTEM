@@ -14,35 +14,34 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
 
   const TopNavigation({
     super.key,
-    required this.isMainScreen,
-    required this.title,
+    this.isMainScreen = false,
+    this.title = '',
     this.estudiante
   });
 
   @override
   Widget build(BuildContext context) => AppBar(
-    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
       statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark,
     ),
-    leading: isMainScreen ? Padding(
+    leading: isMainScreen ? (estudiante != null ? Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: CircleAvatar(
         radius: 30,
         backgroundColor: Theme.of(context).colorScheme.primary, // Asegúrate de que se note
         child: Text(estudiante?.primerNombre.substring(0, 1) ?? '',
-          style: StyleText.headline.copyWith(
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontSize: 24,
             color: Theme.of(context).colorScheme.onPrimary, // Asegúrate de que el texto sea visible
           ),
         ),
       ),
-    ) : BackButton(color: Theme.of(context).colorScheme.onSurface),
+    ) : Container()) : BackButton(color: Theme.of(context).colorScheme.onSurface),
     title: Row(
       children: [
-        if (isMainScreen) Text(title,
-          style: StyleText.label.copyWith(
+        if (title != '') Text(title,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20,
           ),

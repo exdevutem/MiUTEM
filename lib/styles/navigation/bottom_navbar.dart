@@ -47,7 +47,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ),
     body: IndexedStack(
       index: idx,
-      children: screens.map((e) => e.destination).toList(),
+      children: screens.map((e) => SafeArea(
+        minimum: const EdgeInsets.symmetric(vertical: 20),
+        child: e.destination,
+      )).toList(),
     ),
   );
 }

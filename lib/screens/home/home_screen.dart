@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: TopNavigation(estudiante: estudiante, isMainScreen: true, title: 'Inicio'),
     body: Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: RefreshIndicator(
@@ -80,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
               SeccionClasesDeHoy(
                   errorAlCargarHorario: errorAlCargarHorario,
                   bloques: bloques,
-                  cargarHorario: _cargarHorario),
+                  cargarHorario: _cargarHorario
+              ),
               // Space.large,
               //      ListaNovedades(novedades: novedades
               //    ),

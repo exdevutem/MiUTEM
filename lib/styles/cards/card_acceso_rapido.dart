@@ -53,7 +53,7 @@ class _CardAccesoRapidoState extends State<CardAccesoRapido> with WidgetsBinding
             children: [
               Icon(widget.icon, fill: widget.fill, size: 32, weight: 600, color: Theme.of(context).textTheme.bodyMedium?.color),
               const Spacer(),
-              Text(widget.label, style: StyleText.label),
+              Text(widget.label, style: Theme.of(context).textTheme.labelMedium),
             ],
           ),
         ),

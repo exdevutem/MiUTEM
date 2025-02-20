@@ -27,44 +27,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Obx(() {
-        final userTheme = UserConfig.to.themeMode.value;
-        final isDarkMode = userTheme == ThemeMode.dark;
-        final textColor = isDarkMode ? AppTheme.white : AppTheme.black;
-        return Scaffold(
-          appBar: const TopNavigation(isMainScreen: true, title: ''),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              setState(() => estudiante = null);
-              final newEstudiante = await Get.find<AuthService>().login(forceRefresh: true);
-              setState(() => estudiante = newEstudiante);
-            },
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  if (estudiante != null) ProfileHeader(estudiante: estudiante),
-                  Space.xSmall,
-                  const LogOutButton(),
-                  Space.small,
-                  const Divider(thickness: 0.5),
-                  Space.small,
-                  const ProfileSettings(),
-                  Space.small,
-                  ListTile(
-                    leading: Image.asset('assets/launcher_icons/prod/icon_splash.png', width: 36),
-                    title: Text('Versión de la Aplicación',
-                        style: StyleText.description.copyWith(color: textColor)),
-                    subtitle: Text(
-                      '4.0.0',
-                      style: StyleText.body.copyWith(color: textColor),
-                    ),
-                  ),
-                ],
-              ),
+  Widget build(BuildContext context) => Scaffold(
+    body: RefreshIndicator(
+      onRefresh: () async {
+        setState(() => estudiante = null);
+        final newEstudiante = await Get.find<AuthService>().login(forceRefresh: true);
+        setState(() => estudiante = newEstudiante);
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (estudiante != null) ProfileHeader(estudiante: estudiante),
+            Space.xSmall,
+            const LogOutButton(),
+            Space.small,
+            const Divider(thickness: 0.5),
+            Space.small,
+            const ProfileSettings(),
+            Space.small,
+            ListTile(
+              titleTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+              subtitleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal),
+              leading: Image.asset('assets/launcher_icons/prod/icon_splash.png', width: 36),
+              title: const Text('Versión de la Aplicación'),
+              subtitle: const Text('4.0.0'),
             ),
-          ),
-        );
-      });
+          ],
+        ),
+      ),
+    ),
+  );
 }

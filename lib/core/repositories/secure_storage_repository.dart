@@ -6,8 +6,18 @@ import 'package:miutem/core/utils/constants.dart';
 
 const String credentialsKey = "auth_credentials";
 const String estudianteKey = "estudiante";
+const String miutemCookiesKey = "miutem_cookies";
 
 class SecureStorageRepository {
+
+  /* Mi.UTEM Cookie */
+  Future<String?> getMiUTEMCookies() async {
+    return await secureStorage.read(key: miutemCookiesKey);
+  }
+
+  Future<bool> hasMiUTEMCookies() async => await secureStorage.containsKey(key: miutemCookiesKey);
+
+  Future<void> setMiUTEMCookies(String? cookies) async => cookies == null ? await secureStorage.delete(key: miutemCookiesKey) : await secureStorage.write(key: miutemCookiesKey, value: cookies);
 
   /* Estudiante */
   Future<Estudiante?> getEstudiante() async {

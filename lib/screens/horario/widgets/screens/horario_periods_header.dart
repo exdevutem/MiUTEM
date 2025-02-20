@@ -22,7 +22,7 @@ class HorarioPeriodsHeader extends StatelessWidget {
     required this.periodHeight,
     required this.width,
     this.showActivePeriod = true,
-    this.backgroundColor = AppTheme.greyligth,
+    this.backgroundColor = AppTheme.greyLight,
     this.borderColor = AppTheme.dividerColor,
     this.borderWidth = 2,
   });

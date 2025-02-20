@@ -21,7 +21,7 @@ class HorarioDaysHeader extends StatelessWidget {
     required this.dayWidth,
     this.showActiveDay = true,
     this.borderColor = AppTheme.dividerColor,
-    this.backgroundColor = AppTheme.greyligth,
+    this.backgroundColor = AppTheme.greyLight,
     this.borderWidth = 2,
   });
 
