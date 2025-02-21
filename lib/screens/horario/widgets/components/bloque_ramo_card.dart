@@ -25,38 +25,31 @@ class ClassBlockCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: height,
-        width: width,
-        child: Padding(
-          padding: EdgeInsets.all(internalMargin),
-          child: block?.asignatura == null
-              ? const SizedBox()
-              : GestureDetector(
-                  onTap: () => _onTap(block!, context),
-                  onLongPress: () => _onLongPress(block!, context),
-                  child: Container(
-                    width: width,
-                    height: height,
-                    color: Colors.blue, // Example color
-                    child: Center(
-                      child: Text(
-                        block!.asignatura!.nombre,
-                        style: TextStyle(color: textColor),
-                      ),
-                    ),
-                  ),
-                ),
+    height: height,
+    width: width,
+    child: Padding(
+      padding: EdgeInsets.all(internalMargin),
+      child: block?.asignatura == null ? const SizedBox() : GestureDetector(
+        onTap: () => _onTap(block!, context),
+        onLongPress: () => _onLongPress(block!, context),
+        child: Container(
+          width: width,
+          height: height,
+          color: Colors.blue, // Example color
+          child: Center(
+            child: Text(block!.asignatura!.nombre,
+              style: TextStyle(color: textColor),
+            ),
+          ),
         ),
-      );
+      ),
+    ),
+  );
 
   _onTap(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final carrera = await Get.find<CarreraService>().getCarrera();
-    final asignatura = (await Get.find<AsignaturasService>()
-            .getAsignaturas(forceRefresh: true))
-        .firstWhereOrNull((asignatura) =>
-            asignatura.id == block.asignatura?.id ||
-            asignatura.codigo == block.asignatura?.codigo);
+    final asignatura = (await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true)).firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
     final grades = await Get.find<GradesService>().getGrades(asignatura!);
     if (carrera == null || asignatura == null) {
       Navigator.pop(context);

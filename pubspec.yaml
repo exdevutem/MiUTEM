@@ -48,6 +48,7 @@ dependencies:
   xpath_selector_html_parser: ^3.0.1
   html: ^0.15.5
   flutter_carousel_widget: ^3.1.0
+  file_saver: ^0.2.9
   # Awesome-notifications REMOTE
   # awesome_notifications_fcm: ^0.10.0
 

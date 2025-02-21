@@ -11,8 +11,6 @@ class HorarioPeriodsHeader extends StatelessWidget {
   final Horario horario;
   final double periodHeight;
   final double width;
-  final Color borderColor;
-  final Color backgroundColor;
   final double borderWidth;
   final bool showActivePeriod;
 
@@ -22,8 +20,6 @@ class HorarioPeriodsHeader extends StatelessWidget {
     required this.periodHeight,
     required this.width,
     this.showActivePeriod = true,
-    this.backgroundColor = AppTheme.greyLight,
-    this.borderColor = AppTheme.dividerColor,
     this.borderWidth = 2,
   });
 
@@ -32,12 +28,12 @@ class HorarioPeriodsHeader extends StatelessWidget {
     defaultColumnWidth: FixedColumnWidth(width),
     border: TableBorder(
       horizontalInside: BorderSide(
-        color: borderColor,
+        color: Theme.of(context).dividerColor,
         style: BorderStyle.solid,
         width: borderWidth,
       ),
       right: BorderSide(
-        color: borderColor,
+        color: Theme.of(context).dividerColor,
         style: BorderStyle.solid,
         width: borderWidth,
       ),
@@ -51,7 +47,6 @@ class HorarioPeriodsHeader extends StatelessWidget {
           active: showActivePeriod && Get.find<HorarioController>().indexOfCurrentPeriod == e.key,
           height: periodHeight,
           width: width,
-          backgroundColor: backgroundColor,
         ),
       ],
     )).toList(),

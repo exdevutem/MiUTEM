@@ -8,6 +8,8 @@ PODS:
     - Firebase/Firestore (~> 11.4.0)
     - firebase_core
     - FlutterMacOS
+  - file_saver (0.0.1):
+    - FlutterMacOS
   - Firebase/Analytics (11.4.0):
     - Firebase/Core
   - Firebase/Core (11.4.0):
@@ -177,6 +179,7 @@ DEPENDENCIES:
   - awesome_notifications (from `Flutter/ephemeral/.symlinks/plugins/awesome_notifications/macos`)
   - awesome_notifications_core (from `Flutter/ephemeral/.symlinks/plugins/awesome_notifications_core/macos`)
   - cloud_firestore (from `Flutter/ephemeral/.symlinks/plugins/cloud_firestore/macos`)
+  - file_saver (from `Flutter/ephemeral/.symlinks/plugins/file_saver/macos`)
   - firebase_analytics (from `Flutter/ephemeral/.symlinks/plugins/firebase_analytics/macos`)
   - firebase_core (from `Flutter/ephemeral/.symlinks/plugins/firebase_core/macos`)
   - firebase_remote_config (from `Flutter/ephemeral/.symlinks/plugins/firebase_remote_config/macos`)
@@ -222,6 +225,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/awesome_notifications_core/macos
   cloud_firestore:
     :path: Flutter/ephemeral/.symlinks/plugins/cloud_firestore/macos
+  file_saver:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_saver/macos
   firebase_analytics:
     :path: Flutter/ephemeral/.symlinks/plugins/firebase_analytics/macos
   firebase_core:
@@ -259,6 +264,7 @@ SPEC CHECKSUMS:
   awesome_notifications: 428f5c15a700b117418aed09e29c21c5806fcf69
   awesome_notifications_core: 43438f2e1b0e1dd9da81aaeb1b4af5ec0447af1a
   cloud_firestore: 0d1c982890702bf99ab2881743c35fddb66e295d
+  file_saver: 44e6fbf666677faf097302460e214e977fdd977b
   Firebase: cf1b19f21410b029b6786a54e9764a0cacad3c99
   firebase_analytics: a80b3d6645f2f12d626fde928b61dae12e5ea2ef
   firebase_core: 1dfe1f4d02ad78be0277e320aa3d8384cf46231f

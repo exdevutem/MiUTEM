@@ -8,7 +8,6 @@ class HorarioBlocksContent extends StatelessWidget {
   final double blockHeight;
   final double blockWidth;
   final double blockInternalMargin;
-  final Color borderColor;
   final double borderWidth;
 
   const HorarioBlocksContent({
@@ -17,7 +16,6 @@ class HorarioBlocksContent extends StatelessWidget {
     required this.blockHeight,
     required this.blockWidth,
     this.blockInternalMargin = 0,
-    this.borderColor = AppTheme.dividerColor,
     this.borderWidth = 2,
   });
 
@@ -48,12 +46,12 @@ class HorarioBlocksContent extends StatelessWidget {
     defaultColumnWidth: FixedColumnWidth(blockWidth),
     border: TableBorder(
       horizontalInside: BorderSide(
-        color: borderColor,
+        color: Theme.of(context).dividerColor,
         style: BorderStyle.solid,
         width: borderWidth,
       ),
       verticalInside: BorderSide(
-        color: borderColor,
+        color: Theme.of(context).dividerColor,
         style: BorderStyle.solid,
         width: borderWidth,
       ),
