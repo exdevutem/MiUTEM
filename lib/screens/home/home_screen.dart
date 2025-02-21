@@ -10,6 +10,8 @@ import 'package:miutem/screens/home/actions/cargar_clases_de_hoy.dart';
 import 'package:miutem/screens/home/models/novedad.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/seccion_clases_de_hoy.dart';
+import 'package:miutem/screens/home/widgets/novedades/card_novedades.dart';
+import 'package:miutem/screens/home/widgets/novedades/lista_novedades.dart';
 import 'package:miutem/screens/home/widgets/saludo.dart';
 import 'package:miutem/styles/styles.dart';
 
@@ -38,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }, onError: (err) {
       if (mounted) {
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
       }
     });
   }
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 20, left: 16.0, right: 16.0),
       child: RefreshIndicator(
         onRefresh: () async {
           setState(() {
@@ -75,15 +76,32 @@ class _HomeScreenState extends State<HomeScreen> {
               Saludo(estudiante: estudiante),
               Space.large,
               const AccesoRapido(),
+              if(novedades?.isNotEmpty == true) GestureDetector(
+                onTap: () => {
+                  // TODO: Redirigir a la pantalla de novedades
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Space.large,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Novedades", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
+                        Text("Ver más", style: Theme.of(context).textTheme.bodySmall),
+                      ],
+                    ),
+                    Space.xSmall,
+                    CardNovedades(novedad: novedades!.first),
+                  ],
+                ),
+              ),
               Space.large,
               SeccionClasesDeHoy(
-                  errorAlCargarHorario: errorAlCargarHorario,
-                  bloques: bloques,
-                  cargarHorario: _cargarHorario
+                errorAlCargarHorario: errorAlCargarHorario,
+                bloques: bloques,
+                cargarHorario: _cargarHorario,
               ),
-              // Space.large,
-              //      ListaNovedades(novedades: novedades
-              //    ),
             ],
           ),
         ),

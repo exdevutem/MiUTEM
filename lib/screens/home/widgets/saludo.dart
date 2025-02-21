@@ -46,38 +46,35 @@ class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(let<int, String>(DateTime.now().hour, (hour) => hour >= 6 && hour < 12 ? '¡Buenos Días!,' : (hour >= 12 && hour < 19 ? '¡Buenas Tardes!,' : '¡Buenas Noches!,')) ?? '¡Te damos la Bienvenida!,',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Skeletonizer(
-              enabled: widget.estudiante == null,
-              child: Text(widget.estudiante?.primerNombre ?? "John Doe",
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        GestureDetector(
-          onTap: _startAnimation,
-          child: AnimatedBuilder(
-            animation: _animation,
-            child: const Text("👋", style: TextStyle(fontSize: 40)),
-            builder: (context, child) => Transform.rotate(
-              angle: _animation.value,
-              child: child,
+  Widget build(BuildContext context) => Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(let<int, String>(DateTime.now().hour, (hour) => hour >= 6 && hour < 12 ? '¡Buenos Días!,' : (hour >= 12 && hour < 19 ? '¡Buenas Tardes!,' : '¡Buenas Noches!,')) ?? '¡Te damos la Bienvenida!,',
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
+          ),
+          Skeletonizer(
+            enabled: widget.estudiante == null,
+            child: Text(widget.estudiante?.primerNombre ?? "John Doe",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
             ),
           ),
+        ],
+      ),
+      const Spacer(),
+      GestureDetector(
+        onTap: _startAnimation,
+        child: AnimatedBuilder(
+          animation: _animation,
+          child: const Text("👋", style: TextStyle(fontSize: 40)),
+          builder: (context, child) => Transform.rotate(
+            angle: _animation.value,
+            child: child,
+          ),
         ),
-      ],
-    ),
+      ),
+    ],
   );
 }

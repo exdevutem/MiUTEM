@@ -11,6 +11,9 @@ class AppTheme {
   static Color get white => const Color(0xFFFAFAFA);
   static Color get black => const Color(0xFF333333);
 
+  static Color get scaffoldBackgroundColor => white;
+  static Color get scaffoldBackgroundColorDark => const Color(0xFF1D1B20);
+
   static Color get lightGrey => const Color(0xFFBBBBBB);
   static Color get darkLightGrey => const Color(0xFF474747);
 
@@ -79,7 +82,12 @@ class AppTheme {
     ),
 
     /// Fondo de la aplicación
-    scaffoldBackgroundColor: white,
+    scaffoldBackgroundColor: scaffoldBackgroundColor,
+
+    /// Tema de las tarjetas
+    cardTheme: CardTheme(
+      color: scaffoldBackgroundColor,
+    ),
 
     /// Tema de la barra de navegación
     navigationBarTheme: navigationBarTheme(context).copyWith(
@@ -129,18 +137,23 @@ class AppTheme {
     ),
 
     /// Fondo de la aplicación
-    scaffoldBackgroundColor: const Color(0xFF1D1B20),
+    scaffoldBackgroundColor: scaffoldBackgroundColorDark,
+
+    /// Tema de las tarjetas
+    cardTheme: CardTheme(
+      color: scaffoldBackgroundColorDark,
+    ),
 
     /// Tema de la barra de navegación
     navigationBarTheme: navigationBarTheme(context).copyWith(
       indicatorColor: primary.withOpacity(.9),
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: black.withOpacity(.1),
       iconTheme: WidgetStateProperty.all(IconThemeData(color: white)),
     ),
 
     /// Tema de la barra superior
     appBarTheme: AppBarTheme.of(context).copyWith(
-      backgroundColor: const Color(0xFF1D1B20),
+      backgroundColor: scaffoldBackgroundColorDark,
       systemOverlayStyle: SystemUiOverlayStyle.light.copyWith(
         statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
@@ -163,7 +176,7 @@ class AppTheme {
     ),
 
     /// Tema de la decoración de los inputs
-    inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: const Color(0xFF1D1B20)),
+    inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: scaffoldBackgroundColorDark),
   );
 
   /// Obtiene el tema de los textos, incluyendo fuentes de Google Fonts.

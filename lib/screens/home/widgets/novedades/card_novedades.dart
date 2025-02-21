@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 import 'package:miutem/styles/styles.dart';
 
 class CardNovedades extends StatelessWidget {
-
   final Novedad novedad;
 
   const CardNovedades({
@@ -23,18 +22,18 @@ class CardNovedades extends StatelessWidget {
     },
     child: SizedBox(
       height: 120,
-      width: 350,
       child: Card(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        margin: const EdgeInsets.all(0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: themedColor(context, light: AppTheme.lightGrey, dark: AppTheme.darkLightGrey), width: 2),
         ),
         child: ListTile(
-          contentPadding: const EdgeInsets.all(16),
+          contentPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 10),
           title: Text(novedad.title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: AppTheme.colorScheme.primary)),
           titleAlignment: ListTileTitleAlignment.top,
-          subtitle: Text(novedad.subtitle, style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Theme.of(context).primaryTextTheme.titleMedium?.color)),
+          subtitle: Text(novedad.subtitle, style: Theme.of(context).textTheme.bodyMedium),
           leading: CircleAvatar(
             backgroundColor: AppTheme.colorScheme.primary,
             radius: 16,

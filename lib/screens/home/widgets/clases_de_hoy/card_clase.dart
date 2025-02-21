@@ -68,7 +68,6 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Card(
     elevation: 0,
-    color: MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.white : const Color(0xFF171819),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: MediaQuery.of(context).platformBrightness == Brightness.light ? AppTheme.lightGrey : AppTheme.darkLightGrey)),
     margin: const EdgeInsets.only(bottom: 10),
     child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas

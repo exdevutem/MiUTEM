@@ -11,11 +11,12 @@ class SeccionClasesDeHoy extends StatefulWidget {
   final List<BloqueHorario>? bloques;
   final void Function({bool forceRefresh}) cargarHorario;
 
-  const SeccionClasesDeHoy(
-      {super.key,
-      required this.errorAlCargarHorario,
-      required this.bloques,
-      required this.cargarHorario});
+  const SeccionClasesDeHoy({
+    super.key,
+    required this.errorAlCargarHorario,
+    required this.bloques,
+    required this.cargarHorario,
+  });
 
   @override
   State<SeccionClasesDeHoy> createState() => _SeccionClasesDeHoyState();
@@ -39,26 +40,20 @@ class _SeccionClasesDeHoyState extends State<SeccionClasesDeHoy> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
+  Widget build(BuildContext context) => Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Clases de Hoy", style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-              )),
-              Text(today,
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.normal)),
-            ],
-          ),
-          Space.xSmall,
-          ListaClases(
-              error: widget.errorAlCargarHorario,
-              bloques: widget.bloques,
-              onRefresh: () => widget.cargarHorario(forceRefresh: true)),
+          Text("Clases de Hoy", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
+          Text(today, style: Theme.of(context).textTheme.bodySmall)
         ],
-      ));
+      ),
+      Space.xSmall,
+      ListaClases(error: widget.errorAlCargarHorario,
+        bloques: widget.bloques,
+        onRefresh: () => widget.cargarHorario(forceRefresh: true),
+      ),
+    ],
+  );
 }
