@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +15,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      // Oculta la barra de estado
+      // Oculta la barra de estado,
       statusBarIconBrightness: Brightness.dark,
     ),
   );
@@ -42,11 +43,17 @@ class _MiUTEMAppState extends State<MiUTEMApp> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'Mi UTEM',
-    debugShowCheckedModeBanner: false,
-    theme: AppTheme.getTheme(context),
-    darkTheme: AppTheme.getThemeDark(context),
-    home: const Scaffold(body: BottomNavBar()),
+  Widget build(BuildContext context) => AdaptiveTheme(
+    light: AppTheme.getTheme(context),
+    dark: AppTheme.getThemeDark(context),
+    initial: AdaptiveThemeMode.light,
+    debugShowFloatingThemeButton: false,
+    builder: (theme, darkTheme) => MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Mi UTEM',
+      theme: theme,
+      darkTheme: darkTheme,
+      home: const Scaffold(body: BottomNavBar()),
+    ),
   );
 }

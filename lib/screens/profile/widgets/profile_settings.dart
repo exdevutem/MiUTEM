@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/config/user_config.dart';
@@ -21,30 +22,8 @@ class ProfileSettings extends StatelessWidget {
       Text('Pantalla', style: Theme.of(context).textTheme.bodyLarge),
       ListTile(
         title: const Text('Tema de la aplicación'),
-        subtitle: Text(_getThemeModeText(UserConfig.to.themeMode.value), style: Theme.of(context).textTheme.bodyMedium),
+        subtitle: Text(_getThemeModeText(UserConfig.to.themeMode.value)),
         onTap: () => _showThemeModeDialog(context, UserConfig.to),
-      ),
-      ListTile(
-        title: const Text('Color de la aplicación'),
-        subtitle: const Text('Selecciona el color de la aplicación'),
-        trailing: DropdownButton<ThemeMode>(
-          value: UserConfig.to.themeMode.value,
-          items: const [
-            DropdownMenuItem(
-              value: ThemeMode.system,
-              child: Text('Sistema'),
-            ),
-            DropdownMenuItem(
-              value: ThemeMode.light,
-              child: Text('Claro'),
-            ),
-            DropdownMenuItem(
-              value: ThemeMode.dark,
-              child: Text('Oscuro'),
-            ),
-          ],
-          onChanged: (newMode) => UserConfig.to.themeMode.value = newMode!,
-        ),
       ),
       Space.small,
       Text('Feedback', style: Theme.of(context).textTheme.bodyLarge),
@@ -73,14 +52,13 @@ class ProfileSettings extends StatelessWidget {
   ));
 
   // Cambia el tema del sistema
-  String _getThemeModeText(ThemeMode mode) {
+  String _getThemeModeText(AdaptiveThemeMode mode) {
     switch (mode) {
-      case ThemeMode.light:
+      case AdaptiveThemeMode.light:
         return 'Claro';
-      case ThemeMode.dark:
+      case AdaptiveThemeMode.dark:
         return 'Oscuro';
-      case ThemeMode.system:
-      default:
+      case AdaptiveThemeMode.system:
         return 'Sistema';
     }
   }
@@ -89,29 +67,26 @@ class ProfileSettings extends StatelessWidget {
   void _showThemeModeDialog(BuildContext context, UserConfig userConfig) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        final textColor = Theme.of(context).textTheme.bodySmall?.color;
-        return AlertDialog(
-          title: const Text('Seleccionar Tema'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: ThemeMode.values.map((mode) {
-              return RadioListTile<ThemeMode>(
-                title: Text(_getThemeModeText(mode),
-                    style: TextStyle(color: textColor)),
-                value: mode,
-                groupValue: userConfig.themeMode.value,
-                onChanged: (ThemeMode? value) {
-                  if (value != null) {
-                    userConfig.changeThemeMode(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-              );
-            }).toList(),
-          ),
-        );
-      },
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Seleccionar Tema'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: AdaptiveThemeMode.values.map((mode) => RadioListTile<AdaptiveThemeMode>(
+            title: Text(_getThemeModeText(mode)),
+            value: mode,
+            groupValue: userConfig.themeMode.value,
+            onChanged: (AdaptiveThemeMode? value) {
+              if (value == null) {
+                return;
+              }
+
+              userConfig.changeThemeMode(value);
+              AdaptiveTheme.of(context).setThemeMode(mode);
+              Navigator.of(context).pop();
+            },
+          )).toList(),
+        ),
+      ),
     );
   }
 }

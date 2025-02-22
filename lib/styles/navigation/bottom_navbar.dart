@@ -29,6 +29,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     bottomNavigationBar: NavigationBar(
       height: 65,
       elevation: 0,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       onDestinationSelected: (idx) => setState(() => this.idx = idx),
       selectedIndex: idx,

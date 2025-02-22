@@ -20,3 +20,6 @@ export 'package:miutem/styles/loading/progress_button.dart';
 // Navegación
 export 'package:miutem/styles/navigation/bottom_navbar.dart';
 export 'package:miutem/styles/navigation/top_navigation.dart';
+
+// Modales
+export 'package:miutem/styles/modals/modal_persona.dart';

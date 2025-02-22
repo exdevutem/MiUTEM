@@ -1,18 +1,22 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
+import 'package:miutem/core/utils/utilities.dart';
+import 'package:miutem/screens/asignaturas/asignaturas_screen.dart';
+import 'package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart';
 import 'package:miutem/screens/tasklist/task_list_screen.dart';
 import 'package:miutem/styles/loading/loading_dialog.dart';
+import 'package:miutem/styles/styles.dart';
 
 class ClassBlockCard extends StatelessWidget {
   final BloqueHorario? block;
   final double width;
   final double height;
   final double internalMargin;
-  final Color textColor;
 
   const ClassBlockCard({
     super.key,
@@ -20,7 +24,6 @@ class ClassBlockCard extends StatelessWidget {
     required this.width,
     required this.height,
     this.internalMargin = 0,
-    this.textColor = Colors.white,
   });
 
   @override
@@ -32,13 +35,29 @@ class ClassBlockCard extends StatelessWidget {
       child: block?.asignatura == null ? const SizedBox() : GestureDetector(
         onTap: () => _onTap(block!, context),
         onLongPress: () => _onLongPress(block!, context),
-        child: Container(
+        child: SizedBox(
           width: width,
           height: height,
-          color: Colors.blue, // Example color
-          child: Center(
-            child: Text(block!.asignatura!.nombre,
-              style: TextStyle(color: textColor),
+          child: ValueListenableBuilder<AdaptiveThemeMode>(
+            valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
+            builder: (ctx, mode, child) => DecoratedBox(
+              decoration: BoxDecoration(
+                color: themedColor(context, light: AppTheme.lightBlueCard, dark: AppTheme.darkBlueCard),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('${block!.asignatura!.codigo}/${block!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal)),
+                    Space.medium,
+                    Text(block!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
+                    Space.medium,
+                    Text(block!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal)),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -49,20 +68,17 @@ class ClassBlockCard extends StatelessWidget {
   _onTap(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final carrera = await Get.find<CarreraService>().getCarrera();
-    final asignatura = (await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true)).firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
+    final asignatura = (await Get.find<AsignaturasService>()
+        .getAsignaturas(forceRefresh: true))
+        .firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
     final grades = await Get.find<GradesService>().getGrades(asignatura!);
     if (carrera == null || asignatura == null) {
-      Navigator.pop(context);
+      if(context.mounted) Navigator.pop(context);
       return;
     }
 
-    // Get.find<AnalyticsService>().logEvent("horario_class_block_tap", parameters: {
-    //   "asignatura": asignatura.nombre,
-    //   "codigo": asignatura.codigo,
-    // });
-
-    Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => TaskListScreen()));
+    if(context.mounted) Navigator.pop(context);
+    // if(context.mounted) Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaScreen(asignatura)));
     // Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaDetalleScreen(
     //   carrera: carrera,
     //   asignatura: asignatura.copyWith(grades: grades),
@@ -73,21 +89,20 @@ class ClassBlockCard extends StatelessWidget {
     showLoadingDialog(context);
     final carrera = await Get.find<CarreraService>().getCarrera();
     final asignatura = (await Get.find<AsignaturasService>()
-            .getAsignaturas(forceRefresh: true))
-        .firstWhereOrNull((asignatura) =>
-            asignatura.id == block.asignatura?.id ||
-            asignatura.codigo == block.asignatura?.codigo);
+        .getAsignaturas(forceRefresh: true))
+        .firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
     if (carrera == null || asignatura == null) {
-      Navigator.pop(context);
+      if(context.mounted) Navigator.pop(context);
       return;
     }
 
-    // Get.find<AnalyticsService>().logEvent("horario_class_block_long_press", parameters: {
-    //   "asignatura": block.asignatura?.nombre,
-    //   "codigo": block.asignatura?.codigo,
-    // });
-    Navigator.pop(context);
-    /// TODO
-    // showModalBottomSheet(context: context, builder: (ctx) => AsignaturaVistaPreviaModal(asignatura: asignatura, bloque: block), shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))));
+    if(context.mounted) {
+      Navigator.pop(context);
+      showModalBottomSheet(
+        context: context,
+        builder: (ctx) => VistaPreviaAsignaturaModal(asignatura: asignatura, bloque: block),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      );
+    }
   }
 }

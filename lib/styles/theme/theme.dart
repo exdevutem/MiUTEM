@@ -14,6 +14,9 @@ class AppTheme {
   static Color get scaffoldBackgroundColor => white;
   static Color get scaffoldBackgroundColorDark => const Color(0xFF1D1B20);
 
+  static Color get popupMenuBackgroundColor => const Color(0xFFFCFCFC);
+  static Color get popupMenuBackgroundColorDark => const Color(0xFF1D1B22);
+
   static Color get lightGrey => const Color(0xFFBBBBBB);
   static Color get darkLightGrey => const Color(0xFF474747);
 
@@ -73,7 +76,7 @@ class AppTheme {
     /// Esquema de colores
     colorScheme: colorScheme,
     canvasColor: colorScheme.surface,
-    dividerColor: lightGrey,
+    dividerColor: black,
 
     /// Tema de texto
     textTheme: textTheme(context).apply(
@@ -87,6 +90,7 @@ class AppTheme {
     /// Tema de las tarjetas
     cardTheme: CardTheme(
       color: scaffoldBackgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
     ),
 
     /// Tema de la barra de navegación
@@ -119,8 +123,35 @@ class AppTheme {
       elevation: 0,
     ),
 
+    /// Tema del popup menu
+    popupMenuTheme: PopupMenuThemeData(
+      color: popupMenuBackgroundColor,
+      textStyle: GoogleFonts.inter(
+        color: black,
+        fontSize: 16,
+      ),
+    ),
+
     /// Tema de la decoración de los inputs
     inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: white),
+
+    /// Tema de la barra inferior
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: scaffoldBackgroundColor,
+    ),
+
+    /// Tema de las listas
+    listTileTheme: ListTileThemeData(
+      titleTextStyle: GoogleFonts.inter(
+        color: black,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      subtitleTextStyle: GoogleFonts.inter(
+        color: lightGrey,
+        fontSize: 15,
+      ),
+    ),
   );
 
   /// Obtiene el tema para modo oscuro
@@ -142,12 +173,13 @@ class AppTheme {
     /// Tema de las tarjetas
     cardTheme: CardTheme(
       color: scaffoldBackgroundColorDark,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
     ),
 
     /// Tema de la barra de navegación
     navigationBarTheme: navigationBarTheme(context).copyWith(
-      indicatorColor: primary.withOpacity(.9),
-      backgroundColor: black.withOpacity(.1),
+      indicatorColor: primaryDark.withAlpha(50),
+      backgroundColor: black.withAlpha(10),
       iconTheme: WidgetStateProperty.all(IconThemeData(color: white)),
     ),
 
@@ -175,8 +207,49 @@ class AppTheme {
       elevation: 0,
     ),
 
+    /// Tema del popup menu
+    popupMenuTheme: PopupMenuThemeData(
+      color: popupMenuBackgroundColorDark,
+      textStyle: GoogleFonts.inter(
+        color: white,
+        fontSize: 16,
+      ),
+    ),
+
     /// Tema de la decoración de los inputs
     inputDecorationTheme: inputDecorationTheme(context).copyWith(fillColor: scaffoldBackgroundColorDark),
+
+    /// Tema de la barra inferior
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: scaffoldBackgroundColorDark,
+    ),
+
+    /// Tema de las listas
+    listTileTheme: ListTileThemeData(
+      titleTextStyle: GoogleFonts.inter(
+        color: white,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      subtitleTextStyle: GoogleFonts.inter(
+        color: lightGrey,
+        fontSize: 15,
+      ),
+    ),
+
+    /// Tema del dialogo
+    dialogTheme: DialogTheme(
+      backgroundColor: scaffoldBackgroundColorDark,
+      titleTextStyle: GoogleFonts.inter(
+        color: white,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      contentTextStyle: GoogleFonts.inter(
+        color: white,
+        fontSize: 16,
+      ),
+    ),
   );
 
   /// Obtiene el tema de los textos, incluyendo fuentes de Google Fonts.

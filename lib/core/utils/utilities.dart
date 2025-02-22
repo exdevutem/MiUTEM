@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:miutem/core/utils/constants.dart';
 
@@ -66,4 +67,11 @@ String getToday() {
 }
 
 /// Devuelve un color dependiendo si es modo oscuro o no.
-Color themedColor(BuildContext context, {required Color light, required Color dark}) => MediaQuery.of(context).platformBrightness == Brightness.light ? light : dark;
+Color themedColor(BuildContext context, {required Color light, required Color dark}) {
+  final mode = AdaptiveTheme.of(context).mode;
+  if(mode.isSystem) {
+    return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? dark : light;
+  }
+
+  return mode.isDark ? dark : light;
+}

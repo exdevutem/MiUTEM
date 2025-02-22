@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
-import 'package:miutem/screens/horario/widgets/custom_app_bar.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 import 'package:miutem/styles/styles.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +29,12 @@ class _HorarioScreenState extends State<HorarioScreen> {
   void initState() {
     _forceRefresh = false;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    horarioController.dispose();
+    super.dispose();
   }
 
   @override
@@ -85,21 +90,33 @@ class _HorarioScreenState extends State<HorarioScreen> {
           appBar: AppBar(
             title: const Text("Horario"),
             actions: [
-              IconButton(
-                onPressed: _reloadData,
-                icon: const Icon(Icons.refresh_sharp),
-                tooltip: "Forzar actualización del horario",
+              PopupMenuButton(
+                position: PopupMenuPosition.under,
+                icon: const Icon(Icons.more_vert),
+                itemBuilder: (ctx) => [
+                  PopupMenuItem(
+                    onTap: _reloadData,
+                    child: const ListTile(
+                      leading: Icon(Icons.refresh_sharp),
+                      title: Text("Recargar"),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    onTap: () => _captureAndShareScreenshot(context, horario),
+                    child: const ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text("Compartir"),
+                    ),
+                  ),
+                  if (!horarioController.isCenteredInCurrentPeriodAndDay.value) PopupMenuItem(
+                    onTap: _moveViewportToCurrentTime,
+                    child: const ListTile(
+                      leading: Icon(Icons.center_focus_strong),
+                      title: Text("Centrar en hora actual"),
+                    ),
+                  ),
+                ],
               ),
-              Obx(() => !horarioController.isCenteredInCurrentPeriodAndDay.value ? IconButton(
-                onPressed: _moveViewportToCurrentTime,
-                icon: const Icon(Icons.center_focus_strong),
-                tooltip: "Centrar Horario En Hora Actual",
-              ) : Container()),
-              IconButton(
-                onPressed: () => _captureAndShareScreenshot(context, horario),
-                icon: const Icon(Icons.share),
-                tooltip: "Compartir Horario",
-              )
             ],
           ),
           body: SafeArea(
