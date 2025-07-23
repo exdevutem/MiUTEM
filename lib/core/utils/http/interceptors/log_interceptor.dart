@@ -13,7 +13,7 @@ InterceptorsWrapper logInterceptor = InterceptorsWrapper(
     final requestCreatedAt = DateTime.tryParse(response.requestOptions.extra["request_created_at"] as String);
     if(requestCreatedAt != null) {
       final difference = now.difference(requestCreatedAt).inMilliseconds;
-      logger.d("[HttpClient - $requestCreatedAt]: ${response.statusCode} > ${response.requestOptions.method.toUpperCase()} ${response.requestOptions.uri} ${difference}ms\nResponse: ${response.data}");
+      logger.d("[HttpClient - $requestCreatedAt]: ${response.statusCode} > ${response.requestOptions.method.toUpperCase()} ${response.requestOptions.uri} ${difference}ms${response.headers.value('content-type')?.startsWith('text/html') == true ? '' : '\nResponse: ${response.data}'}");
     }
     return handler.next(response);
   },

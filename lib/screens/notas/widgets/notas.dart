@@ -3,12 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/evaluacion/evaluacion.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/widgets/icons.dart';
-import 'package:miutem/widgets/snackbar.dart';
+import 'package:miutem/styles/styles.dart';
 
 class Notas extends StatelessWidget {
 
@@ -26,7 +22,7 @@ class Notas extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Text("Notas", style: StyleText.description),
+      Text("Notas", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 12),
       SizedBox(
         width: double.infinity,
@@ -97,7 +93,7 @@ class Notas extends StatelessWidget {
   }) => TextField(
     enabled: enabled,
     controller: controller,
-    style: StyleText.body,
+    style: Theme.of(context).textTheme.bodyMedium,
     decoration: InputDecoration(
       hintText: hintText ?? "--",
       filled: true,

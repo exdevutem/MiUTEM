@@ -3,6 +3,8 @@ import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/card_asignatura.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
+const defaultCard = CardAsignatura(tipo: "Club", nombre: "Desarrollo Experimental", codigo: "Dart");
+
 class ListaAsignaturas extends StatelessWidget {
 
   final List<Asignatura>? asignaturas;
@@ -14,7 +16,7 @@ class ListaAsignaturas extends StatelessWidget {
     enabled: true,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.filled(5, const CardAsignatura(tipo: "Club", nombre: "Desarrollo Experimental", codigo: "Dart")),
+      children: List.filled(5, defaultCard),
     ),
   ) : Skeletonizer(
     enabled: asignaturas == null,
@@ -24,7 +26,7 @@ class ListaAsignaturas extends StatelessWidget {
         tipo: asignatura.tipoHora,
         nombre: asignatura.nombre,
         codigo: asignatura.codigo,
-      )).toList() ?? List.filled(6, const CardAsignatura(tipo: "Club", nombre: "Desarrollo Experimental", codigo: "Dart")),
+      )).toList() ?? List.filled(6, defaultCard),
     ),
   );
 }

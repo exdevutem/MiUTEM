@@ -25,9 +25,9 @@ class CardAsignatura extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(tipo, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-              Text(nombre, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-              Text(codigo, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
+              Text(tipo, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500)),
+              Text(nombre, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
+              Text(codigo, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w400)),
             ],
           ),
         ),

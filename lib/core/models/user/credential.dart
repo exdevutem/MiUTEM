@@ -17,7 +17,7 @@ class Credentials {
   @override
   String toString() => jsonEncode(toJson());
 
-  String toFormUrlEncoded() => 'username=${Uri.encodeFull(username)}&password=${Uri.encodeFull(password)}';
+  String toFormUrlEncoded() => 'username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}';
   
   factory Credentials.fromJson(Map<String, dynamic> json) => Credentials(
     username: json['username'] as String,

@@ -29,7 +29,7 @@ class HorarioMainScroller extends StatefulWidget {
   });
 
   @override
-  _HorarioMainScrollerState createState() => _HorarioMainScrollerState();
+  HorarioMainScrollerState createState() => HorarioMainScrollerState();
 
   static double get daysWidth => dayWidth * Get.find<HorarioController>().daysCount;
   static double get periodsHeight => periodHeight * Get.find<HorarioController>().periodsCount;
@@ -37,13 +37,12 @@ class HorarioMainScroller extends StatefulWidget {
   static double get totalWidth => daysWidth + periodWidth;
   static double get totalHeight => periodsHeight + dayHeight;
 
-  /// TODO AQUI QUEDE 09/11/2024 GGONU20
   Widget get _horarioBlocksContent => HorarioBlocksContent(horario: horario, blockHeight: blockHeight, blockWidth: blockWidth, blockInternalMargin: blockInternalMargin);
   Widget get _horarioDaysHeader => HorarioDaysHeader(horario: horario, height: dayHeight, dayWidth: dayWidth, showActiveDay: showActive);
   Widget get _horarioPeriodsHeader => HorarioPeriodsHeader(horario: horario, width: periodWidth, periodHeight: periodHeight, showActivePeriod: showActive);
-  Widget get _horarioCorner => HorarioCorner(height: dayHeight, width: periodWidth);
-  Widget get basicHorario => Container(
-    color: Colors.white,
+  Widget get _horarioCorner => const HorarioCorner(height: dayHeight, width: periodWidth);
+  Widget basicHorario(BuildContext context) => Container(
+    color: Theme.of(context).scaffoldBackgroundColor,
     child: Column(
       children: [
         Row(children: [
@@ -59,7 +58,7 @@ class HorarioMainScroller extends StatefulWidget {
   );
 }
 
-class _HorarioMainScrollerState extends State<HorarioMainScroller> {
+class HorarioMainScrollerState extends State<HorarioMainScroller> {
 
   final controller = Get.find<HorarioController>();
 
@@ -77,7 +76,7 @@ class _HorarioMainScrollerState extends State<HorarioMainScroller> {
 
   @override
   Widget build(BuildContext context) => Obx(() => Container(
-    color: Colors.white,
+    color: Theme.of(context).scaffoldBackgroundColor,
     child: Stack(
       children: [
         /* Bloques del Horario */
@@ -123,7 +122,7 @@ class _HorarioMainScrollerState extends State<HorarioMainScroller> {
           )),
         ),
         /* Esquina del Horario */
-        Container(
+        SizedBox(
           width: HorarioMainScroller.periodWidth,
           height: HorarioMainScroller.dayHeight,
           child: ClipRect(child: InteractiveViewer(
@@ -161,7 +160,7 @@ class _HorarioMainScrollerState extends State<HorarioMainScroller> {
                   widget._horarioPeriodsHeader,
                   HorarioIndicator(
                     maxWidth: HorarioMainScroller.daysWidth,
-                    initialMargin: EdgeInsets.only(
+                    initialMargin: const EdgeInsets.only(
                       top: HorarioMainScroller.dayHeight,
                       left: HorarioMainScroller.periodWidth,
                     ),

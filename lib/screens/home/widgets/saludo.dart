@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/utils/style_text.dart';
+import 'package:miutem/core/services/mi_utem/miutem_auth_service.dart';
+import 'package:miutem/core/services/mi_utem/miutem_credencial_service.dart';
+import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
 import 'package:miutem/core/utils/utils.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Saludo extends StatefulWidget {
@@ -50,12 +53,12 @@ class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(let<int, String>(DateTime.now().hour, (hour) => hour >= 6 && hour < 12 ? '¡Buenos Días!,' : (hour >= 12 && hour < 19 ? '¡Buenas Tardes!,' : '¡Buenas Noches!,')) ?? '¡Te damos la Bienvenida!,',
-            style: StyleText.headline,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
           ),
           Skeletonizer(
             enabled: widget.estudiante == null,
             child: Text(widget.estudiante?.primerNombre ?? "John Doe",
-              style: StyleText.headline,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
             ),
           ),
         ],
@@ -66,12 +69,10 @@ class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
         child: AnimatedBuilder(
           animation: _animation,
           child: const Text("👋", style: TextStyle(fontSize: 40)),
-          builder: (context, child) {
-            return Transform.rotate(
-              angle: _animation.value,
-              child: child,
-            );
-          },
+          builder: (context, child) => Transform.rotate(
+            angle: _animation.value,
+            child: child,
+          ),
         ),
       ),
     ],

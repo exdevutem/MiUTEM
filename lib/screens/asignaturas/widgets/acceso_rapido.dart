@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:miutem/screens/asignaturas/widgets/actions/acceso_rapido.dart';
-import 'package:miutem/widgets/cards/card_acceso_rapido.dart';
-import 'package:miutem/widgets/icons.dart';
 
 class AccesoRapido extends StatelessWidget {
   const AccesoRapido({super.key});
@@ -12,7 +9,7 @@ class AccesoRapido extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("Accesos rápidos", style: StyleText.description),
+      Text("Accesos rápidos", style: Theme.of(context).textTheme.bodyLarge),
       const SizedBox(height: 10),
       SizedBox(
         height: 130,
@@ -25,7 +22,7 @@ class AccesoRapido extends StatelessWidget {
               colorDark: AppTheme.darkBlueCard,
               label: 'Horario',
               icon: AppIcons.timetable,
-              onTap: () => {},
+              onTap: () => visitarHorario(context),
             ),
             const SizedBox(width: 10),
             CardAccesoRapido(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miutem/styles/styles.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/notas/widgets/nota_examen.dart';
 import 'package:miutem/screens/notas/widgets/nota_presentacion.dart';
@@ -21,7 +20,7 @@ class Promedio extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.max,
     children: [
-      Text("Promedio", style: StyleText.description),
+      Text("Promedio", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 5),
       SizedBox(
         width: double.infinity,
@@ -47,7 +46,7 @@ class Promedio extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("Presentación", style: StyleText.description),
+                          Text("Presentación", style: Theme.of(context).textTheme.bodyMedium),
                           const Spacer(),
                           NotaPresentacion(notasController: notasController),
                         ],
@@ -55,7 +54,7 @@ class Promedio extends StatelessWidget {
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          Text("Examen", style: StyleText.description),
+                          Text("Examen", style: Theme.of(context).textTheme.bodyMedium),
                           const Spacer(),
                           NotaExamen(notasController: notasController),
                         ],

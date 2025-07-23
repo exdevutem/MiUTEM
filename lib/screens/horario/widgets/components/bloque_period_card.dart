@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/styles/styles.dart';
 
 class BloquePeriodoCard extends StatelessWidget {
   final String? inicio;
@@ -8,7 +8,6 @@ class BloquePeriodoCard extends StatelessWidget {
   final double height;
   final double width;
   final bool active;
-  final Color backgroundColor;
 
   const BloquePeriodoCard({
     super.key,
@@ -17,13 +16,12 @@ class BloquePeriodoCard extends StatelessWidget {
     required this.fin,
     required this.height,
     required this.width,
-    this.backgroundColor = AppTheme.greyligth,
     this.active = false,
   });
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(color: backgroundColor),
+    decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
     height: height,
     width: width,
     child: Column(
@@ -32,7 +30,6 @@ class BloquePeriodoCard extends StatelessWidget {
         Text(inicio!,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.black54,
             fontSize: 18,
             fontWeight: active ? FontWeight.bold : FontWeight.normal,
           ),
@@ -43,7 +40,6 @@ class BloquePeriodoCard extends StatelessWidget {
           style: TextStyle(
             letterSpacing: 0.5,
             wordSpacing: 1,
-            color: Colors.black54,
             fontSize: 14,
             fontWeight: active ? FontWeight.bold : FontWeight.normal,
           ),
@@ -51,7 +47,6 @@ class BloquePeriodoCard extends StatelessWidget {
         Text(fin!,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.black54,
             fontSize: 18,
             fontWeight: active ? FontWeight.bold : FontWeight.normal,
           ),

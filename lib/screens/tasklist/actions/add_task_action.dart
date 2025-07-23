@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/repositories/tasks_repository.dart';
+import 'package:miutem/core/models/Task/task.dart';
+import 'package:miutem/screens/tasklist/components/components.dart';
+import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
-import '../models/task_model.dart';
-import '../widgets/add_task_screen.dart';
-
-Future<void> addTask(BuildContext context, Function() onFinish) async {
-  final result = await showDialog<Task>(context: context, builder: (BuildContext context) => const AddTaskScreen());
+Future<void> addTask(BuildContext context, List<String> categorys, Function() onFinish) async {
+  final result = await showDialog<Task>(context: context, builder: (BuildContext context) =>  AddTaskScreen(categorys: categorys));
 
   if(result == null) {
     return;
   }
 
-  final tasksRepository = Get.find<TasksRepository>();
-  final tasks = await tasksRepository.getTaskLists();
-  await tasksRepository.saveTaskLists([...tasks, result.toJson()]);
+  // Insert the new task into the database
+  /// TODO A LO MEJOR ESTO DEBERIA ESTAR DENTRO DE UN CONTROLLER
+  await DatabaseHelper().insertTask(result);
+
   onFinish();
 }

@@ -3,6 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  awesome_notifications
+  awesome_notifications_core
+  file_saver
   flutter_secure_storage_linux
   url_launcher_linux
 )

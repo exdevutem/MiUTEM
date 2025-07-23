@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/styles/styles.dart';
 
 class HorarioCorner extends StatelessWidget {
   final double height;
   final double width;
-  final Color backgroundColor;
 
   const HorarioCorner({
-    Key? key,
+    super.key,
     required this.height,
     required this.width,
-    this.backgroundColor = AppTheme.greyligth,
   });
 
   @override
@@ -18,7 +16,7 @@ class HorarioCorner extends StatelessWidget {
     defaultColumnWidth: FixedColumnWidth(width),
     border: TableBorder(
       right: BorderSide(
-        color: Color(0xFFBDBDBD),
+        color: Theme.of(context).dividerColor,
         style: BorderStyle.solid,
         width: 2,
       ),
@@ -29,7 +27,7 @@ class HorarioCorner extends StatelessWidget {
           Container(
             height: height,
             width: width,
-            color: backgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor,
           ),
         ],
       ),

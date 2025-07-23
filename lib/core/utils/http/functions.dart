@@ -43,12 +43,12 @@ Future<Response> sigaClientRequest(String path, {
     }
 
     return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
-      data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&"),
+      data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&"),
       queryParameters: queryParameters,
       options: options ?? buildCacheOptions(ttl,
         forceRefresh: forceRefresh,
         primaryKey: 'api_siga.miutem',
-        subKey: base64Encode(utf8.encode("$path/${params.entries.map((e) => "${e.key}=${Uri.encodeFull(e.value)}").join("&")}")),
+        subKey: base64Encode(utf8.encode("$path/${params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&")}")),
         maxStale: const Duration(days: 14),
         options: (options ?? Options()).copyWith(
           method: method,

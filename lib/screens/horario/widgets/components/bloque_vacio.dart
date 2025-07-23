@@ -1,6 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/theme.dart';
+import 'package:miutem/styles/styles.dart';
 
 class BloqueVacio extends StatelessWidget {
   const BloqueVacio({super.key});

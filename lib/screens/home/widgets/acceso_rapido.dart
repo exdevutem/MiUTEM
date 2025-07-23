@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/style_text.dart';
-import 'package:miutem/core/utils/theme.dart';
 import 'package:miutem/screens/home/actions/acceso_rapido.dart';
-import 'package:miutem/widgets/cards/card_acceso_rapido.dart';
-import 'package:miutem/widgets/icons.dart';
+import 'package:miutem/styles/styles.dart';
 
 class AccesoRapido extends StatelessWidget {
-
   const AccesoRapido({super.key});
 
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("¿Que quieres hacer hoy?", style: StyleText.description),
-      const SizedBox(height: 10),
+      Text("¿Que quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
+      Space.xSmall,
       SizedBox(
         height: 130,
         child: ListView(
@@ -28,7 +24,7 @@ class AccesoRapido extends StatelessWidget {
               icon: AppIcons.timetable,
               onTap: () => visitarHorario(context),
             ),
-            const SizedBox(width: 10), // Add space between cards
+            const SizedBox(width: 8),
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,
@@ -37,7 +33,7 @@ class AccesoRapido extends StatelessWidget {
               fill: 0,
               onTap: () => visitarNotas(context),
             ),
-            const SizedBox(width: 10), // Add space between cards
+            const SizedBox(width: 8),
             CardAccesoRapido(
               color: AppTheme.lightGreenCard,
               colorDark: AppTheme.darkGreenCard,
