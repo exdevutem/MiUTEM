@@ -76,7 +76,7 @@ class _NotasScreenState extends State<NotasScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(widget.asignatura == null) SelectorAsignatura(asignatura: asignatura, asignaturas: asignaturas, onChanged: (Asignatura? asignatura) {
+            if (widget.asignatura == null) SelectorAsignatura(asignatura: asignatura, asignaturas: asignaturas, onChanged: (Asignatura? asignatura) {
               notasController.updateWithGrades(asignatura?.grades);
               setState(() => this.asignatura = asignatura);
             }),
