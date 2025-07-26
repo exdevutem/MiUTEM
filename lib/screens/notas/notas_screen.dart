@@ -37,7 +37,7 @@ class _NotasScreenState extends State<NotasScreen> {
   void initState() {
     super.initState();
 
-    if(widget.asignatura != null) {
+    if (widget.asignatura != null) {
       if(!mounted) return;
       setState(() {
         asignatura = widget.asignatura;
