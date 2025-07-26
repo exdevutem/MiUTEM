@@ -44,9 +44,7 @@ class ProfileSettings extends StatelessWidget {
       ListTile(
         title: const Text('Sugerencias'),
         subtitle: const Text('Déjanos tus opiniones sobre la App'),
-        onTap: () => {
-
-        },
+        onTap: () {},
       ),
       ListTile(
         title: const Text('Desarrolladores de la App'),
