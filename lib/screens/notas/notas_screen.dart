@@ -38,7 +38,7 @@ class _NotasScreenState extends State<NotasScreen> {
     super.initState();
 
     if (widget.asignatura != null) {
-      if(!mounted) return;
+      if (!mounted) return;
       setState(() {
         asignatura = widget.asignatura;
         notasController.updateWithGrades(asignatura?.grades);
