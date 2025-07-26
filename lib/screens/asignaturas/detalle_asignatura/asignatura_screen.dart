@@ -28,7 +28,7 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
     asignatura = widget.asignatura;
     super.initState();
     cargarAsignaturaConNotas(asignatura: widget.asignatura).then((asignatura) => setState(() => this.asignatura = asignatura)).catchError((error) {
-      if(mounted) showErrorSnackbar(context, "Error al cargar las notas");
+      if (mounted) showErrorSnackbar(context, "Error al cargar las notas");
     });
   }
 
