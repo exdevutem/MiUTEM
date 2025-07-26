@@ -19,9 +19,9 @@ class ProfileSettings extends StatelessWidget {
         onChanged: (value) async {
           await UserConfig.to.toggleNotifications();
 
-          if(value) {
+          if (value) {
             // Se habilitan las notificaciones, si no hay permisos, se solicita
-            if(context.mounted) showTextSnackbar(context, title: 'Notificaciones', message: 'Se han habilitado las notificaciones de la aplicación');
+            if (context.mounted) showTextSnackbar(context, title: 'Notificaciones', message: 'Se han habilitado las notificaciones de la aplicación');
           }
         },
       ),
