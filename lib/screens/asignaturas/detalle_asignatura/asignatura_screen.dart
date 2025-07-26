@@ -40,8 +40,8 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
       child: RefreshIndicator(
         onRefresh: () async {
           try {
-            final asignatura = await cargarAsignaturaConNotas(asignatura: widget.asignatura);
-            if (context.mounted) setState(() => this.asignatura = asignatura);
+            final updatedAsignatura = await cargarAsignaturaConNotas(asignatura: widget.asignatura);
+            if (context.mounted) setState(() => this.asignatura = updatedAsignatura);
           } catch (error) {
             if (context.mounted) showErrorSnackbar(context, "Error al recargar las notas");
           }
