@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/styles/styles.dart';
+import 'package:miutem/widgets/feature_flag.dart';
 
 class ProfileSettings extends StatelessWidget {
   const ProfileSettings({super.key});
@@ -12,7 +13,7 @@ class ProfileSettings extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text('Sistema', style: Theme.of(context).textTheme.bodyLarge),
-      SwitchListTile(
+      FeatureFlag('perfil.notificaciones', child: SwitchListTile(
         title: const Text('Habilitar Notificaciones'),
         subtitle: const Text('Recibir notificaciones de la aplicación'),
         value: UserConfig.to.notificationsEnabled.value,
@@ -24,7 +25,7 @@ class ProfileSettings extends StatelessWidget {
             if (context.mounted) showTextSnackbar(context, title: 'Notificaciones', message: 'Se han habilitado las notificaciones de la aplicación');
           }
         },
-      ),
+      )),
       Space.small,
       Text('Pantalla', style: Theme.of(context).textTheme.bodyLarge),
       ListTile(
@@ -34,25 +35,25 @@ class ProfileSettings extends StatelessWidget {
       ),
       Space.small,
       Text('Feedback', style: Theme.of(context).textTheme.bodyLarge),
-      ListTile(
+      FeatureFlag('perfil.bug_report', child: ListTile(
         title: const Text('Reportar un Bug'),
         subtitle: const Text('Reportar un bug en la aplicación'),
         onTap: () {
           // Implementar lógica para reportar un bug
         },
-      ),
-      ListTile(
+      )),
+      FeatureFlag('perfil.feedback_report', child: ListTile(
         title: const Text('Sugerencias'),
         subtitle: const Text('Déjanos tus opiniones sobre la App'),
         onTap: () {},
-      ),
-      ListTile(
+      )),
+      FeatureFlag('perfil.desarrolladores', child: ListTile(
         title: const Text('Desarrolladores de la App'),
         subtitle: const Text('Vé al equipo que desarrolla Mi UTEM'),
         onTap: () {
           // Implementar lógica para ver los desarrolladores de la app
         },
-      ),
+      )),
     ],
   ));
 
