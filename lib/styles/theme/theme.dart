@@ -88,7 +88,7 @@ class AppTheme {
     scaffoldBackgroundColor: scaffoldBackgroundColor,
 
     /// Tema de las tarjetas
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
     ),
@@ -171,7 +171,7 @@ class AppTheme {
     scaffoldBackgroundColor: scaffoldBackgroundColorDark,
 
     /// Tema de las tarjetas
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: scaffoldBackgroundColorDark,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
     ),
@@ -238,7 +238,7 @@ class AppTheme {
     ),
 
     /// Tema del dialogo
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: scaffoldBackgroundColorDark,
       titleTextStyle: GoogleFonts.inter(
         color: white,

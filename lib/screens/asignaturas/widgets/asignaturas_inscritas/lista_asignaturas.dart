@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
+import 'package:miutem/screens/asignaturas/detalle_asignatura/asignatura_screen.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/card_asignatura.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -26,6 +27,7 @@ class ListaAsignaturas extends StatelessWidget {
         tipo: asignatura.tipoHora,
         nombre: asignatura.nombre,
         codigo: asignatura.codigo,
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AsignaturaScreen(asignatura: asignatura))),
       )).toList() ?? List.filled(6, defaultCard),
     ),
   );

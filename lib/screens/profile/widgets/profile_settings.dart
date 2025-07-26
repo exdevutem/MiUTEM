@@ -16,7 +16,14 @@ class ProfileSettings extends StatelessWidget {
         title: const Text('Habilitar Notificaciones'),
         subtitle: const Text('Recibir notificaciones de la aplicación'),
         value: UserConfig.to.notificationsEnabled.value,
-        onChanged: (value) => UserConfig.to.toggleNotifications(),
+        onChanged: (value) async {
+          await UserConfig.to.toggleNotifications();
+
+          if(value) {
+            // Se habilitan las notificaciones, si no hay permisos, se solicita
+            if(context.mounted) showTextSnackbar(context, title: 'Notificaciones', message: 'Se han habilitado las notificaciones de la aplicación');
+          }
+        },
       ),
       Space.small,
       Text('Pantalla', style: Theme.of(context).textTheme.bodyLarge),
@@ -37,8 +44,8 @@ class ProfileSettings extends StatelessWidget {
       ListTile(
         title: const Text('Sugerencias'),
         subtitle: const Text('Déjanos tus opiniones sobre la App'),
-        onTap: () {
-          // Implementar lógica para sugerencias
+        onTap: () => {
+
         },
       ),
       ListTile(
