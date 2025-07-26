@@ -33,6 +33,8 @@ class LoginFormFields extends StatelessWidget {
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.password),
         ),
+        autofillHints: const [AutofillHints.password],
+        textInputAction: TextInputAction.go,
         focusNode: passwordFocus,
         obscureText: true,
         obscuringCharacter: '•',

@@ -6,7 +6,7 @@ import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/screens/asignaturas/asignaturas_screen.dart';
+import 'package:miutem/screens/asignaturas/lista_asignaturas_screen.dart';
 import 'package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart';
 import 'package:miutem/screens/tasklist/task_list_screen.dart';
 import 'package:miutem/styles/loading/loading_dialog.dart';

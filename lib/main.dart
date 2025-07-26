@@ -19,7 +19,7 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  
+
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   runApp(const MiUTEMApp());
@@ -38,7 +38,7 @@ class _MiUTEMAppState extends State<MiUTEMApp> {
   void initState() {
     isOffline().then((isOffline) => Preferencia.isOffline.set(isOffline ? 'true' : 'false'), onError: (err) => Preferencia.isOffline.set('true'));
     NotificationController.checkAndRequestNotificationPermissions();
-    
+
     super.initState();
   }
 
