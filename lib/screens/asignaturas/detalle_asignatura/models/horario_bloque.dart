@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class HorarioBloque {
   final String dia;
   final String horaInicio;
@@ -12,4 +14,13 @@ class HorarioBloque {
     required this.nombreAsignatura,
     required this.sala,
   });
+
+  toJson() => {
+    'dia': dia,
+    'horaInicio': horaInicio,
+    'horaFin': horaFin,
+    'nombreAsignatura': nombreAsignatura,
+    'sala': sala,
+  };
+
 }

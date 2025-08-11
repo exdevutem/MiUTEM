@@ -50,3 +50,7 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 linux/flutter/*
 macos/Flutter/*
+
+# env
+.env*
+!.env.example

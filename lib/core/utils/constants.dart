@@ -6,9 +6,9 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final apiUrl = !kDebugMode ? 'https://api.exdev.cl' : (dotenv.env['MI_UTEM_API_DEBUG'] ?? 'https://api.exdev.cl');
-const sigaHost = 'https://siga.utem.cl';
+final sigaHost = !kDebugMode ? 'https://siga.utem.cl' : (dotenv.env['MI_UTEM_SIGA_DEBUG'] ?? 'https://siga.utem.cl');
 const miUtemHost = 'https://mi.utem.cl';
-const sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
+final sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
 
 const genericUserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15';
 

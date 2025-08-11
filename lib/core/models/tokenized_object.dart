@@ -3,6 +3,7 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 mixin TokenizedObject {
 
   String get token;
+  bool get ignoreTokenExpiration;
 
   JWT? decodeToken() => JWT.tryDecode(token);
 

@@ -10,6 +10,9 @@ class Estudiante extends PersonaUtem with TokenizedObject {
   @override
   final String token;
 
+  @override
+  final bool ignoreTokenExpiration;
+
   final String correoPersonal;
   final List<Perfil> perfiles;
 
@@ -21,6 +24,7 @@ class Estudiante extends PersonaUtem with TokenizedObject {
     required this.correoPersonal,
     required super.fotoUrl,
     required this.perfiles,
+    this.ignoreTokenExpiration = false,
   });
 
   factory Estudiante.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,7 @@ class Estudiante extends PersonaUtem with TokenizedObject {
       correoUtem: datosPersona['correo_utem'],
       fotoUrl: datosPersona['foto'],
       perfiles: Perfil.values.where((perfil) => (datosPersona['perfiles'] as List).map((perfil) => (perfil as String).toLowerCase()).contains(perfil.name)).toList(),
+      ignoreTokenExpiration: json['ignore_token_expiration'] ?? false,
     );
   }
 

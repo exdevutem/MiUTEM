@@ -9,16 +9,7 @@ class CardHorario extends StatelessWidget {
     required this.bloque,
   });
 
-  String formatTime(String time) {
-    final parts = time.split(':');
-    final hours = parts[0].padLeft(2, '0');
-    final minutes = parts[1].padLeft(2, '0');
-    return '$hours:$minutes';
-  }
-
-  String _capitalizeDia(String dia) {
-    return dia[0].toUpperCase() + dia.substring(1).toLowerCase();
-  }
+  String _capitalizeDia(String dia) => dia[0].toUpperCase() + dia.substring(1).toLowerCase();
 
   @override
   Widget build(BuildContext context) => Card(
@@ -51,15 +42,13 @@ class CardHorario extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      formatTime(bloque.horaInicio),
+                    Text(bloque.horaInicio.trim(),
                       style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 18,
                       ),
                     ),
-                    Text(
-                      formatTime(bloque.horaFin),
+                    Text(bloque.horaFin.trim(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
@@ -78,17 +67,17 @@ class CardHorario extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    _capitalizeDia(bloque.dia),
+                    _capitalizeDia(bloque.nombreAsignatura),
                     style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    bloque.nombreAsignatura,
+                    bloque.dia,
                     style: const TextStyle(
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w300,
                       fontSize: 14,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -96,7 +85,7 @@ class CardHorario extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Icon(Icons.location_on, size: 16),
+                      const Icon(Icons.location_on_outlined, size: 16),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(

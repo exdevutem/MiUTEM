@@ -25,7 +25,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
   @override
   void initState() {
     super.initState();
-    _logger.d("ProfileHeader initialized");
     _loadData();
   }
 
@@ -46,7 +45,6 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         }
       } catch (e) {
         _logger.e('Error loading carrera: $e');
-       
       }
     }
   }
