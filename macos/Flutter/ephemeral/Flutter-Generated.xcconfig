@@ -1,13 +1,13 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/fran/.sdk/flutter
-FLUTTER_APPLICATION_PATH=/Users/fran/Development/Apps/miutem
+FLUTTER_ROOT=/opt/homebrew/share/flutter
+FLUTTER_APPLICATION_PATH=/Users/fran/Development/exdevutem/miutem
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=/Users/fran/Development/Apps/miutem/lib/main.dart
+FLUTTER_TARGET=/Users/fran/Development/exdevutem/miutem/lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=3.0.0
 FLUTTER_BUILD_NUMBER=142
-DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9WRVJTSU9OPTMuMzIuNg==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MDc3YjRhNGNlMQ==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NzJmMmIxOGJiMA==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My44LjE=
+DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9WRVJTSU9OPTMuMzguNQ==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049ZjZmZjE1MjlmZA==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049MTUyN2FlMGVjNQ==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMC40
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/fran/Development/Apps/miutem/.dart_tool/package_config.json
+PACKAGE_CONFIG=/Users/fran/Development/exdevutem/miutem/.dart_tool/package_config.json
