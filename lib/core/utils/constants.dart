@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final apiUrl = !kDebugMode ? 'https://api.exdev.cl' : (dotenv.env['MI_UTEM_API_DEBUG'] ?? 'https://api.exdev.cl');
-final sigaHost = !kDebugMode ? 'https://siga.utem.cl' : (dotenv.env['MI_UTEM_SIGA_DEBUG'] ?? 'https://siga.utem.cl');
+final apiUrl = dotenv.env['EXDEV_API_ENDPOINT'] ?? 'https://api.exdev.cl';
+final sigaHost = dotenv.env['SIGA_ENDPOINT'] ?? 'https://siga.utem.cl';
 const miUtemHost = 'https://mi.utem.cl';
 final sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
 
