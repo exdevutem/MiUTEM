@@ -155,8 +155,11 @@ class _HorarioScreenState extends State<HorarioScreen> {
         ext: 'png',
         mimeType: MimeType.png,
       );
-      if(context.mounted) Navigator.pop(context);
-
+      // Mostrar toast de éxito
+      if(context.mounted) {
+        Navigator.pop(context);
+        showTextSnackbar(context, title: "Horario guardado", message: "El horario se ha guardado correctamente en tu carpeta de descargas.");
+      }
     } else {
       final directory = await getApplicationDocumentsDirectory();
       final imagePath = await File('${directory.path}/horario.png').create();

@@ -68,7 +68,14 @@ String getToday() {
 
 /// Devuelve un color dependiendo si es modo oscuro o no.
 Color themedColor(BuildContext context, {required Color light, required Color dark}) {
-  final mode = AdaptiveTheme.of(context).mode;
+  final adaptiveTheme = AdaptiveTheme.maybeOf(context);
+
+  // Si AdaptiveTheme no está disponible, usar el brillo del sistema
+  if (adaptiveTheme == null) {
+    return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? dark : light;
+  }
+
+  final mode = adaptiveTheme.mode;
   if(mode.isSystem) {
     return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? dark : light;
   }
