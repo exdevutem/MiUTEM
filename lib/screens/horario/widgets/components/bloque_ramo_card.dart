@@ -3,13 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
-import 'package:miutem/core/services/carrera_service.dart';
-import 'package:miutem/core/services/grades_service.dart';
+import 'package:miutem/core/services/controllers/horario_controller.dart';
 import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/screens/asignaturas/lista_asignaturas_screen.dart';
 import 'package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart';
-import 'package:miutem/screens/tasklist/task_list_screen.dart';
-import 'package:miutem/styles/loading/loading_dialog.dart';
 import 'package:miutem/styles/styles.dart';
 
 class ClassBlockCard extends StatelessWidget {
@@ -46,10 +42,13 @@ class ClassBlockCard extends StatelessWidget {
 
   Widget _buildBlockContent(BuildContext context) {
     final adaptiveTheme = AdaptiveTheme.maybeOf(context);
+    final colorData = Get.find<HorarioController>().getColorWithContrast(block?.asignatura);
+    final backgroundColor = colorData?.background ?? themedColor(context, light: AppTheme.lightBlueCard, dark: AppTheme.darkBlueCard);
+    final textColor = colorData?.text ?? Theme.of(context).textTheme.bodyMedium?.color;
 
     final content = DecoratedBox(
       decoration: BoxDecoration(
-        color: themedColor(context, light: AppTheme.lightBlueCard, dark: AppTheme.darkBlueCard),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Center(
@@ -57,11 +56,11 @@ class ClassBlockCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('${block!.asignatura!.codigo}/${block!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal)),
+            Text('${block!.asignatura!.codigo}/${block!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
             Space.medium,
-            Text(block!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
+            Text(block!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700, color: textColor), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
             Space.medium,
-            Text(block!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal)),
+            Text(block!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
           ],
         ),
       ),

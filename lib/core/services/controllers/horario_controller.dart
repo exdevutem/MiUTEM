@@ -11,7 +11,51 @@ import 'package:vector_math/vector_math_64.dart' as vector;
 
 class HorarioController {
   final _storage = GetStorage();
-  final _randomColors = Colors.primaries.toList()..shuffle();
+
+  /// Lista de colores pastel de Material Design para las tarjetas de clases
+  static final List<Color> _pastelColors = [
+    // Material 100
+    const Color(0xFFB3E5FC), // Light Blue 100
+    const Color(0xFFC8E6C9), // Green 100
+    const Color(0xFFF8BBD9), // Pink 100
+    const Color(0xFFFFE0B2), // Orange 100
+    const Color(0xFFD1C4E9), // Deep Purple 100
+    const Color(0xFFB2EBF2), // Cyan 100
+    const Color(0xFFFFF9C4), // Yellow 100
+    const Color(0xFFFFCCBC), // Deep Orange 100
+    const Color(0xFFC5CAE9), // Indigo 100
+    const Color(0xFFDCEDC8), // Light Green 100
+    const Color(0xFFF0F4C3), // Lime 100
+    const Color(0xFFE1BEE7), // Purple 100
+    // Material 200
+    const Color(0xFFFFE082), // Amber 200
+    const Color(0xFF80DEEA), // Cyan 200
+    const Color(0xFFCE93D8), // Purple 200
+    const Color(0xFFA5D6A7), // Green 200
+    const Color(0xFFEF9A9A), // Red 200
+    const Color(0xFF90CAF9), // Blue 200
+    const Color(0xFFBCAAA4), // Brown 200
+    const Color(0xFFB0BEC5), // Blue Grey 200
+    // Material 50 (más claros)
+    const Color(0xFFE3F2FD), // Blue 50
+    const Color(0xFFE8F5E9), // Green 50
+    const Color(0xFFFCE4EC), // Pink 50
+    const Color(0xFFFFF3E0), // Orange 50
+    const Color(0xFFEDE7F6), // Deep Purple 50
+    const Color(0xFFE0F7FA), // Cyan 50
+    const Color(0xFFFFFDE7), // Yellow 50
+    const Color(0xFFFBE9E7), // Deep Orange 50
+    // Material 300 (un poco más saturados)
+    const Color(0xFF81D4FA), // Light Blue 300
+    const Color(0xFFF48FB1), // Pink 300
+    const Color(0xFFFFB74D), // Orange 300
+    const Color(0xFFB39DDB), // Deep Purple 300
+    const Color(0xFF4DD0E1), // Cyan 300
+    const Color(0xFFAED581), // Light Green 300
+    const Color(0xFFBA68C8), // Purple 300
+  ];
+
+  final _randomColors = List<Color>.from(_pastelColors)..shuffle();
   final _now = DateTime.now();
 
   num daysCount = 6;
@@ -90,12 +134,35 @@ class HorarioController {
     final newColor = color ?? unusedColors.first;
     final key = '${asignatura.codigo}_${asignatura.tipoHora}';
     usedColors.add(newColor);
-    _storage.write(key, newColor.value);
+    _storage.write(key, newColor.toARGB32());
   }
 
   Color? getColor(Asignatura? asignatura){
     if(asignatura == null) return null;
     return let(_storage.read('${asignatura.codigo}_${asignatura.tipoHora}'), (dynamic element)=> Color(element));
+  }
+
+  /// Obtiene el color de fondo y el color de texto con contraste para una asignatura
+  ({Color background, Color text})? getColorWithContrast(Asignatura? asignatura) {
+    final backgroundColor = getColor(asignatura);
+    if (backgroundColor == null) return null;
+    return (background: backgroundColor, text: _getContrastTextColor(backgroundColor));
+  }
+
+  /// Calcula el color de texto ideal (claro u oscuro) para un color de fondo dado
+  /// usando el algoritmo de luminancia relativa de WCAG
+  static Color _getContrastTextColor(Color backgroundColor) {
+    // Calcular luminancia relativa según WCAG 2.0
+    final double luminance = backgroundColor.computeLuminance();
+
+    // Si el fondo es claro (luminancia > 0.5), usar texto oscuro
+    // Si el fondo es oscuro, usar texto claro
+    // Usamos 0.5 como umbral pero ajustado a 0.45 para mejor contraste en colores pastel
+    if (luminance > 0.45) {
+      return const Color(0xFF1A1A1A); // Gris muy oscuro para mejor legibilidad
+    } else {
+      return const Color(0xFFFFFFFF); // Blanco
+    }
   }
 
   ///

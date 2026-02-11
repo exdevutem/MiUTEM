@@ -8,7 +8,7 @@ class BloqueClase extends StatelessWidget {
   final BloqueHorario block;
   final double width;
   final double height;
-  final Color textColor;
+  final Color? textColor;
   final Color? color;
   final void Function(BloqueHorario)? onTap;
   final void Function(BloqueHorario)? onLongPress;
@@ -18,41 +18,47 @@ class BloqueClase extends StatelessWidget {
     required this.block,
     required this.width,
     required this.height,
-    required this.textColor,
+    this.textColor,
     this.color = Colors.teal,
     this.onTap,
     this.onLongPress,
   });
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: Get.find<HorarioController>().getColor(block.asignatura) ?? this.color,
-      borderRadius: BorderRadius.circular(15),
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
+  Widget build(BuildContext context) {
+    final colorData = Get.find<HorarioController>().getColorWithContrast(block.asignatura);
+    final backgroundColor = colorData?.background ?? this.color ?? Colors.teal;
+    final effectiveTextColor = this.textColor ?? colorData?.text ?? Colors.white;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
-        onTap: () => onTap?.call(block),
-        onLongPress: () => onLongPress?.call(block),
-        child: Column(
-          children: [
-            HorarioText.classCode("${block.codigo}",
-              color: textColor,
-            ),
-            HorarioText.className("${block.asignatura?.nombre.toUpperCase()}",
-              color: textColor,
-            ),
-            HorarioText.classLocation(block.sala ?? "Sin sala",
-              color: textColor,
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(15),
+          onTap: () => onTap?.call(block),
+          onLongPress: () => onLongPress?.call(block),
+          child: Column(
+            children: [
+              HorarioText.classCode("${block.codigo}",
+                color: effectiveTextColor,
+              ),
+              HorarioText.className("${block.asignatura?.nombre.toUpperCase()}",
+                color: effectiveTextColor,
+              ),
+              HorarioText.classLocation(block.sala ?? "Sin sala",
+                color: effectiveTextColor,
+              ),
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 
