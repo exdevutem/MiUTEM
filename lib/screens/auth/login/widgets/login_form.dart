@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
@@ -72,6 +73,7 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     passwordFocus: _passwordFocus,
                     usernameFocus: _usernameFocus,
                     onLogin: () async {
+                      TextInput.finishAutofillContext(shouldSave: true);
                       showLoadingDialog(context);
                       try {
                         await loginAction(

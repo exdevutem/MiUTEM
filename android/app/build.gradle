@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "cl.exdev.miutem"
+    namespace = "cl.inndev.miutem"
     compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
@@ -24,7 +24,7 @@ android {
 
     // AQUI SE TIENE QUE USAR LA CONFIGURACION DEL KEYSTORE QUE TIENE LA APP OFICIAL
     defaultConfig {
-        applicationId = "cl.exdev.miutem"
+        applicationId = "cl.inndev.miutem"
         
         minSdk = 23
         targetSdk = 34
