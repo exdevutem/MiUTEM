@@ -31,7 +31,7 @@ class AccesoRapido extends StatelessWidget {
               label: 'Malla Histórica',
               icon: AppIcons.historicTimetable,
               fill: 0,
-              onTap: () => {},
+              onTap: () => visitarMallaHistorica(context),
             ),
             const SizedBox(width: 10),
             CardAccesoRapido(

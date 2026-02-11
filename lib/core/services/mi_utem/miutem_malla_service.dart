@@ -32,7 +32,7 @@ class MiUTEMMallaService {
       throw CustomException(message: "No se pudo obtener la malla. Por favor intenta más tarde.", internalCode: 2);
     }
 
-    return (htmlDoc.querySelectorAll("div[id=collapseTwo][class*=show] > div > div > div > #table-avance").first).querySelectorAll("table > tbody > tr").map((it) {
+    return (htmlDoc.querySelectorAll("div[id=avance-malla][class*=show] > div > div > div > div > div > #table-avance").first).querySelectorAll("tbody > tr").map((it) {
       final parts = it.children;
       return AsignaturaMalla(
         nivel: int.tryParse(parts[0].text.trim()) ?? 0,
