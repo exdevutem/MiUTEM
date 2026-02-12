@@ -9,7 +9,6 @@ import 'package:miutem/core/utils/http/interceptors/offline_mode_interceptor.dar
 class HttpClient {
 
   static final DioCacheManager cacheManager = DioCacheManager(CacheConfig(
-    baseUrl: miUtemHost,
     defaultMaxAge: const Duration(days: 7),
     defaultMaxStale: const Duration(days: 14),
   ));
@@ -40,5 +39,6 @@ class HttpClient {
 
   static Future<void> clearCache() async {
     await cacheManagerSiga.clearAll();
+    await cacheManager.clearAll();
   }
 }

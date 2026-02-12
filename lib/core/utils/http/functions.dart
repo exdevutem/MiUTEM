@@ -66,6 +66,43 @@ Future<Response> sigaClientRequest(String path, {
   }
 }
 
+Future<Response> httpClientRequest(String uri, {
+  String method = "GET",
+  Map<String, String>? headers,
+  dynamic data,
+  String? contentType,
+  ResponseType? responseType,
+  Options? options,
+  bool forceRefresh = false,
+  Duration ttl = const Duration(days: 7),
+  Map<String, dynamic>? extra,
+  Map<String, dynamic>? queryParameters,
+}) async {
+  try {
+    return await HttpClient.httpCachedClient.request(uri,
+      data: data,
+      queryParameters: queryParameters,
+      options: options ?? buildCacheOptions(ttl,
+        forceRefresh: forceRefresh,
+        primaryKey: 'api.miutem',
+        subKey: base64Encode(utf8.encode("$uri/${queryParameters?.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&")}")),
+        maxStale: const Duration(days: 14),
+        options: (options ?? Options()).copyWith(
+          method: method,
+          headers: headers,
+          contentType: contentType,
+          responseType: responseType,
+          extra: extra,
+        ),
+      ),
+    );
+  } on SocketException {
+    throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
+  } catch (e) {
+    rethrow;
+  }
+}
+
 Future<bool> isOffline() async {
   bool offlineMode = (await Preferencia.isOffline.getAsBool(defaultValue: false, guardar: true));
 

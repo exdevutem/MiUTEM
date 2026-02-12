@@ -9,7 +9,7 @@ class UtemEmailInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     // Remove any @ symbols from the new text
-    final filteredText = newValue.text.replaceAll('@', '');
+    final filteredText = newValue.text.replaceAll('@utem.cl', '').replaceAll('@', '');
 
     if (filteredText == newValue.text) {
       return newValue;

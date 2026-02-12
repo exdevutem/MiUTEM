@@ -19,7 +19,10 @@ import 'package:miutem/core/services/controllers/horario_controller.dart';
 /// Inicializa los servicios y los registra en GetX
 Future<void> initServices() async {
   // Inicializar Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+    name: 'miutem-app',
+  );
   Get.lazyPut(() => RemoteConfigService());
   await Get.find<RemoteConfigService>().initialize();
 
