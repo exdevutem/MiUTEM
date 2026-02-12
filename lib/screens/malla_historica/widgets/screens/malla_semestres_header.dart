@@ -3,45 +3,31 @@ import 'package:miutem/screens/malla_historica/widgets/components/semestre_heade
 
 class MallaSemestresHeader extends StatelessWidget {
   final int cantidadSemestres;
-  final double height;
-  final double semestreWidth;
-  final double borderWidth;
 
   const MallaSemestresHeader({
     super.key,
     required this.cantidadSemestres,
-    required this.height,
-    required this.semestreWidth,
-    this.borderWidth = 2,
   });
 
   @override
-  Widget build(BuildContext context) => Table(
-    defaultColumnWidth: FixedColumnWidth(semestreWidth),
-    border: TableBorder(
-      verticalInside: BorderSide(
-        color: Theme.of(context).dividerColor,
-        style: BorderStyle.solid,
-        width: borderWidth,
-      ),
-      bottom: BorderSide(
-        color: Theme.of(context).dividerColor,
-        style: BorderStyle.solid,
-        width: borderWidth,
-      ),
-    ),
-    children: [
-      TableRow(
-        children: List.generate(
-          cantidadSemestres,
-          (index) => SemestreHeaderCard(
-            semestre: index + 1,
-            height: height,
-            width: semestreWidth,
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(
+        cantidadSemestres,
+        (index) => Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: index < cantidadSemestres - 1
+                    ? BorderSide(color: Theme.of(context).dividerColor)
+                    : BorderSide.none,
+                bottom: BorderSide(color: Theme.of(context).dividerColor),
+              ),
+            ),
+            child: SemestreHeaderCard(semestre: index + 1),
           ),
         ),
       ),
-    ],
-  );
+    );
+  }
 }
-

@@ -5,16 +5,10 @@ import 'package:miutem/styles/styles.dart';
 
 class AsignaturaMallaCard extends StatelessWidget {
   final AsignaturaMalla asignatura;
-  final double width;
-  final double height;
-  final double internalMargin;
 
   const AsignaturaMallaCard({
     super.key,
     required this.asignatura,
-    required this.width,
-    required this.height,
-    this.internalMargin = 8,
   });
 
   Color _getBackgroundColor(BuildContext context) {
@@ -52,63 +46,61 @@ class AsignaturaMallaCard extends StatelessWidget {
     final backgroundColor = _getBackgroundColor(context);
     final textColor = _getTextColor(context);
 
-    return SizedBox(
-      height: height,
-      width: width,
-      child: Padding(
-        padding: EdgeInsets.all(internalMargin),
-        child: GestureDetector(
-          onTap: () => _showAsignaturaDetail(context),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.all(6),
+      child: GestureDetector(
+        onTap: () => _showAsignaturaDetail(context),
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  asignatura.nombre,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Space.xSmall,
+              Text(
+                asignatura.tipo,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: textColor.withValues(alpha: 0.8),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Space.xSmall,
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 4,
+                runSpacing: 4,
                 children: [
-                  Text(
-                    asignatura.nombre,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Space.xSmall,
-                  Text(
-                    asignatura.tipo,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: textColor.withValues(alpha: 0.8),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Space.xSmall,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildChip(context, asignatura.nota, textColor, backgroundColor),
-                      Space.xSmall,
-                      _buildChip(context, asignatura.estado, textColor, backgroundColor),
-                    ],
-                  ),
+                  _buildChip(context, asignatura.nota, textColor),
+                  _buildChip(context, asignatura.estado, textColor),
                 ],
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildChip(BuildContext context, String label, Color textColor, Color backgroundColor) {
+  Widget _buildChip(BuildContext context, String label, Color textColor) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: textColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
@@ -119,6 +111,8 @@ class AsignaturaMallaCard extends StatelessWidget {
           color: textColor,
           fontWeight: FontWeight.w500,
         ),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }
@@ -126,40 +120,48 @@ class AsignaturaMallaCard extends StatelessWidget {
   void _showAsignaturaDetail(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).dividerColor,
-                  borderRadius: BorderRadius.circular(2),
+      builder: (ctx) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).dividerColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            Space.medium,
-            Text(
-              asignatura.nombre,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              Space.medium,
+              Text(
+                asignatura.nombre,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Space.medium,
-            _buildDetailRow(context, 'Tipo', asignatura.tipo),
-            _buildDetailRow(context, 'Estado', asignatura.estado),
-            _buildDetailRow(context, 'Nota', asignatura.nota),
-            _buildDetailRow(context, 'Nivel', asignatura.nivel.toString()),
-            _buildDetailRow(context, 'Intentos', asignatura.intentos.toString()),
-            Space.large,
-          ],
+              Space.medium,
+              _buildDetailRow(context, 'Tipo', asignatura.tipo),
+              _buildDetailRow(context, 'Estado', asignatura.estado),
+              _buildDetailRow(context, 'Nota', asignatura.nota),
+              _buildDetailRow(context, 'Nivel', asignatura.nivel.toString()),
+              _buildDetailRow(context, 'Intentos', asignatura.intentos.toString()),
+              Space.large,
+            ],
+          ),
         ),
       ),
     );
@@ -171,16 +173,21 @@ class AsignaturaMallaCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).textTheme.bodySmall?.color,
+          Flexible(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ),
           ),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+          Flexible(
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.end,
             ),
           ),
         ],
@@ -188,4 +195,3 @@ class AsignaturaMallaCard extends StatelessWidget {
     );
   }
 }
-

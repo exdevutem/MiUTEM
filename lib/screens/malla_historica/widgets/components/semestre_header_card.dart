@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
 
 class SemestreHeaderCard extends StatelessWidget {
   final int semestre;
-  final double width;
-  final double height;
 
   const SemestreHeaderCard({
     super.key,
     required this.semestre,
-    required this.width,
-    required this.height,
   });
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: height,
-    width: width,
-    child: DecoratedBox(
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
@@ -40,7 +35,6 @@ class SemestreHeaderCard extends StatelessWidget {
           ),
         ],
       ),
-    ),
-  );
+    );
+  }
 }
-

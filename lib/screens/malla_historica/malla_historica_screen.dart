@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
-import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/malla_historica/widgets/widgets.dart';
 import 'package:miutem/styles/styles.dart';
 
@@ -23,15 +22,8 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
     _mallaFuture = _getMalla();
   }
 
-  Future<List<AsignaturaMalla>> _getMalla() async {
-    try {
-      final malla = await MiUTEMMallaService.get.getMalla();
-      logger.d(malla);
-      return malla;
-    } catch (e) {
-      logger.e("Error al obtener la malla histórica", error: e);
-      rethrow;
-    }
+  Future<List<AsignaturaMalla>> _getMalla({bool forceRefresh = false}) async {
+    return await MiUTEMMallaService.get.getMalla(forceRefresh: forceRefresh);
   }
 
   @override
@@ -113,6 +105,10 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
     );
   }
 
-  void _reloadData() => setState(() => _mallaFuture = _getMalla());
+  void _reloadData() {
+    setState(() {
+      _mallaFuture = _getMalla(forceRefresh: true);
+    });
+  }
 }
 

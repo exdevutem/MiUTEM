@@ -8,6 +8,12 @@ import 'package:miutem/core/utils/http/interceptors/offline_mode_interceptor.dar
 
 class HttpClient {
 
+  static final DioCacheManager cacheManager = DioCacheManager(CacheConfig(
+    baseUrl: miUtemHost,
+    defaultMaxAge: const Duration(days: 7),
+    defaultMaxStale: const Duration(days: 14),
+  ));
+
   static final DioCacheManager cacheManagerSiga = DioCacheManager(CacheConfig(
     baseUrl: sigaServiceUri,
     defaultMaxAge: const Duration(days: 7),
@@ -22,6 +28,10 @@ class HttpClient {
   static final Dio httpClient = dioClient..interceptors.addAll([
     OfflineModeInterceptor(),
     errorInterceptor,
+  ]);
+
+  static final httpCachedClient = httpClient..interceptors.addAll([
+    cacheManager.interceptor,
   ]);
 
   static final Dio authClientSiga = httpClient..interceptors.addAll([
