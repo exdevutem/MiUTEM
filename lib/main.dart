@@ -9,8 +9,8 @@ import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/styles/styles.dart';
 
 void main() async {
-  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

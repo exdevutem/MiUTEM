@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class HorarioBloque {
   final String dia;
   final String horaInicio;
@@ -7,7 +5,7 @@ class HorarioBloque {
   final String nombreAsignatura;
   final String sala;
 
-  HorarioBloque({
+  const HorarioBloque({
     required this.dia,
     required this.horaInicio,
     required this.horaFin,
