@@ -53,13 +53,12 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
             this.asignaturas = null;
           });
           final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
-          final asignaturas = await Get.find<AsignaturasService>()
-              .getAsignaturas(forceRefresh: true);
+          final asignaturas = await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true);
           setState(() {
             this.estudiante = estudiante;
             this.asignaturas = asignaturas;
           });
-          },
+        },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           clipBehavior: Clip.none,

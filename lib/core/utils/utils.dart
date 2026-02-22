@@ -1,7 +1,6 @@
-// Librería de widgets
 // Utilidades
-export './utilities.dart';
-export './constants.dart';
-export './firebase_options.dart';
+export 'package:miutem/core/utils/constants.dart';
+export 'package:miutem/core/utils/logger.dart';
+export 'package:miutem/core/utils/utilities.dart';
 
-// Estilos
+export 'package:miutem/core/utils/firebase/analytics.dart';

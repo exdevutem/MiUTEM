@@ -31,7 +31,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
       final isHoraFin = now.hour == int.parse(widget.horaFin.split(':')[0]) && now.minute == int.parse(widget.horaFin.split(':')[1]);
 
       // Se verifica que sea la hora de inicio (o la de fin) para actualizar la tarjeta.
-      if(isHoraInicio || isHoraFin) {
+      if(isHoraInicio || isHoraFin && context.mounted) {
         setState(() {});
       }
     });

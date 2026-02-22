@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/asignaturas/detalle_asignatura/actions/cargar_notas_asignatura.dart';
 import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
 import 'package:miutem/screens/asignaturas/detalle_asignatura/widgets/promedio.dart';

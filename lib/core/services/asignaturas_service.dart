@@ -7,7 +7,7 @@ import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/user/persona/persona.dart';
 import 'package:miutem/core/services/carrera_service.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 
 class AsignaturasService {

@@ -24,6 +24,9 @@ import 'package:miutem/core/utils/constants.dart';
 /// ```
 V? let<K,V>(K? object, V Function(K) op) => object != null ? op(object) : null;
 
+// Esta función es similar a `let`, pero asume que el objeto no es nulo, por lo que no retorna un valor nulo, sino que directamente el resultado de la función `op`.
+V apply<K,V>(K object, V Function(K) op) => op(object);
+
 /// Esta función muestra una nota en formato de 1 o 2 decimales dependiendo de si es un 3.95 o no.
 String? formatoNota(num? nota) => nota == 3.95 ? nota?.toStringAsFixed(2) : nota?.toStringAsFixed(1);
 

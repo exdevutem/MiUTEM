@@ -2,15 +2,30 @@ import 'dart:convert';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:miutem/core/services/firebase/keys.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/home/models/novedad.dart';
 
 final remoteConfigDefaults = {
-  'novedades': jsonEncode([{
+  RemoteConfigServiceKeys.novedades: jsonEncode([{
     'icon': 'bell',
     'title': '¡Nuevas Funcionalidades!',
     'subtitle': 'Ahora puedes ver las clases de hoy en la pantalla inicial.'
-  }])
+  }]),
+  RemoteConfigServiceKeys.featureFlags: jsonEncode({
+    'bottom_navigation': {
+      'home': true,
+      'asignaturas': true,
+      'apuntes': false,
+      'perfil': true,
+    },
+    'profile': {
+      'notificaciones': true,
+      'bug_report': true,
+      'feedback_report': true,
+      'desarrolladores': true,
+    }
+  }),
+  RemoteConfigServiceKeys.horarioZoom: 0.75,
 };
 
 class RemoteConfigService {

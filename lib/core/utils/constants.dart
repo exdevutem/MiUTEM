@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+const uuidNamespace = 'a590b229-221c-4d24-a41d-23f5b60ce757';
 final apiUrl = dotenv.env['EXDEV_API_ENDPOINT'] ?? 'https://api.exdev.cl';
 final sigaHost = dotenv.env['SIGA_ENDPOINT'] ?? 'https://siga.utem.cl';
 const miUtemHost = 'https://mi.utem.cl';
@@ -16,8 +15,6 @@ const String sentryDsn = 'https://c03edae5839c62f95de91c1cbabb65d7@o450693820455
 const String uxCamDevKey = '0y6p88obpgiug1g';
 const String uxCamProdKey = 'fxkjj5ulr7vb4yf';
 
-/// Logger de la app.
-final logger = Logger(printer: PrettyPrinter());
 /// Secure storage para guardar datos sensibles.
 const secureStorage = FlutterSecureStorage();
 

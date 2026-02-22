@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:miutem/core/models/config/user_config.dart';
@@ -13,16 +17,22 @@ import 'package:miutem/core/services/horario_service.dart';
 import 'package:miutem/core/services/mi_utem/miutem_auth_service.dart';
 import 'package:miutem/core/services/mi_utem/miutem_credencial_service.dart';
 import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
-import 'package:miutem/core/utils/firebase_options.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
+import 'package:miutem/firebase_options.dart';
 
 /// Inicializa los servicios y los registra en GetX
 Future<void> initServices() async {
   // Inicializar Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-    name: 'miutem-app',
+    name: 'miutem-dev',
   );
+  FlutterError.onError = (errorDetails) => FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   Get.lazyPut(() => RemoteConfigService());
   await Get.find<RemoteConfigService>().initialize();
 
@@ -50,7 +60,6 @@ Future<void> initServices() async {
   
 
   // Inicializar preferencias de usuario
-  Get.lazyPut(() => UserConfig());
-  Get.put(UserConfig()); 
+  Get.put(UserConfig());
 
 }

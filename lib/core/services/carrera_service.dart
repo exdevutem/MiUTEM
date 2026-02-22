@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:miutem/core/models/carrera.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 
 class CarreraService {

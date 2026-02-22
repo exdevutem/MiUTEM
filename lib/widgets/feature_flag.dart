@@ -4,34 +4,51 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:miutem/core/services/firebase/keys.dart';
 import 'package:miutem/core/services/firebase/remote_config_service.dart';
+import 'package:miutem/core/utils/utils.dart';
 
-/// A widget that conditionally renders its child based on a feature flag value from Firebase Remote Config.
+/// A widget that conditionally renders its child based on feature flag values from Firebase Remote Config.
 ///
-/// Usage:
+/// Usage with a single flag:
 /// ```dart
 /// FeatureFlag('bottom_navigation.novedades', child: const Text('This text will be shown if the feature flag is true'))
 /// ```
+///
+/// Usage with multiple flags (shows if at least one is enabled):
+/// ```dart
+/// FeatureFlag.multiple(['feature1', 'feature2'], child: const Text('Shown if feature1 OR feature2 is true'))
+/// ```
 class FeatureFlag extends StatelessWidget {
   /// The feature flag key to evaluate (supports dot notation for nested flags)
-  final String flagKey;
+  final String? flagKey;
 
-  /// The child widget to render if the feature flag is enabled
+  /// Multiple feature flag keys (at least one must be true to show the child)
+  final List<String>? flagKeys;
+
+  /// The child widget to render if the feature flag(s) is/are enabled
   final Widget child;
 
-  /// The fallback widget to render if the feature flag is disabled (optional)
+  /// The fallback widget to render if the feature flag(s) is/are disabled (optional)
   final Widget? fallback;
 
   /// Whether to show debug information in development mode
   final bool showDebugInfo;
 
-  const FeatureFlag(
-    this.flagKey, {
+  const FeatureFlag(this.flagKey, {
     super.key,
     required this.child,
     this.fallback,
     this.showDebugInfo = false,
-  });
+  }) : flagKeys = null;
+
+  /// Constructor for multiple feature flags (shows if at least one is enabled)
+  const FeatureFlag.multiple(this.flagKeys, {
+    super.key,
+    required this.child,
+    this.fallback,
+    this.showDebugInfo = false,
+  }) : flagKey = null;
 
   /// Evaluates a feature flag and returns its boolean value
   ///
@@ -44,9 +61,7 @@ class FeatureFlag extends StatelessWidget {
       final remoteConfig = FirebaseRemoteConfig.instance;
 
       // Ensure remote config is initialized
-      if (Get.isRegistered<RemoteConfigService>()) {
-        // Remote config should already be initialized via the service
-      } else {
+      if (!Get.isRegistered<RemoteConfigService>()) {
         // Fallback initialization if service is not available
         await remoteConfig.setConfigSettings(RemoteConfigSettings(
           fetchTimeout: const Duration(minutes: 1),
@@ -83,10 +98,10 @@ class FeatureFlag extends StatelessWidget {
   static bool _evaluateNestedFlag(FirebaseRemoteConfig remoteConfig, String flagKey) {
     try {
       // Get the feature_flags JSON from Remote Config
-      final featureFlagsJson = remoteConfig.getString('feature_flags');
+      final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
       if (featureFlagsJson.isEmpty) {
-        Logger().w('FeatureFlag: No feature_flags parameter found in Remote Config');
+        logger.w('FeatureFlag: No "${RemoteConfigServiceKeys.featureFlags}" parameter found in Remote Config');
         return false;
       }
 
@@ -101,7 +116,7 @@ class FeatureFlag extends StatelessWidget {
         if (currentLevel is Map<String, dynamic> && currentLevel.containsKey(part)) {
           currentLevel = currentLevel[part];
         } else {
-          Logger().w('FeatureFlag: Feature flag "$flagKey" not found in remote config, defaulting to false');
+          logger.w('FeatureFlag: Feature flag "$flagKey" not found in remote config, defaulting to false');
           return false;
         }
       }
@@ -110,11 +125,11 @@ class FeatureFlag extends StatelessWidget {
       if (currentLevel is bool) {
         return currentLevel;
       } else {
-        Logger().w('FeatureFlag: Value for "$flagKey" is not a boolean: $currentLevel, defaulting to false');
+        logger.w('FeatureFlag: Value for "$flagKey" is not a boolean: $currentLevel, defaulting to false');
         return false;
       }
     } catch (e) {
-      Logger().e('FeatureFlag: Error parsing feature flags JSON for "$flagKey": $e, defaulting to false');
+      logger.e('FeatureFlag: Error parsing feature flags JSON for "$flagKey": $e, defaulting to false');
       return false;
     }
   }
@@ -123,7 +138,7 @@ class FeatureFlag extends StatelessWidget {
   static String getString(String flagKey, {String defaultValue = ''}) {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
-      final featureFlagsJson = remoteConfig.getString('feature_flags');
+      final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
       if (featureFlagsJson.isEmpty) {
         return defaultValue;
@@ -152,7 +167,7 @@ class FeatureFlag extends StatelessWidget {
   static int getInt(String flagKey, {int defaultValue = 0}) {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
-      final featureFlagsJson = remoteConfig.getString('feature_flags');
+      final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
       if (featureFlagsJson.isEmpty) {
         return defaultValue;
@@ -187,7 +202,7 @@ class FeatureFlag extends StatelessWidget {
   static double getDouble(String flagKey, {double defaultValue = 0.0}) {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
-      final featureFlagsJson = remoteConfig.getString('feature_flags');
+      final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
       if (featureFlagsJson.isEmpty) {
         return defaultValue;
@@ -222,7 +237,7 @@ class FeatureFlag extends StatelessWidget {
   static dynamic getValue(String flagKey, {dynamic defaultValue}) {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
-      final featureFlagsJson = remoteConfig.getString('feature_flags');
+      final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
       if (featureFlagsJson.isEmpty) {
         return defaultValue;
@@ -249,7 +264,8 @@ class FeatureFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = evaluateSync(flagKey);
+    final isEnabled = _isAnyFlagEnabled();
+    final debugInfo = _getDebugInfo();
 
     if (showDebugInfo && kDebugMode) {
       return Column(
@@ -262,7 +278,7 @@ class FeatureFlag extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              'FeatureFlag: $flagKey = $isEnabled',
+              debugInfo,
               style: TextStyle(
                 fontSize: 10,
                 color: isEnabled ? Colors.green[800] : Colors.red[800],
@@ -277,6 +293,29 @@ class FeatureFlag extends StatelessWidget {
     }
 
     return isEnabled ? child : (fallback ?? const SizedBox.shrink());
+  }
+
+  /// Checks if at least one flag is enabled (for multiple flags) or the flag is enabled (for single flag)
+  bool _isAnyFlagEnabled() {
+    if (flagKeys != null && flagKeys!.isNotEmpty) {
+      // For multiple flags, return true if at least one is enabled (OR logic)
+      return flagKeys!.any((flag) => evaluateSync(flag));
+    } else if (flagKey != null) {
+      // For single flag, evaluate normally
+      return evaluateSync(flagKey!);
+    }
+    return false;
+  }
+
+  /// Gets debug information string
+  String _getDebugInfo() {
+    if (flagKeys != null && flagKeys!.isNotEmpty) {
+      final flags = flagKeys!.map((f) => '$f = ${evaluateSync(f)}').join(', ');
+      return 'FeatureFlags (OR): [$flags]';
+    } else if (flagKey != null) {
+      return 'FeatureFlag: $flagKey = ${evaluateSync(flagKey!)}';
+    }
+    return 'FeatureFlag: No flags configured';
   }
 }
 

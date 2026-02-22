@@ -7,7 +7,7 @@ import 'package:get/get.dart' hide Response;
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 
 

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:miutem/core/models/noticia.dart';
+import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/core/utils/http/interceptors/headers_interceptor.dart';
 import 'package:miutem/core/utils/http/interceptors/log_interceptor.dart';
 
@@ -8,14 +9,16 @@ const String noticiasUrl = "https://noticias.utem.cl";
 
 class NoticiasService {
 
-  final _httpClient = Dio(BaseOptions(baseUrl: noticiasUrl))..interceptors.addAll([
-    HeadersInterceptor(),
-    logInterceptor,
-    DioCacheManager(CacheConfig(
-      baseUrl: noticiasUrl,
-      defaultMaxAge: const Duration(days: 7),
-      defaultMaxStale: const Duration(days: 14),
-    )).interceptor,
+  static final _cacheManager = DioCacheManager(CacheConfig(
+    baseUrl: noticiasUrl,
+    defaultMaxAge: const Duration(days: 7),
+    defaultMaxStale: const Duration(days: 14),
+  ));
+
+  final _httpClient = Dio(HttpClient.httpClient.options.copyWith(
+      baseUrl: noticiasUrl
+  ))..interceptors.addAll([
+    _cacheManager.interceptor,
   ]);
 
   Future<List<Noticia>> getNoticias({ bool forceRefresh = false }) async {

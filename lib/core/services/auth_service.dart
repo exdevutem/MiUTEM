@@ -5,7 +5,7 @@ import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
@@ -13,6 +13,7 @@ import 'package:miutem/screens/auth/login/login_screen.dart';
 class AuthService {
 
   final SecureStorageRepository _secureStorageRepository = Get.find<SecureStorageRepository>();
+  bool idHasBeenSet = false;
 
   Future<bool> isFirstTime() async => (await Preferencia.lastLogin.exists()) == false;
 
@@ -26,6 +27,10 @@ class AuthService {
 
     Estudiante? estudiante = await _secureStorageRepository.getEstudiante();
     if (estudiante != null && !forceRefresh) {
+      if(!idHasBeenSet) {
+        setUserIdentifier(estudiante);
+        idHasBeenSet = true;
+      }
       return estudiante;
     }
 
@@ -47,6 +52,10 @@ class AuthService {
       estudiante = Estudiante.fromJson(response.data['response'] as Map<String, dynamic>);
       await _secureStorageRepository.setEstudiante(estudiante);
       await Preferencia.lastLogin.set(DateTime.now().toIso8601String());
+      if(!idHasBeenSet) {
+        setUserIdentifier(estudiante);
+        idHasBeenSet = true;
+      }
       return estudiante;
     } on DioError catch (e) {
       if(e.response?.statusCode == 401) {

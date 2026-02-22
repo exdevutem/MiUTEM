@@ -5,10 +5,12 @@ import 'package:miutem/screens/malla_historica/widgets/components/semestre_heade
 
 class MallaMainScroller extends StatelessWidget {
   final List<AsignaturaMalla> asignaturas;
+  final bool forScreenshot;
 
   const MallaMainScroller({
     super.key,
     required this.asignaturas,
+    this.forScreenshot = false,
   });
 
   /// Agrupa las asignaturas por nivel (semestre)
@@ -36,6 +38,10 @@ class MallaMainScroller extends StatelessWidget {
     }
 
     final semestres = _asignaturasPorSemestre;
+
+    if (forScreenshot) {
+      return _buildTableViewForScreenshot(context, semestres);
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -176,6 +182,33 @@ class MallaMainScroller extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  /// Vista de tabla para impresión o captura de pantalla (sin scroll)
+  Widget _buildTableViewForScreenshot(BuildContext context, List<List<AsignaturaMalla>> semestres) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: IntrinsicWidth(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header de semestres
+            Row(
+              children: List.generate(
+                semestres.length,
+                (index) => Expanded(
+                  child: SemestreHeaderCard(semestre: index + 1),
+                ),
+              ),
+            ),
+            const Divider(height: 1),
+            // Contenido de asignaturas
+            _buildAsignaturasTable(context, semestres),
+          ],
+        ),
+      ),
     );
   }
 }

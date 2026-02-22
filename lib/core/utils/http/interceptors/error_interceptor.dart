@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 
 InterceptorsWrapper errorInterceptor = InterceptorsWrapper(
   onError: (DioError err, ErrorInterceptorHandler handler) {

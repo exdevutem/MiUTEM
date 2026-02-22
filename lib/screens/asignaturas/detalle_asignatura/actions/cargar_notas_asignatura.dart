@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
 import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/services/horario_service.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/horario_data.dart';
 import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
 
