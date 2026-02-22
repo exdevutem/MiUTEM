@@ -4,19 +4,21 @@ import 'package:get/get.dart';
 import 'package:miutem/core/models/horario.dart';
 import 'package:miutem/core/services/asignaturas_service.dart';
 import 'package:miutem/core/services/controllers/horario_controller.dart';
+import 'package:miutem/core/services/grades_service.dart';
 import 'package:miutem/core/utils/utilities.dart';
 import 'package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart';
+import 'package:miutem/screens/notas/notas_screen.dart';
 import 'package:miutem/styles/styles.dart';
 
 class ClassBlockCard extends StatelessWidget {
-  final BloqueHorario? block;
+  final BloqueHorario? bloqueHorario;
   final double width;
   final double height;
   final double internalMargin;
 
   const ClassBlockCard({
     super.key,
-    required this.block,
+    required this.bloqueHorario,
     required this.width,
     required this.height,
     this.internalMargin = 0,
@@ -28,9 +30,9 @@ class ClassBlockCard extends StatelessWidget {
     width: width,
     child: Padding(
       padding: EdgeInsets.all(internalMargin),
-      child: block?.asignatura == null ? const SizedBox() : GestureDetector(
-        onTap: () => _onTap(block!, context),
-        onLongPress: () => _onLongPress(block!, context),
+      child: bloqueHorario?.asignatura == null ? const SizedBox() : GestureDetector(
+        onTap: () => _onTap(bloqueHorario!, context),
+        onLongPress: () => _onLongPress(bloqueHorario!, context),
         child: SizedBox(
           width: width,
           height: height,
@@ -42,7 +44,7 @@ class ClassBlockCard extends StatelessWidget {
 
   Widget _buildBlockContent(BuildContext context) {
     final adaptiveTheme = AdaptiveTheme.maybeOf(context);
-    final colorData = Get.find<HorarioController>().getColorWithContrast(block?.asignatura);
+    final colorData = Get.find<HorarioController>().getColorWithContrast(bloqueHorario?.asignatura);
     final backgroundColor = colorData?.background ?? themedColor(context, light: AppTheme.lightBlueCard, dark: AppTheme.darkBlueCard);
     final textColor = colorData?.text ?? Theme.of(context).textTheme.bodyMedium?.color;
 
@@ -56,11 +58,11 @@ class ClassBlockCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('${block!.asignatura!.codigo}/${block!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
+            Text('${bloqueHorario!.asignatura!.codigo}/${bloqueHorario!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
             Space.medium,
-            Text(block!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700, color: textColor), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
+            Text(bloqueHorario!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700, color: textColor), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
             Space.medium,
-            Text(block!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
+            Text(bloqueHorario!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
           ],
         ),
       ),
@@ -88,13 +90,11 @@ class ClassBlockCard extends StatelessWidget {
       return;
     }
 
-    // final grades = await Get.find<GradesService>().getGrades(asignatura);
-    if(context.mounted) Navigator.pop(context);
-    // if(context.mounted) Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaScreen(asignatura)));
-    // Navigator.push(context, MaterialPageRoute(builder: (ctx) => AsignaturaDetalleScreen(
-    //   carrera: carrera,
-    //   asignatura: asignatura.copyWith(grades: grades),
-    // )));
+    final grades = await Get.find<GradesService>().getGrades(asignatura);
+    if(context.mounted) {
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (ctx) => NotasScreen(asignatura: asignatura.copyWith(grades: grades))));
+    }
   }
 
   _onLongPress(BloqueHorario block, BuildContext context) async {

@@ -29,7 +29,7 @@ class HorarioBlocksContent extends StatelessWidget {
         for (num dia = 0; dia < bloquePorDias.length; dia++) {
           BloqueHorario block = horario.horarioEnlazado[blockIndex][dia as int];
           currentRow.add(ClassBlockCard(
-            block: block,
+            bloqueHorario: block,
             height: blockHeight,
             width: blockWidth,
             internalMargin: blockInternalMargin,

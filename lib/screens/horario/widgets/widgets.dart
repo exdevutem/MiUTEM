@@ -1,7 +1,6 @@
 /// Components
 library;
 
-export 'components/bloque_clase.dart';
 export 'components/bloque_dias_card.dart';
 export 'components/bloque_period_card.dart';
 export 'components/bloque_ramo_card.dart';
