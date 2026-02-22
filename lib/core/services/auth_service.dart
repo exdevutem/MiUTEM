@@ -57,7 +57,7 @@ class AuthService {
         idHasBeenSet = true;
       }
       return estudiante;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if(e.response?.statusCode == 401) {
         throw CustomException(message: "Credenciales incorrectas. Por favor intenta nuevamente.", statusCode: 401);
       }

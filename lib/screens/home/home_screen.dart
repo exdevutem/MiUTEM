@@ -58,8 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
           await Get.find<RemoteConfigService>().refresh();
           await HttpClient.clearCache();
-          final estudiante =
-          await Get.find<AuthService>().login(forceRefresh: true);
+          final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
           await _cargarHorario(forceRefresh: true);
           setState(() {
             this.estudiante = estudiante;

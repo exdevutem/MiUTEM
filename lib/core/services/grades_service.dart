@@ -27,7 +27,7 @@ class GradesService {
       }
 
       return (response.data['response'] as List<dynamic>).map((it) => Grades.fromJson(it)).toList().first;
-    } on DioError catch(e){
+    } on DioException catch(e){
       final data = e.response?.data ?? {
         'response': 'Error al obtener notas de asignatura. Intenta más tarde.',
         'status_code': e.response?.statusCode ?? 500,

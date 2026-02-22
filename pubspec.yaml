@@ -13,8 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   logger: ^2.4.0
   flutter_dotenv: ^5.1.0
-  dio: ^4.0.6
-  dio_http_cache: ^0.3.0
+  dio: ^5.9.1
   get: ^4.6.6
   package_info_plus: ^8.0.2
   shared_preferences: ^2.3.2
@@ -55,6 +54,8 @@ dependencies:
   uuid: ^4.5.3
   shake: ^3.0.0
   sensors_plus: ^6.1.2
+  dio_cache_interceptor: ^4.0.5
+  http_cache_file_store: ^2.0.1
   # Awesome-notifications REMOTE
   # awesome_notifications_fcm: ^0.10.0
 

@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 String generateUserId(String correo) {
   final correoFinal = apply<String, String>(correo, (c) => c.endsWith('@utem.cl') ? c : '$c@utem.cl').toLowerCase();
   const uuid = Uuid();
-  return uuid.v5(uuidNamespace, correoFinal);
+  return uuid.v5(miutemUuidNamespace, correoFinal);
 }
 
 void setUserIdentifier(PersonaUtem persona) {

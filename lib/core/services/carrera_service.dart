@@ -23,7 +23,7 @@ class CarreraService {
 
       carreras.sort((a,b) => estados.indexOf(b.estado.toLowerCase()).compareTo(estados.indexOf(a.estado.toLowerCase())));
       return carreras.first;
-    } on DioError catch(e) {
+    } on DioException catch(e) {
       final data = e.response?.data ?? {
         'response': 'Error al obtener carrera. Por favor intenta nuevamente.',
         'status_code': 500,

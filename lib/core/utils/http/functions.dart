@@ -1,8 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
@@ -42,21 +41,18 @@ Future<Response> sigaClientRequest(String path, {
       params['token'] = await Get.find<AuthService>().activeToken();
     }
 
-    return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
+    return await HttpClient.httpCachedClient.request("$sigaServiceUri/$path",
       data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&"),
       queryParameters: queryParameters,
-      options: options ?? buildCacheOptions(ttl,
-        forceRefresh: forceRefresh,
-        primaryKey: 'api_siga.miutem',
-        subKey: base64Encode(utf8.encode("$path/${params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&")}")),
+      options: options ?? cacheOptions.copyWith(
         maxStale: const Duration(days: 14),
-        options: (options ?? Options()).copyWith(
-          method: method,
-          headers: headers,
-          contentType: contentType,
-          responseType: responseType,
-          extra: extra,
-        ),
+        policy: forceRefresh ? CachePolicy.refreshForceCache : CachePolicy.forceCache,
+      ).toOptions().copyWith(
+        method: method,
+        headers: headers,
+        contentType: contentType,
+        responseType: responseType,
+        extra: extra,
       ),
     );
   } on SocketException {
@@ -82,18 +78,15 @@ Future<Response> httpClientRequest(String uri, {
     return await HttpClient.httpCachedClient.request(uri,
       data: data,
       queryParameters: queryParameters,
-      options: options ?? buildCacheOptions(ttl,
-        forceRefresh: forceRefresh,
-        primaryKey: 'api.miutem',
-        subKey: base64Encode(utf8.encode("$uri/${queryParameters?.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&")}")),
+      options: options ?? cacheOptions.copyWith(
         maxStale: const Duration(days: 14),
-        options: (options ?? Options()).copyWith(
-          method: method,
-          headers: headers,
-          contentType: contentType,
-          responseType: responseType,
-          extra: extra,
-        ),
+        policy: forceRefresh ? CachePolicy.refreshForceCache : CachePolicy.forceCache,
+      ).toOptions().copyWith(
+        method: method,
+        headers: headers,
+        contentType: contentType,
+        responseType: responseType,
+        extra: extra,
       ),
     );
   } on SocketException {

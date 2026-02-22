@@ -83,7 +83,7 @@ class ClassBlockCard extends StatelessWidget {
   _onTap(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final asignatura = (await Get.find<AsignaturasService>()
-        .getAsignaturas(forceRefresh: true))
+        .getAsignaturas())
         .firstWhereOrNull((asignatura) => asignatura.id == block.asignatura?.id || asignatura.codigo == block.asignatura?.codigo);
     if (asignatura == null) {
       if(context.mounted) Navigator.pop(context);
