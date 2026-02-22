@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:miutem/core/models/config/user_config.dart';
@@ -25,7 +26,7 @@ Future<void> initServices() async {
   // Inicializar Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-    name: 'miutem-dev',
+    name: dotenv.env['FIREBASE_PROJECT_NAME'] ?? 'miutem-dev',
   );
   FlutterError.onError = (errorDetails) => FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
   PlatformDispatcher.instance.onError = (error, stack) {
