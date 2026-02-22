@@ -47,9 +47,9 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
         }
 
         final esErrorOffline = snapshot.hasError &&
-            snapshot.error is DioError &&
-            (snapshot.error as DioError).type == DioErrorType.cancel &&
-            (snapshot.error as DioError).response?.extra["offline"] == true;
+            snapshot.error is DioException &&
+            (snapshot.error as DioException).type == DioExceptionType.cancel &&
+            (snapshot.error as DioException).response?.extra["offline"] == true;
 
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || snapshot.data == null) {
           String errorMessage = "Ocurrió un error al cargar la malla. Por favor intenta más tarde.";
