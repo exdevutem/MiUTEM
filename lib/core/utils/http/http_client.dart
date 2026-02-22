@@ -24,16 +24,26 @@ class HttpClient {
     logInterceptor,
   ]);
 
-  static final Dio httpClient = dioClient..interceptors.addAll([
+  static final Dio httpClient = Dio()..interceptors.addAll([
+    HeadersInterceptor(),
+    logInterceptor,
     OfflineModeInterceptor(),
     errorInterceptor,
   ]);
 
-  static final httpCachedClient = httpClient..interceptors.addAll([
+  static final httpCachedClient = Dio()..interceptors.addAll([
+    HeadersInterceptor(),
+    logInterceptor,
+    OfflineModeInterceptor(),
+    errorInterceptor,
     cacheManager.interceptor,
   ]);
 
-  static final Dio authClientSiga = httpClient..interceptors.addAll([
+  static final Dio authClientSiga = Dio()..interceptors.addAll([
+    HeadersInterceptor(),
+    logInterceptor,
+    OfflineModeInterceptor(),
+    errorInterceptor,
     cacheManagerSiga.interceptor,
   ]);
 
