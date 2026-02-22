@@ -30,11 +30,17 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
   void initState() {
     asignatura = widget.asignatura;
     super.initState();
-    cargarAsignaturaConNotas(asignatura: widget.asignatura).then((loadedAsignatura) => setState(() => asignatura = loadedAsignatura)).catchError((error) {
+    cargarAsignaturaConNotas(asignatura: widget.asignatura).then((loadedAsignatura) {
+      if (mounted) setState(() => asignatura = loadedAsignatura);
+    }).catchError((error) {
       if (mounted) showErrorSnackbar(context, "Error al cargar las notas");
     });
 
-    cargarHorarioBloque(asignatura: asignatura).then((bloques) => setState(() => bloquesHorario = bloques));
+    cargarHorarioBloque(asignatura: asignatura).then((bloques) {
+      if (mounted) setState(() => bloquesHorario = bloques);
+    }).catchError((error) {
+      logger.e('Error al cargar bloques de horario', error: error);
+    });
   }
 
   @override
@@ -59,11 +65,13 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
               });
             }
           } catch (error) {
-            setState(() {
-              bloquesHorario = tmp; // Revertir a los bloques anteriores en caso de error
-            });
             logger.e('Error al recargar vista asignatura', error: error);
-            if (context.mounted) showErrorSnackbar(context, "Error al recargar las notas");
+            if (context.mounted) {
+              setState(() {
+                bloquesHorario = tmp; // Revertir a los bloques anteriores en caso de error
+              });
+              showErrorSnackbar(context, "Error al recargar las notas");
+            }
           }
         },
         child: SingleChildScrollView(
