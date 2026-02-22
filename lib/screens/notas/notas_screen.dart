@@ -5,7 +5,6 @@ import 'package:miutem/core/models/evaluacion/evaluacion.dart';
 import 'package:miutem/core/models/evaluacion/grades.dart';
 import 'package:miutem/core/models/user/persona/persona.dart';
 import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/constants.dart';
 import 'package:miutem/screens/notas/actions/cargar_asignaturas_con_notas.dart';
 import 'package:miutem/screens/notas/widgets/notas.dart';
 import 'package:miutem/screens/notas/widgets/promedio.dart';
