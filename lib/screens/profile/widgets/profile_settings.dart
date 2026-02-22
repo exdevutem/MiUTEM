@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/screens/profile/widgets/controllers/profile_settings_controller.dart';
+import 'package:miutem/screens/profile/controllers/profile_settings_controller.dart';
 import 'package:miutem/screens/profile/widgets/settings/app_section.dart';
 import 'package:miutem/screens/profile/widgets/settings/debug_section.dart';
 import 'package:miutem/screens/profile/widgets/settings/feedback_section.dart';

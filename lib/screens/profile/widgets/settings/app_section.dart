@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/screens/profile/widgets/controllers/profile_settings_controller.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:miutem/screens/profile/controllers/profile_settings_controller.dart';
 import 'package:miutem/styles/styles.dart';
 import 'package:miutem/widgets/feature_flag.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -45,7 +46,6 @@ class _AppSectionState extends State<AppSection> {
         subtitle: FutureBuilder(
           future: PackageInfo.fromPlatform(),
           builder: (ctx, snapshot) {
-
             return Skeletonizer(
               enabled: snapshot.connectionState == ConnectionState.waiting,
               child: Text(snapshot.data?.version ?? 'Desconocida'),
@@ -53,22 +53,32 @@ class _AppSectionState extends State<AppSection> {
           },
         ),
         onTap: () {
-          if(tapCount > 5 && widget.profileSettingsController.debugMode.value) {
-            if (context.mounted) showTextSnackbar(context, title: 'Modo de depuración ya habilitado', message: 'El modo de depuración ya está habilitado', duration: const Duration(seconds: 5));
+          if (dotenv.env['APP_ENV'] == 'prod') {
             return;
           }
 
-          if(5-tapCount <= 3 && 5-tapCount > 0) {
+          if(tapCount >= 5 && widget.profileSettingsController.debugMode.value) {
             if (context.mounted) {
-              dismissSnackbar(context);
-              showTextSnackbar(context, title: '¡Casi lo logras!', message: 'Toca ${5-tapCount} veces más para habilitar el modo de depuración', duration: const Duration(milliseconds: 250));
+              removeSnackbar(context);
+              showTextSnackbar(context, title: 'Modo de depuración ya habilitado', message: 'El modo de depuración ya está habilitado', duration: const Duration(seconds: 5));
+            }
+            return;
+          }
+
+          if((5-tapCount) <= 3 && (5-tapCount) > 0) {
+            if (context.mounted) {
+              removeSnackbar(context);
+              showTextSnackbar(context, title: '¡Casi lo logras!', message: 'Toca ${5-(tapCount+1)} veces más para habilitar el modo de depuración', duration: const Duration(seconds: 2));
             }
           }
 
           tapCount++;
-          if (tapCount > 5) {
+          if (tapCount >= 5) {
             widget.profileSettingsController.setDebugMode(true);
-            if (context.mounted) showTextSnackbar(context, title: 'Modo de depuración habilitado', message: 'Has habilitado el modo de depuración al tocar varias veces la versión de la aplicación', duration: const Duration(seconds: 5));
+            if (context.mounted) {
+              removeSnackbar(context);
+              showTextSnackbar(context, title: 'Modo de depuración habilitado', message: 'Has habilitado el modo de depuración al tocar varias veces la versión de la aplicación', duration: const Duration(seconds: 5));
+            }
           }
         },
       ),

@@ -37,3 +37,5 @@ void showSnackbar(BuildContext context, {
 ));
 
 void dismissSnackbar(BuildContext context) => ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+void removeSnackbar(BuildContext context) => ScaffoldMessenger.of(context).removeCurrentSnackBar();
