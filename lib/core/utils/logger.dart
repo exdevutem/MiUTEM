@@ -10,7 +10,11 @@ class _ConsoleOutput extends LogOutput {
 
   @override
   void output(OutputEvent event) {
-    FirebaseCrashlytics.instance.log(event.lines.join('\n'));
+    // Only send warning-level and above to Crashlytics to avoid leaking
+    // sensitive request/response data (headers, credentials) from debug logs.
+    if (event.level.index >= Level.warning.index) {
+      FirebaseCrashlytics.instance.log(event.lines.join('\n'));
+    }
     event.lines.forEach(print);
   }
 }
