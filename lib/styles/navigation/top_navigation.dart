@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/styles/styles.dart';
 import 'package:flutter/services.dart';
 
 class TopNavigation extends StatelessWidget implements PreferredSizeWidget {

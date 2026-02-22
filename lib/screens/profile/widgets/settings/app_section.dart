@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miutem/screens/profile/widgets/controllers/profile_settings_controller.dart';
 import 'package:miutem/styles/styles.dart';
 import 'package:miutem/widgets/feature_flag.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppSection extends StatefulWidget {
@@ -41,7 +42,16 @@ class _AppSectionState extends State<AppSection> {
         subtitleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal),
         leading: Image.asset('assets/launcher_icons/prod/icon_splash.png', width: 36),
         title: const Text('Versión de la Aplicación'),
-        subtitle: const Text('4.0.0'),
+        subtitle: FutureBuilder(
+          future: PackageInfo.fromPlatform(),
+          builder: (ctx, snapshot) {
+
+            return Skeletonizer(
+              enabled: snapshot.connectionState == ConnectionState.waiting,
+              child: Text(snapshot.data?.version ?? 'Desconocida'),
+            );
+          },
+        ),
         onTap: () {
           if(tapCount > 5 && widget.profileSettingsController.debugMode.value) {
             if (context.mounted) showTextSnackbar(context, title: 'Modo de depuración ya habilitado', message: 'El modo de depuración ya está habilitado', duration: const Duration(seconds: 5));

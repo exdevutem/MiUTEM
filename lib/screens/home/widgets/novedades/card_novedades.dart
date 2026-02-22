@@ -1,6 +1,4 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/home/models/novedad.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:miutem/styles/styles.dart';

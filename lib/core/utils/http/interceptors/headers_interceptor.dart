@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:miutem/core/utils/constants.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class HeadersInterceptor extends Interceptor {

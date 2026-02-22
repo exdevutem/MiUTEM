@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/config/user_config.dart';
@@ -32,7 +33,7 @@ class _LogOutButtonState extends State<LogOutButton> {
   Widget build(BuildContext context) {
     return Obx(() {
       final userTheme = UserConfig.to.themeMode.value;
-      final isDarkMode = userTheme == ThemeMode.dark;
+      final isDarkMode = userTheme == AdaptiveThemeMode.dark;
       return AnimatedOpacity(
         opacity: _showElements ? 1.0 : 0.0,
         duration: const Duration(milliseconds: 300),

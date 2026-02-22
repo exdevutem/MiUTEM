@@ -6,10 +6,10 @@ import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 final dummyBloques = [
-  HorarioBloque(dia: 'Lunes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  HorarioBloque(dia: 'Martes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  HorarioBloque(dia: 'Miércoles', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  HorarioBloque(dia: 'Jueves', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
+  const HorarioBloque(dia: 'Lunes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
+  const HorarioBloque(dia: 'Martes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
+  const HorarioBloque(dia: 'Miércoles', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
+  const HorarioBloque(dia: 'Jueves', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
 ];
 
 class SeccionHorario extends StatelessWidget {

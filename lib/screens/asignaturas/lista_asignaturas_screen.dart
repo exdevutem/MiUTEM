@@ -8,7 +8,6 @@ import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
-import 'package:miutem/styles/styles.dart';
 
 class AsignaturasScreen extends StatefulWidget {
   const AsignaturasScreen({super.key});

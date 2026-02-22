@@ -58,7 +58,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
         }
 
         final horario = snapshot.data;
-        final esErrorOffline = snapshot.hasError && snapshot.error is DioError && (snapshot.error as DioError).type == DioErrorType.cancel && (snapshot.error as DioError).response?.extra["offline"] == true;
+        final esErrorOffline = snapshot.hasError && snapshot.error is DioException && (snapshot.error as DioException).type == DioExceptionType.cancel && (snapshot.error as DioException).response?.extra["offline"] == true;
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || horario == null) {
           String errorMessage = "Ocurrió un error al cargar el horario! Por favor intenta más tarde.";
           final error = snapshot.error;

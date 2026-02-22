@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/styles/styles.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 
 class HorarioBlocksContent extends StatelessWidget {

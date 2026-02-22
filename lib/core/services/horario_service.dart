@@ -11,7 +11,7 @@ class HorarioService {
 
   Future<Horario> getHorario({ bool forceRefresh = false }) async {
     try {
-      final carrera = await Get.find<CarreraService>().getCarrera();
+      final carrera = await Get.find<CarreraService>().getCarrera(forceRefresh: forceRefresh);
       final response = await sigaClientRequest('estudiante/horario/',
         method: 'POST',
         contentType: Headers.formUrlEncodedContentType,

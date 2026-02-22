@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/mi_utem/miutem_auth_service.dart';
-import 'package:miutem/core/services/mi_utem/miutem_credencial_service.dart';
-import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
 import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/styles/styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Saludo extends StatefulWidget {

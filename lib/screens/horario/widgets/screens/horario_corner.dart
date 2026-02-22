@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
 
 class HorarioCorner extends StatelessWidget {
   final double height;

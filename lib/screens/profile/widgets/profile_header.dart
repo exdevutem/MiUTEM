@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miutem/core/models/carrera.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/styles/styles.dart';

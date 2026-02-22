@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/screens/profile/actions/theme.dart';
 import 'package:miutem/screens/profile/widgets/modals/theme_mode_dialog.dart';

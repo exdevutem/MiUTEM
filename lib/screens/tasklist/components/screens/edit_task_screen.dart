@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
 
 class EditTaskScreen extends StatefulWidget {
   final Task task;

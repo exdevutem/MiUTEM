@@ -6,7 +6,6 @@ import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
 import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 
@@ -20,6 +19,9 @@ class AuthService {
   Future<bool> isLoggedIn() async => (await _secureStorageRepository.getEstudiante()) != null;
 
   Future<Estudiante> login({ bool forceRefresh = false }) async {
+    if (forceRefresh) {
+      logger.d('Forzando refresco de sesión');
+    }
     final credentials = await _secureStorageRepository.getCredentials();
     if(credentials == null) {
       throw CustomException.custom(message: "No se encontraron credenciales. Por favor intenta más tarde.");
@@ -35,14 +37,11 @@ class AuthService {
     }
 
     try {
-      final response = await sigaClientRequest("autenticacion/login/",
-        method: 'POST',
-        forceRefresh: forceRefresh,
-        contentType: Headers.formUrlEncodedContentType,
-        extra: {
-          'noToken': true,
-        },
-        sigaParams: credentials.toJson(),
+      final response = await HttpClient.httpClient.post("$sigaServiceUri/autenticacion/login/",
+        data: credentials.toFormUrlEncoded(),
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        )
       );
 
       if(response.statusCode != 200 || response.data['status_code'] != 200) {
@@ -72,6 +71,7 @@ class AuthService {
   Future<String> activeToken() async {
     Estudiante estudiante = await login();
     if(estudiante.isTokenExpired()) {
+      logger.d('Se encontró un token expirado, solicitando uno nuevo.');
       estudiante = await login(forceRefresh: true);
     }
 

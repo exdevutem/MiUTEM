@@ -16,7 +16,7 @@ class BloqueVacio extends StatelessWidget {
         strokeWidth: 2,
         color: AppTheme.grey,
         borderType: BorderType.RRect,
-        radius: Radius.circular(15),
+        radius: const Radius.circular(15),
         child: Container(),
       ),
     );

@@ -60,7 +60,7 @@ class NotificationController {
         body: 'This notification was scheduled to appear at a specific time',
       ),
       schedule: NotificationCalendar.fromDate(
-        date: DateTime.now().add(Duration(minutes: 2)),
+        date: DateTime.now().add(const Duration(minutes: 2)),
       ),
     );
   }

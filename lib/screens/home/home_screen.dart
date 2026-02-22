@@ -11,7 +11,6 @@ import 'package:miutem/screens/home/models/novedad.dart';
 import 'package:miutem/screens/home/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/home/widgets/clases_de_hoy/seccion_clases_de_hoy.dart';
 import 'package:miutem/screens/home/widgets/novedades/card_novedades.dart';
-import 'package:miutem/screens/home/widgets/novedades/lista_novedades.dart';
 import 'package:miutem/screens/home/widgets/saludo.dart';
 import 'package:miutem/styles/styles.dart';
 
@@ -113,9 +112,17 @@ class _HomeScreenState extends State<HomeScreen> {
       errorAlCargarHorario = null;
       bloques = null;
     });
-    await cargarClasesDeHoy(forceRefresh: forceRefresh).then((bloques) => setState(() {
-      errorAlCargarHorario = null;
-      this.bloques = bloques;
-    }), onError: (err) => setState(() => errorAlCargarHorario = err));
+    await cargarClasesDeHoy(forceRefresh: forceRefresh).then((bloques) {
+      if (context.mounted) {
+        setState(() {
+          errorAlCargarHorario = null;
+          this.bloques = bloques;
+        });
+      }
+    }, onError: (err) {
+      if (context.mounted) {
+        setState(() => errorAlCargarHorario = err);
+      }
+    });
   }
 }
