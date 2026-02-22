@@ -8,8 +8,6 @@ class LoginFormFields extends StatelessWidget {
 
   const LoginFormFields({super.key, required this.usernameController, required this.passwordController, required this.passwordFocus, required this.onLogin, required this.usernameFocus});
 
-  String get fullEmail => '${usernameController.text}@utem.cl';
-
   @override
   Widget build(BuildContext context) => AutofillGroup(
     onDisposeAction: AutofillContextAction.commit,
