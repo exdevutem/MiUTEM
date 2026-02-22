@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/styles/styles.dart';
-import 'package:shake/shake.dart';
 
 class DebugSection extends StatelessWidget {
 
