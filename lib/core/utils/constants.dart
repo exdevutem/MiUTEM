@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// UUID Namespace es para generar IDs determinísticos usando UUID v5, por ejemplo para generar un ID de usuario a partir de su correo electrónico sin necesidad de guardar el ID en la base de datos.
 const uuidNamespace = 'a590b229-221c-4d24-a41d-23f5b60ce757';
 final apiUrl = dotenv.env['EXDEV_API_ENDPOINT'] ?? 'https://api.exdev.cl';
 final sigaHost = dotenv.env['SIGA_ENDPOINT'] ?? 'https://siga.utem.cl';
