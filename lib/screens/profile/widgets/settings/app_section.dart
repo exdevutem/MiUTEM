@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:miutem/screens/profile/controllers/profile_settings_controller.dart';
 import 'package:miutem/styles/styles.dart';
@@ -48,12 +49,12 @@ class _AppSectionState extends State<AppSection> {
           builder: (ctx, snapshot) {
             return Skeletonizer(
               enabled: snapshot.connectionState == ConnectionState.waiting,
-              child: Text(snapshot.data?.version ?? 'Desconocida'),
+              child: Text("${snapshot.data?.version ?? 'Desconocida'} Compilación: ${snapshot.data?.buildNumber ?? 'Desconocida'}"),
             );
           },
         ),
         onTap: () {
-          if (dotenv.env['APP_ENV'] == 'prod') {
+          if (appFlavor == 'production') {
             return;
           }
 

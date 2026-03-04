@@ -9,7 +9,7 @@ const _sensitiveHeaders = {
 };
 
 /// Form-encoded / JSON body keys whose values must never appear in logs.
-const _sensitiveBodyKeys = {'password', 'token', 'username', 'rut', 'pass'};
+const _sensitiveBodyKeys = {'password', 'token', 'rut', 'pass'};
 
 /// Pre-compiled regex that matches sensitive key=value pairs in
 /// application/x-www-form-urlencoded strings.

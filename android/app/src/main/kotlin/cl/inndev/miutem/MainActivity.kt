@@ -1,4 +1,4 @@
-package cl.exdev.miutem
+package cl.inndev.miutem
 
 import io.flutter.embedding.android.FlutterActivity
 

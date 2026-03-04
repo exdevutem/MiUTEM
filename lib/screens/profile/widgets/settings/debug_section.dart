@@ -17,6 +17,10 @@ class DebugSection extends StatelessWidget {
     children: [
       Space.small,
       Text('Depuración', style: Theme.of(context).textTheme.bodyLarge),
+      const ListTile(
+        title: Text('Sabor de la App'),
+        subtitle: Text(appFlavor == 'production' ? 'Versión de producción' : 'Versión de desarrollo')
+      ),
       ListTile(
         title: const Text('ID de usuario'),
         subtitle: const Text('Copia el ID de usuario para usar en reportes o pruebas'),

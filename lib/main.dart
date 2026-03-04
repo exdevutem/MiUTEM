@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,7 +9,7 @@ import 'package:miutem/core/services/service_manager.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/styles/styles.dart';
 
-void main() async {
+void runMainApp(FirebaseOptions firebaseOptions) async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   SystemChrome.setSystemUIOverlayStyle(
@@ -20,7 +21,7 @@ void main() async {
   );
 
   WidgetsFlutterBinding.ensureInitialized();
-  await initServices();
+  await initServices(firebaseOptions);
   runApp(const MiUTEMApp());
 }
 

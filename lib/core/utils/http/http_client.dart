@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:http_cache_file_store/http_cache_file_store.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/interceptors/error_interceptor.dart';
 import 'package:miutem/core/utils/http/interceptors/headers_interceptor.dart';
@@ -10,7 +9,7 @@ import 'package:miutem/core/utils/http/interceptors/log_interceptor.dart';
 import 'package:uuid/uuid.dart';
 
 final cacheOptions = CacheOptions(
-  store: FileCacheStore('miutem'),
+  store: MemCacheStore(),
   policy: CachePolicy.forceCache,
   hitCacheOnErrorCodes: [500, 502, 503, 504],
   hitCacheOnNetworkFailure: true,
