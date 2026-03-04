@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -24,7 +27,21 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    // AQUI SE TIENE QUE USAR LA CONFIGURACION DEL KEYSTORE QUE TIENE LA APP OFICIAL
+    val keystoreProperties = Properties()
+    val keystorePropertiesFile = rootProject.file("key.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+
     defaultConfig {
         applicationId = "cl.inndev.miutem"
         
@@ -36,7 +53,7 @@ android {
 
     buildTypes {
         named("release") {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
