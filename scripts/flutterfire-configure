@@ -13,9 +13,9 @@ case $1 in
       --project=miutem-dev \
       --out=lib/firebase_options_dev.dart \
       --ios-bundle-id=cl.utem.miutem.dev \
-      --ios-out=ios/flavors/development/GoogleService-Info.plist \
+      --ios-out=ios/Firebase/development/GoogleService-Info.plist \
       --macos-bundle-id=cl.utem.miutem.dev \
-      --macos-out=macos/flavors/development/GoogleService-Info.plist \
+      --macos-out=macos/Firebase/development/GoogleService-Info.plist \
       --android-package-name=cl.inndev.miutem.dev \
       --android-out=android/app/src/development/google-services.json
     ;;
@@ -24,9 +24,9 @@ case $1 in
       --project=miutem-prod \
       --out=lib/firebase_options_prod.dart \
       --ios-bundle-id=cl.utem.miutem \
-      --ios-out=ios/flavors/production/GoogleService-Info.plist \
+      --ios-out=ios/Firebase/production/GoogleService-Info.plist \
       --macos-bundle-id=cl.utem.miutem \
-      --macos-out=macos/flavors/production/GoogleService-Info.plist \
+      --macos-out=macos/Firebase/production/GoogleService-Info.plist \
       --android-package-name=cl.inndev.miutem \
       --android-out=android/app/src/production/google-services.json
     ;;
