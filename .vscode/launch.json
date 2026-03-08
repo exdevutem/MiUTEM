@@ -1,0 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Mi UTEM [development]",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "development",
+        "-t",
+        "lib/main_dev.dart"
+      ]
+    },
+    {
+      "name": "Mi UTEM [production]",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "production",
+        "-t",
+        "lib/main_prod.dart"
+      ]
+    },
+    {
+      "name": "Mi UTEM [development] - Release",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "development",
+        "-t",
+        "lib/main_dev.dart",
+        "--release"
+      ]
+    },
+    {
+      "name": "Mi UTEM [production] - Release",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "production",
+        "-t",
+        "lib/main_prod.dart",
+        "--release"
+      ]
+    }
+  ]
+}

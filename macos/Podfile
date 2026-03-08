@@ -1,12 +1,18 @@
-platform :macos, '11.5'
+platform :osx, '13.5'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-development' => :debug,
+  'Debug-production' => :debug,
   'Profile' => :release,
+  'Profile-development' => :release,
+  'Profile-production' => :release,
   'Release' => :release,
+  'Release-development' => :release,
+  'Release-production' => :release,
 }
 
 def flutter_root
@@ -30,10 +36,6 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  pod 'FirebaseFirestore',
-      :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git',
-      :tag => '11.4.0'
-
   flutter_install_all_macos_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
@@ -43,5 +45,10 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
+
+    # Ensure all Pods use a supported macOS deployment target.
+    target.build_configurations.each do |config|
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '13.5'
+    end
   end
 end

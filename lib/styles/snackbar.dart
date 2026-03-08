@@ -35,3 +35,7 @@ void showSnackbar(BuildContext context, {
   behavior: SnackBarBehavior.floating,
   duration: duration ?? const Duration(seconds: 5),
 ));
+
+void dismissSnackbar(BuildContext context) => ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+void removeSnackbar(BuildContext context) => ScaffoldMessenger.of(context).removeCurrentSnackBar();

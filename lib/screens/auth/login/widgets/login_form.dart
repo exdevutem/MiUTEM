@@ -1,4 +1,6 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/screens/auth/login/actions/login_action.dart';
 import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
@@ -50,7 +52,10 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
           children: [
             Padding(
               padding: const EdgeInsets.all(15),
-              child: Image.asset(MediaQuery.of(context).platformBrightness == Brightness.light ? 'assets/images/miutem_oscuro.png' : 'assets/images/miutem_claro.png', height: 80, fit: BoxFit.fitWidth),
+              child: ValueListenableBuilder<AdaptiveThemeMode>(
+                valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
+                builder: (ctx, mode, child) => Image.asset(mode == AdaptiveThemeMode.light ? 'assets/images/miutem_oscuro.png' : 'assets/images/miutem_claro.png', height: 80, fit: BoxFit.fitWidth),
+              ),
             ),
             const Padding(
               padding: EdgeInsets.only(bottom: 15),
@@ -68,6 +73,7 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     passwordFocus: _passwordFocus,
                     usernameFocus: _usernameFocus,
                     onLogin: () async {
+                      TextInput.finishAutofillContext(shouldSave: true);
                       showLoadingDialog(context);
                       try {
                         await loginAction(

@@ -22,10 +22,9 @@ class Task extends ChangeNotifier {
     required this.content,
     required this.color,
     required this.state,
-    required DateTime createdAt,
-    required DateTime modifiedAt,
-  }) : this.createdAt = createdAt ?? DateTime.now(),
-       this.modifiedAt = modifiedAt ?? DateTime.now();
+    required this.createdAt,
+    required this.modifiedAt,
+  });
 
 
   /// SERIALIZE THE NOTE INTO JSON OBJECT

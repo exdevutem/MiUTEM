@@ -1,13 +1,16 @@
-# Uncomment this line to define a global platform for your project
-platform :ios, '13.0'
-
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+platform :ios, '16.6'
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
   'Debug' => :debug,
+  'Debug-development' => :debug,
+  'Debug-production' => :debug,
   'Profile' => :release,
+  'Profile-development' => :release,
+  'Profile-production' => :release,
   'Release' => :release,
+  'Release-development' => :release,
+  'Release-production' => :release,
 }
 
 def flutter_root
@@ -31,10 +34,6 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  pod 'FirebaseFirestore',
-      :git => 'https://github.com/invertase/firestore-ios-sdk-frameworks.git',
-      :tag => '11.4.0'
-
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
@@ -45,15 +44,10 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
-   ################  Awesome Notifications pod modification 1 ###################
-      awesome_pod_file = File.expand_path(File.join('plugins', 'awesome_notifications', 'ios', 'Scripts', 'AwesomePodFile'), '.symlinks')
-      require awesome_pod_file
-      update_awesome_pod_build_settings(installer)
-      ################  Awesome Notifications pod modification 1 ###################
-end
 
-  ################  Awesome Notifications pod modification 2 ###################
-  awesome_pod_file = File.expand_path(File.join('plugins', 'awesome_notifications', 'ios', 'Scripts', 'AwesomePodFile'), '.symlinks')
+  # Awesome Notifications
+  awesome_pod_file = File.expand_path(File.join('plugins', 'awesome_notifications', 'ios', 'Scripts', 'AwesomePodFile'),'.symlinks')
   require awesome_pod_file
+  update_awesome_pod_build_settings(installer)
   update_awesome_main_target_settings('Runner', File.dirname(File.realpath(__FILE__)), flutter_root)
-  ################  Awesome Notifications pod modification 2 ###################
+end

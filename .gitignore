@@ -1,6 +1,9 @@
 # MiUTEM
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
+**/*/google-services.json
+**/*/GoogleService-Info.plist
+**/*/firebase_options_*.dart
+.env*
+!.env.example
 
 # Miscellaneous
 *.class
@@ -131,7 +134,6 @@ app.*.symbols
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-!/dev/ci/**/Gemfile.lock
 
 # FVM related
 .fvm/

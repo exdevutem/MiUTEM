@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:miutem/core/models/carrera.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 
 class CarreraService {
@@ -23,7 +23,7 @@ class CarreraService {
 
       carreras.sort((a,b) => estados.indexOf(b.estado.toLowerCase()).compareTo(estados.indexOf(a.estado.toLowerCase())));
       return carreras.first;
-    } on DioError catch(e) {
+    } on DioException catch(e) {
       final data = e.response?.data ?? {
         'response': 'Error al obtener carrera. Por favor intenta nuevamente.',
         'status_code': 500,

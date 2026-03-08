@@ -24,7 +24,7 @@ class AccesoRapido extends StatelessWidget {
               icon: AppIcons.timetable,
               onTap: () => visitarHorario(context),
             ),
-            const SizedBox(width: 8),
+            HorizontalSpace.xSmall,
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,
@@ -33,7 +33,7 @@ class AccesoRapido extends StatelessWidget {
               fill: 0,
               onTap: () => visitarNotas(context),
             ),
-            const SizedBox(width: 8),
+            HorizontalSpace.xSmall,
             CardAccesoRapido(
               color: AppTheme.lightGreenCard,
               colorDark: AppTheme.darkGreenCard,

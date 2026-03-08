@@ -58,7 +58,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
         }
 
         final horario = snapshot.data;
-        final esErrorOffline = snapshot.hasError && snapshot.error is DioError && (snapshot.error as DioError).type == DioErrorType.cancel && (snapshot.error as DioError).response?.extra["offline"] == true;
+        final esErrorOffline = snapshot.hasError && snapshot.error is DioException && (snapshot.error as DioException).type == DioExceptionType.cancel && (snapshot.error as DioException).response?.extra["offline"] == true;
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || horario == null) {
           String errorMessage = "Ocurrió un error al cargar el horario! Por favor intenta más tarde.";
           final error = snapshot.error;
@@ -155,8 +155,11 @@ class _HorarioScreenState extends State<HorarioScreen> {
         ext: 'png',
         mimeType: MimeType.png,
       );
-      if(context.mounted) Navigator.pop(context);
-
+      // Mostrar toast de éxito
+      if(context.mounted) {
+        Navigator.pop(context);
+        showTextSnackbar(context, title: "Horario guardado", message: "El horario se ha guardado correctamente en tu carpeta de descargas.");
+      }
     } else {
       final directory = await getApplicationDocumentsDirectory();
       final imagePath = await File('${directory.path}/horario.png').create();

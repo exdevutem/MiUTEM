@@ -24,8 +24,8 @@ class Grades {
 
   Map<String, dynamic> toJson() => {
     'notas_parciales': notasParciales.map((nota) => nota.toJson()).toList(),
-    'nota_final': notaFinal,
-    'nota_presentacion': notaPresentacion,
+    'nota_final_asignatura': notaFinal,
+    'nota_seccion_asignatura': notaPresentacion,
     'nota_examen': notaExamen,
   };
 

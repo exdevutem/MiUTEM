@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/styles/styles.dart';
 import 'package:miutem/screens/horario/widgets/widgets.dart';
 
 class HorarioBlocksContent extends StatelessWidget {
@@ -29,7 +28,7 @@ class HorarioBlocksContent extends StatelessWidget {
         for (num dia = 0; dia < bloquePorDias.length; dia++) {
           BloqueHorario block = horario.horarioEnlazado[blockIndex][dia as int];
           currentRow.add(ClassBlockCard(
-            block: block,
+            bloqueHorario: block,
             height: blockHeight,
             width: blockWidth,
             internalMargin: blockInternalMargin,

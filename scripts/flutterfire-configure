@@ -1,0 +1,37 @@
+#!/bin/bash
+# Script to generate Firebase configuration files for different environments/flavors
+# Feel free to reuse and adapt this script for your own projects
+
+if [[ $# -eq 0 ]]; then
+  echo "Error: No environment specified. Use 'dev', or 'prod'."
+  exit 1
+fi
+
+case $1 in
+  dev)
+    flutterfire config \
+      --project=miutem-dev \
+      --out=lib/firebase_options_dev.dart \
+      --ios-bundle-id=cl.utem.miutem.dev \
+      --ios-out=ios/Firebase/development/GoogleService-Info.plist \
+      --macos-bundle-id=cl.utem.miutem.dev \
+      --macos-out=macos/Firebase/development/GoogleService-Info.plist \
+      --android-package-name=cl.inndev.miutem.dev \
+      --android-out=android/app/src/development/google-services.json
+    ;;
+  prod)
+    flutterfire config \
+      --project=miutem-prod \
+      --out=lib/firebase_options_prod.dart \
+      --ios-bundle-id=cl.utem.miutem \
+      --ios-out=ios/Firebase/production/GoogleService-Info.plist \
+      --macos-bundle-id=cl.utem.miutem \
+      --macos-out=macos/Firebase/production/GoogleService-Info.plist \
+      --android-package-name=cl.inndev.miutem \
+      --android-out=android/app/src/production/google-services.json
+    ;;
+  *)
+    echo "Error: Invalid environment specified. Use 'dev', or 'prod'."
+    exit 1
+    ;;
+esac

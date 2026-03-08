@@ -3,7 +3,7 @@
 export 'home/home_screen.dart';
 
 // ASIGNATURAS
-export 'asignaturas/asignaturas_screen.dart';
+export 'asignaturas/lista_asignaturas_screen.dart';
 
 // APUNTES
 export 'tasklist/task_list_screen.dart';

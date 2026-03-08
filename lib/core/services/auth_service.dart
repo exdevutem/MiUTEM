@@ -5,20 +5,23 @@ import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/repositories/secure_storage_repository.dart';
-import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/core/utils/http/functions.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 
 class AuthService {
 
   final SecureStorageRepository _secureStorageRepository = Get.find<SecureStorageRepository>();
+  bool idHasBeenSet = false;
 
   Future<bool> isFirstTime() async => (await Preferencia.lastLogin.exists()) == false;
 
   Future<bool> isLoggedIn() async => (await _secureStorageRepository.getEstudiante()) != null;
 
   Future<Estudiante> login({ bool forceRefresh = false }) async {
+    if (forceRefresh) {
+      logger.d('Forzando refresco de sesión');
+    }
     final credentials = await _secureStorageRepository.getCredentials();
     if(credentials == null) {
       throw CustomException.custom(message: "No se encontraron credenciales. Por favor intenta más tarde.");
@@ -26,18 +29,19 @@ class AuthService {
 
     Estudiante? estudiante = await _secureStorageRepository.getEstudiante();
     if (estudiante != null && !forceRefresh) {
+      if(!idHasBeenSet) {
+        setUserIdentifier(estudiante);
+        idHasBeenSet = true;
+      }
       return estudiante;
     }
 
     try {
-      final response = await sigaClientRequest("autenticacion/login/",
-        method: 'POST',
-        forceRefresh: forceRefresh,
-        contentType: Headers.formUrlEncodedContentType,
-        extra: {
-          'noToken': true,
-        },
-        sigaParams: credentials.toJson(),
+      final response = await HttpClient.httpClient.post("$sigaServiceUri/autenticacion/login/",
+        data: credentials.toFormUrlEncoded(),
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        )
       );
 
       if(response.statusCode != 200 || response.data['status_code'] != 200) {
@@ -47,8 +51,12 @@ class AuthService {
       estudiante = Estudiante.fromJson(response.data['response'] as Map<String, dynamic>);
       await _secureStorageRepository.setEstudiante(estudiante);
       await Preferencia.lastLogin.set(DateTime.now().toIso8601String());
+      if(!idHasBeenSet) {
+        setUserIdentifier(estudiante);
+        idHasBeenSet = true;
+      }
       return estudiante;
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if(e.response?.statusCode == 401) {
         throw CustomException(message: "Credenciales incorrectas. Por favor intenta nuevamente.", statusCode: 401);
       }
@@ -63,6 +71,7 @@ class AuthService {
   Future<String> activeToken() async {
     Estudiante estudiante = await login();
     if(estudiante.isTokenExpired()) {
+      logger.d('Se encontró un token expirado, solicitando uno nuevo.');
       estudiante = await login(forceRefresh: true);
     }
 

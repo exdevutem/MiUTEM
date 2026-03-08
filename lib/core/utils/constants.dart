@@ -1,14 +1,13 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final apiUrl = !kDebugMode ? 'https://api.exdev.cl' : (dotenv.env['MI_UTEM_API_DEBUG'] ?? 'https://api.exdev.cl');
-const sigaHost = 'https://siga.utem.cl';
+/// UUID Namespace es para generar IDs determinísticos usando UUID v5, por ejemplo para generar un ID de usuario a partir de su correo electrónico sin necesidad de guardar el ID en la base de datos.
+const miutemUuidNamespace = 'a590b229-221c-4d24-a41d-23f5b60ce757';
+final sigaHost = dotenv.env['SIGA_ENDPOINT'] ?? 'https://siga.utem.cl';
 const miUtemHost = 'https://mi.utem.cl';
-const sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
+final sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
 
 const genericUserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15';
 
@@ -16,8 +15,6 @@ const String sentryDsn = 'https://c03edae5839c62f95de91c1cbabb65d7@o450693820455
 const String uxCamDevKey = '0y6p88obpgiug1g';
 const String uxCamProdKey = 'fxkjj5ulr7vb4yf';
 
-/// Logger de la app.
-final logger = Logger(printer: PrettyPrinter());
 /// Secure storage para guardar datos sensibles.
 const secureStorage = FlutterSecureStorage();
 

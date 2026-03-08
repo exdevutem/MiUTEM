@@ -34,7 +34,7 @@ class _HorarioIndicatorState extends State<HorarioIndicator> {
 
   @override
   void initState() {
-    _timer = Timer.periodic(Duration(seconds: 30), (Timer t) => setState(() {}));
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer t) => setState(() {}));
     super.initState();
   }
 
@@ -44,7 +44,7 @@ class _HorarioIndicatorState extends State<HorarioIndicator> {
     super.dispose();
   }
 
-  HorarioController _horarioController = Get.find<HorarioController>();
+  final HorarioController _horarioController = Get.find<HorarioController>();
 
   double get _centerLineYPosition => (_horarioController.minutesFromStart * widget.heightByMinute);
 
@@ -80,7 +80,7 @@ class _HorarioIndicatorState extends State<HorarioIndicator> {
               _horarioController.setIndicatorIsOpen(!_horarioController.indicatorIsOpen.value);
             },
             child: Container(
-              padding: EdgeInsets.all(HorarioIndicator._tapAreaRadius),
+              padding: const EdgeInsets.all(HorarioIndicator._tapAreaRadius),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(HorarioIndicator._tapAreaRadius * 2),
               ),

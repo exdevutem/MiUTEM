@@ -20,7 +20,7 @@ class __TickerTimeTextState extends State<TickerTimeText> {
 
   @override
   void initState() {
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => setState(() => _showColon = !_showColon));
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) => setState(() => _showColon = !_showColon));
     super.initState();
   }
 

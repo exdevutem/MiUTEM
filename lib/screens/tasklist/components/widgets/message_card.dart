@@ -4,10 +4,8 @@ import 'package:miutem/styles/styles.dart';
 class MessageCard extends StatelessWidget {
   const MessageCard({super.key});
 
-  /**
-   *  Card de informacion para la screen de Apuntes
-   *  TODO agregar temas, modificar tamaño maximo de la card
-   */
+  ///  Card de informacion para la screen de Apuntes
+  ///  TODO agregar temas, modificar tamaño maximo de la card
   @override
   Widget build(BuildContext context) {
     return Card(

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/Task/task.dart';
 import 'package:miutem/styles/styles.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 
 class TaskCard extends StatelessWidget {
@@ -16,12 +15,10 @@ class TaskCard extends StatelessWidget {
   });
 
 
-  /**
-   * Card de la lista
-   * TODO modificar el diseño de la card despues de arreglar el modelo de card
-   * TODO agregar color al ramo que corresponde la card
-   *
-   */
+  /// Card de la lista
+  /// TODO modificar el diseño de la card despues de arreglar el modelo de card
+  /// TODO agregar color al ramo que corresponde la card
+  ///
   @override
   Widget build(BuildContext context) {
     String mensaje = task.content;
@@ -64,7 +61,7 @@ class TaskCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Text(
                               'titulo',
                               overflow: TextOverflow.ellipsis,
@@ -77,7 +74,7 @@ class TaskCard extends StatelessWidget {
                               color: Colors.green,
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Text(
+                            child: const Text(
                               'message',
                               // style: StyleText.labelSmall.copyWith(
                               //   color: getEstadoTextColor(estado),
@@ -87,7 +84,7 @@ class TaskCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      const Text(
                         'asunto',
                         // style: StyleText.description.copyWith(
                         //   color: Theme.of(context).colorScheme.onPrimaryContainer,

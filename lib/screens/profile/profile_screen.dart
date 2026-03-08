@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miutem/core/models/config/user_config.dart';
 import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/auth_service.dart';
 import 'package:miutem/screens/profile/widgets/profile_logout.dart';
@@ -45,15 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Space.small,
             const Divider(thickness: 0.5),
             Space.small,
-            const ProfileSettings(),
-            Space.small,
-            ListTile(
-              titleTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
-              subtitleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal),
-              leading: Image.asset('assets/launcher_icons/prod/icon_splash.png', width: 36),
-              title: const Text('Versión de la Aplicación'),
-              subtitle: const Text('4.0.0'),
-            ),
+            ProfileSettings(),
           ],
         ),
       ),

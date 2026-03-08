@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
 
 class BloqueDiasCard extends StatelessWidget {
   final String day;

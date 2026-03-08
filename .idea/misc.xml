@@ -1,0 +1,26 @@
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file:///opt/homebrew/share/flutter/packages/flutter_tools/gradle" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/awesome_notifications-0.10.1/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/awesome_notifications_core-0.10.1/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cloud_firestore-6.1.2/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/file_saver-0.2.9/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_analytics-12.1.2/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-4.4.0/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_crashlytics-5.0.7/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_remote_config-6.1.4/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_native_splash-2.4.7/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.2.4/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/package_info_plus-8.3.1/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/path_provider_android-2.2.22/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/sensors_plus-6.1.2/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/share_plus-10.1.4/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/shared_preferences_android-2.4.20/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/sqflite_android-2.4.2+2/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.28/android" />
+    <file type="web" url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/video_player_android-2.9.1/android" />
+    <file type="web" url="file://$PROJECT_DIR$/android" />
+    <type id="android" />
+  </component>
+</project>

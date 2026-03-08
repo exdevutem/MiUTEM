@@ -167,4 +167,10 @@ class BloqueHorario {
   ) : BloqueHorario();
 
   static List<List<BloqueHorario>>? fromJsonMatrix(dynamic json) => json == null ? null : (json as List<dynamic>? ?? []).map((bloque) => (bloque as List<dynamic>? ?? []).map((dia) => BloqueHorario.fromJson(dia)).toList()).toList();
+
+  toJson() => {
+    'asignatura': asignatura?.toJson(),
+    'sala': sala,
+    'codigo': codigo,
+  };
 }

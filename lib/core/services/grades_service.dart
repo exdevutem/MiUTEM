@@ -4,7 +4,7 @@ import 'package:miutem/core/models/asignaturas/asignatura.dart';
 import 'package:miutem/core/models/evaluacion/grades.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/services/carrera_service.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/functions.dart';
 
 class GradesService {
@@ -27,7 +27,7 @@ class GradesService {
       }
 
       return (response.data['response'] as List<dynamic>).map((it) => Grades.fromJson(it)).toList().first;
-    } on DioError catch(e){
+    } on DioException catch(e){
       final data = e.response?.data ?? {
         'response': 'Error al obtener notas de asignatura. Intenta más tarde.',
         'status_code': e.response?.statusCode ?? 500,

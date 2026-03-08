@@ -24,6 +24,9 @@ import 'package:miutem/core/utils/constants.dart';
 /// ```
 V? let<K,V>(K? object, V Function(K) op) => object != null ? op(object) : null;
 
+// Esta función es similar a `let`, pero asume que el objeto no es nulo, por lo que no retorna un valor nulo, sino que directamente el resultado de la función `op`.
+V apply<K,V>(K object, V Function(K) op) => op(object);
+
 /// Esta función muestra una nota en formato de 1 o 2 decimales dependiendo de si es un 3.95 o no.
 String? formatoNota(num? nota) => nota == 3.95 ? nota?.toStringAsFixed(2) : nota?.toStringAsFixed(1);
 
@@ -68,7 +71,14 @@ String getToday() {
 
 /// Devuelve un color dependiendo si es modo oscuro o no.
 Color themedColor(BuildContext context, {required Color light, required Color dark}) {
-  final mode = AdaptiveTheme.of(context).mode;
+  final adaptiveTheme = AdaptiveTheme.maybeOf(context);
+
+  // Si AdaptiveTheme no está disponible, usar el brillo del sistema
+  if (adaptiveTheme == null) {
+    return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? dark : light;
+  }
+
+  final mode = adaptiveTheme.mode;
   if(mode.isSystem) {
     return WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark ? dark : light;
   }

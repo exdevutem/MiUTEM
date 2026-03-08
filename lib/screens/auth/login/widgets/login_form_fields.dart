@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miutem/screens/auth/login/widgets/utem_email_input_formatter.dart';
 
 class LoginFormFields extends StatelessWidget {
   final TextEditingController usernameController, passwordController;
@@ -8,22 +9,27 @@ class LoginFormFields extends StatelessWidget {
   const LoginFormFields({super.key, required this.usernameController, required this.passwordController, required this.passwordFocus, required this.onLogin, required this.usernameFocus});
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => AutofillGroup(
+    onDisposeAction: AutofillContextAction.commit,
+    child: Column(
     children: [
       TextField(
         decoration: const InputDecoration(
           labelText: 'Usuario/Correo',
-          hintText: 'usuario@utem.cl',
+          hintText: 'usuario',
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.alternate_email),
+          suffixText: '@utem.cl',
         ),
         controller: usernameController,
         autocorrect: false,
         keyboardType: TextInputType.emailAddress,
-        autofillHints: const [AutofillHints.email],
+        autofillHints: const [AutofillHints.username, AutofillHints.email],
         autofocus: true,
         onSubmitted: (_) => passwordFocus.requestFocus(),
         focusNode: usernameFocus,
+        textInputAction: TextInputAction.next,
+        inputFormatters: [UtemEmailInputFormatter()],
       ),
       const SizedBox(height: 10),
       TextField(
@@ -33,6 +39,9 @@ class LoginFormFields extends StatelessWidget {
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.password),
         ),
+        autofillHints: const [AutofillHints.password],
+        keyboardType: TextInputType.visiblePassword,
+        textInputAction: TextInputAction.go,
         focusNode: passwordFocus,
         obscureText: true,
         obscuringCharacter: '•',
@@ -50,5 +59,5 @@ class LoginFormFields extends StatelessWidget {
       ),
       const SizedBox(height: 10)
     ],
-  );
+  ));
 }

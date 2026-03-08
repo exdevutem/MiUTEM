@@ -13,6 +13,19 @@ class AsignaturaMalla {
     required this.nota,
   });
 
+  factory AsignaturaMalla.fromJson(Map<String, dynamic> json) => AsignaturaMalla(
+    nivel: json['nivel'] as int,
+    intentos: json['intentos'] as int,
+    nombre: json['nombre'] as String,
+    tipo: json['tipo'] as String,
+    estado: json['estado'] as String,
+    nota: json['nota'] as String,
+  );
+
+  static List<AsignaturaMalla> fromJsonList(dynamic json) => json != null
+      ? (json as List).map((it) => AsignaturaMalla.fromJson(it as Map<String, dynamic>)).toList()
+      : [];
+
   toJson() => {
     'nivel': nivel,
     'intentos': intentos,

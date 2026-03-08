@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/utils/constants.dart';
+import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/core/utils/http/http_client.dart';
 
 
@@ -42,21 +41,52 @@ Future<Response> sigaClientRequest(String path, {
       params['token'] = await Get.find<AuthService>().activeToken();
     }
 
-    return await HttpClient.authClientSiga.request("$sigaServiceUri/$path",
+    return await HttpClient.httpCachedClient.request("$sigaServiceUri/$path",
       data: data ?? params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&"),
       queryParameters: queryParameters,
-      options: options ?? buildCacheOptions(ttl,
-        forceRefresh: forceRefresh,
-        primaryKey: 'api_siga.miutem',
-        subKey: base64Encode(utf8.encode("$path/${params.entries.map((e) => "${e.key}=${Uri.encodeComponent(e.value)}").join("&")}")),
+      options: options ?? cacheOptions.copyWith(
         maxStale: const Duration(days: 14),
-        options: (options ?? Options()).copyWith(
-          method: method,
-          headers: headers,
-          contentType: contentType,
-          responseType: responseType,
-          extra: extra,
-        ),
+        policy: forceRefresh ? CachePolicy.refreshForceCache : CachePolicy.forceCache,
+      ).toOptions().copyWith(
+        method: method,
+        headers: headers,
+        contentType: contentType,
+        responseType: responseType,
+        extra: extra,
+      ),
+    );
+  } on SocketException {
+    throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
+  } catch (e) {
+    rethrow;
+  }
+}
+
+Future<Response> httpClientRequest(String uri, {
+  String method = "GET",
+  Map<String, String>? headers,
+  dynamic data,
+  String? contentType,
+  ResponseType? responseType,
+  Options? options,
+  bool forceRefresh = false,
+  Duration ttl = const Duration(days: 7),
+  Map<String, dynamic>? extra,
+  Map<String, dynamic>? queryParameters,
+}) async {
+  try {
+    return await HttpClient.httpCachedClient.request(uri,
+      data: data,
+      queryParameters: queryParameters,
+      options: options ?? cacheOptions.copyWith(
+        maxStale: const Duration(days: 14),
+        policy: forceRefresh ? CachePolicy.refreshForceCache : CachePolicy.forceCache,
+      ).toOptions().copyWith(
+        method: method,
+        headers: headers,
+        contentType: contentType,
+        responseType: responseType,
+        extra: extra,
       ),
     );
   } on SocketException {

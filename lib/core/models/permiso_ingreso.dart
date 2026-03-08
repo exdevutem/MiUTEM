@@ -1,4 +1,5 @@
 import 'package:miutem/core/models/user/persona/persona.dart';
+import 'package:miutem/core/utils/utils.dart';
 
 class PermisoIngreso {
   String? id;
@@ -27,7 +28,7 @@ class PermisoIngreso {
 
   factory PermisoIngreso.fromJson(Map<String, dynamic>? json) => json != null ? PermisoIngreso(
     id: json['id'],
-    persona: json.containsKey("usuario") ? Persona.fromJson(json['usuario']) : null,
+    persona: let<Map<String, dynamic>, Persona?>(json['usuario'], (usuario) => Persona.fromJson(usuario)),
     codigoQr: json['codigoQr'],
     perfil: json['perfil'],
     motivo: json['motivo'],
@@ -35,7 +36,7 @@ class PermisoIngreso {
     dependencia: json['dependencia'],
     jornada: json['jornada'],
     vigencia: json['vigencia'],
-    fechaSolicitud: DateTime.tryParse(json['fechaSolicitud']),
+    fechaSolicitud: let<String, DateTime?>(json['fechaSolicitud'], (fechaSolicitud) => DateTime.tryParse(fechaSolicitud)),
   ) : PermisoIngreso();
 
   static List<PermisoIngreso> fromJsonList(List<dynamic>? json) => json != null ? json.map((it) => PermisoIngreso.fromJson(it)).toList() : [];

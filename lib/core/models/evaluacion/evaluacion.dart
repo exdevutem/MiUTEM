@@ -17,8 +17,7 @@ class REvaluacion {
     nota: json['nota'],
   );
 
-  static List<REvaluacion> fromJsonList(List<dynamic>? json) =>
-      json?.map((it) => REvaluacion.fromJson(it)).toList() ?? [];
+  static List<REvaluacion> fromJsonList(List<dynamic>? json) => json?.map((it) => REvaluacion.fromJson(it)).toList() ?? [];
 
   Map<String, dynamic> toJson() => {
     'ponderador': porcentaje,
