@@ -1,37 +1,152 @@
 #!/bin/bash
-# Script to generate Firebase configuration files for different environments/flavors
-# Feel free to reuse and adapt this script for your own projects
+##################################################
+# Script para configurar FlutterFire para múltiples entornos (dev y prod)
+# Autor: Francisco Solis Maturana (Club de Desarrollo Experimental)
+# Uso: ./configure_flutterfire.sh [dev|prod|all]
+# Argumentos:
+#   dev  - Configura FlutterFire para el entorno de desarrollo
+#   prod - Configura FlutterFire para el entorno de producción
+#   all  - Configura FlutterFire para ambos entornos (dev y prod)
+# Flags:
+#   -h, --help - Muestra esta ayuda
+#   -v, --verbose - Muestra información detallada durante la ejecución
+#   --dry-run - Muestra los comandos que se ejecutarían sin ejecutarlos realmente
+##################################################
 
-if [[ $# -eq 0 ]]; then
-  echo "Error: No environment specified. Use 'dev', or 'prod'."
+ENVIRONMENTS=(
+  dev
+  prod
+)
+
+VERBOSE=false
+DRY_RUN=false
+TARGET_ENV=""
+
+print_help() {
+  cat <<'EOF'
+Uso: ./flutterfire-configure [dev|prod|all] [flags]
+
+Argumentos:
+  dev                  Configura FlutterFire para el entorno de desarrollo
+  prod                 Configura FlutterFire para el entorno de producción
+  all                  Configura FlutterFire para ambos entornos
+
+Flags:
+  -h, --help           Muestra esta ayuda
+  -v, --verbose        Muestra información detallada durante la ejecución
+  --dry-run            Muestra los comandos sin ejecutarlos
+EOF
+}
+
+log_verbose() {
+  if [ "$VERBOSE" = true ]; then
+    echo "[verbose] $1"
+  fi
+}
+
+run_cmd() {
+  local cmd=("$@")
+
+  if [ "$VERBOSE" = true ] || [ "$DRY_RUN" = true ]; then
+    echo "[cmd] ${cmd[*]}"
+  fi
+
+  if [ "$DRY_RUN" = true ]; then
+    return 0
+  fi
+
+  "${cmd[@]}"
+}
+
+configure_environment() {
+  echo "================================"
+  echo "Configurando FlutterFire para el entorno: $1"
+  echo "================================"
+
+  # Define variables que pueden usar el mismo entorno como argumento
+  PROJECT="miutem-$1"
+  OUT="lib/firebase_options_$1.dart"
+
+  if [ "$1" == "dev" ]; then
+    IOS_BUNDLE_ID="cl.utem.miutem.dev"
+    IOS_OUT="ios/Firebase/development/GoogleService-Info.plist"
+    MACOS_BUNDLE_ID="cl.utem.miutem.dev"
+    MACOS_OUT="macos/Firebase/development/GoogleService-Info.plist"
+    ANDROID_PACKAGE_NAME="cl.inndev.miutem.dev"
+    ANDROID_OUT="android/app/src/development/google-services.json"
+  elif [ "$1" == "prod" ]; then
+    IOS_BUNDLE_ID="cl.utem.miutem"
+    IOS_OUT="ios/Firebase/production/GoogleService-Info.plist"
+    MACOS_BUNDLE_ID="cl.utem.miutem"
+    MACOS_OUT="macos/Firebase/production/GoogleService-Info.plist"
+    ANDROID_PACKAGE_NAME="cl.inndev.miutem"
+    ANDROID_OUT="android/app/src/production/google-services.json"
+  else
+    echo "Error: Entorno no valido. Use 'dev', 'prod' o 'all'."
+    exit 1
+  fi
+
+  log_verbose "Proyecto Firebase: $PROJECT"
+  log_verbose "Salida Dart: $OUT"
+  log_verbose "iOS bundle id: $IOS_BUNDLE_ID"
+  log_verbose "iOS plist: $IOS_OUT"
+  log_verbose "macOS bundle id: $MACOS_BUNDLE_ID"
+  log_verbose "macOS plist: $MACOS_OUT"
+  log_verbose "Android package: $ANDROID_PACKAGE_NAME"
+  log_verbose "Android json: $ANDROID_OUT"
+
+  run_cmd flutterfire config \
+    --project="$PROJECT" \
+    --out="$OUT" \
+    --ios-bundle-id="$IOS_BUNDLE_ID" \
+    --ios-out="$IOS_OUT" \
+    --macos-bundle-id="$MACOS_BUNDLE_ID" \
+    --macos-out="$MACOS_OUT" \
+    --android-package-name="$ANDROID_PACKAGE_NAME" \
+    --android-out="$ANDROID_OUT"
+}
+
+# Parsea argumentos y flags en cualquier orden.
+while [ $# -gt 0 ]; do
+  case "$1" in
+    dev|prod|all)
+      if [ -n "$TARGET_ENV" ]; then
+        echo "Error: solo se permite un entorno objetivo (dev, prod o all)."
+        print_help
+        exit 1
+      fi
+      TARGET_ENV="$1"
+      ;;
+    -h|--help)
+      print_help
+      exit 0
+      ;;
+    -v|--verbose)
+      VERBOSE=true
+      ;;
+    --dry-run)
+      DRY_RUN=true
+      ;;
+    *)
+      echo "Error: argumento no reconocido '$1'."
+      print_help
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+if [ -z "$TARGET_ENV" ]; then
+  echo "Error: debe indicar un entorno (dev, prod o all)."
+  print_help
   exit 1
 fi
 
-case $1 in
-  dev)
-    flutterfire config \
-      --project=miutem-dev \
-      --out=lib/firebase_options_dev.dart \
-      --ios-bundle-id=cl.utem.miutem.dev \
-      --ios-out=ios/Firebase/development/GoogleService-Info.plist \
-      --macos-bundle-id=cl.utem.miutem.dev \
-      --macos-out=macos/Firebase/development/GoogleService-Info.plist \
-      --android-package-name=cl.inndev.miutem.dev \
-      --android-out=android/app/src/development/google-services.json
-    ;;
-  prod)
-    flutterfire config \
-      --project=miutem-prod \
-      --out=lib/firebase_options_prod.dart \
-      --ios-bundle-id=cl.utem.miutem \
-      --ios-out=ios/Firebase/production/GoogleService-Info.plist \
-      --macos-bundle-id=cl.utem.miutem \
-      --macos-out=macos/Firebase/production/GoogleService-Info.plist \
-      --android-package-name=cl.inndev.miutem \
-      --android-out=android/app/src/production/google-services.json
-    ;;
-  *)
-    echo "Error: Invalid environment specified. Use 'dev', or 'prod'."
-    exit 1
-    ;;
-esac
+if [ "$TARGET_ENV" == "all" ]; then
+  for ENV in "${ENVIRONMENTS[@]}"; do
+    configure_environment "$ENV"
+  done
+else
+  configure_environment "$TARGET_ENV"
+fi
+
