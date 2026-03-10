@@ -56,6 +56,9 @@ dependencies:
   sensors_plus: ^6.1.2
   dio_cache_interceptor: ^4.0.5
   http_cache_file_store: ^2.0.1
+  qr_flutter: ^4.1.0
+  barcode_widget: ^2.0.4
+  flutter_svg: ^2.2.4
   # Awesome-notifications REMOTE
   # awesome_notifications_fcm: ^0.10.0
 
@@ -79,6 +82,8 @@ flutter:
     - assets/animations/monito.flr
     - assets/animations/utem.flr
     - assets/images/sibutem.jpg
+    - assets/images/sibutem.svg
+    - assets/images/sibutem.png
     - assets/launcher_icons/prod/full_icon.png
     - assets/images/exdev_light.png
     - assets/images/exdev_dark.png

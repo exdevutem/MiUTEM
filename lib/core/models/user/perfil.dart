@@ -1,5 +1,7 @@
 enum Perfil {
-  estudiante
+  estudiante,
+  funcionario,
+  profesor,
 
   ;
 }

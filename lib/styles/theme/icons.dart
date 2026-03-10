@@ -9,6 +9,7 @@ class AppIcons {
   static const IconData updates = Symbols.notifications_rounded;
   static const IconData profile = Symbols.person_rounded;
   static const IconData notes = Symbols.note_stack_rounded;
+  static const IconData credential = Symbols.badge_rounded;
   /// Iconos de accesos rápidos
   static const IconData timetable = Symbols.calendar_month_rounded;
   static const IconData historicTimetable = Symbols.calendar_clock_rounded;
@@ -36,6 +37,7 @@ class AppIcons {
     'updates': updates,
     'profile': profile,
     'notes': notes,
+    'credential': credential,
     'timetable': timetable,
     'historicTimetable': historicTimetable,
     'grades': grades,

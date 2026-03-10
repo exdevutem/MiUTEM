@@ -49,7 +49,7 @@ class _SeccionClasesDeHoyState extends State<SeccionClasesDeHoy> {
           Text(today, style: Theme.of(context).textTheme.bodySmall)
         ],
       ),
-      Space.xSmall,
+      Space.extraSmall,
       ListaClases(error: widget.errorAlCargarHorario,
         bloques: widget.bloques,
         onRefresh: () => widget.cargarHorario(forceRefresh: true),

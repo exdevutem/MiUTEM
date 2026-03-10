@@ -15,6 +15,7 @@ final remoteConfigDefaults = {
     'bottom_navigation': {
       'home': true,
       'asignaturas': true,
+      'credencial': true,
       'apuntes': false,
       'perfil': true,
     },

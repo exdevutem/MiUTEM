@@ -8,12 +8,11 @@ import 'package:miutem/core/utils/http/functions.dart';
 import 'package:miutem/core/utils/utils.dart';
 
 class MiUTEMMallaService {
-  static MiUTEMMallaService get get => Get.find<MiUTEMMallaService>();
 
   /// Obtiene la malla, usando caché si está disponible y no ha expirado.
   /// [forceRefresh] fuerza una actualización desde el servidor.
   Future<List<AsignaturaMalla>> getMalla({bool forceRefresh = false}) async {
-    final cookie = await MiUTEMAuthService.get.login();
+    final cookie = await Get.find<MiUTEMAuthService>().login();
     final response = await httpClientRequest("$miUtemHost/academicos/mi-malla",
       forceRefresh: forceRefresh,
       headers: {

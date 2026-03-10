@@ -9,6 +9,8 @@ import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
 import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
 import 'package:miutem/screens/auth/login/login_screen.dart';
 
+import 'package:miutem/styles/styles.dart';
+
 class AsignaturasScreen extends StatefulWidget {
   const AsignaturasScreen({super.key});
 
@@ -64,11 +66,11 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
+              Space.large,
               Text("Asignaturas", style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 20),
+              Space.large,
               const AccesoRapido(),
-              const SizedBox(height: 20),
+              Space.large,
               AsignaturasEnCurso(asignaturas: asignaturas),
             ],
           ),

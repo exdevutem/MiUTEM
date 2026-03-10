@@ -1,29 +1,32 @@
 import 'dart:convert';
 
+import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/models/user/persona/rut.dart';
 
-class CredencialVirtual {
+class CredencialBiblioteca {
 
   final String nombre;
-  final String profilePictureURL;
+  final String imagenPerfil;
   final Rut rut;
-  final String carrera;
+  final String area;
+  final String imagenQr;
 
-
-  CredencialVirtual({
+  const CredencialBiblioteca({
     required this.nombre,
-    required this.profilePictureURL,
+    required this.imagenPerfil,
     required this.rut,
-    required this.carrera,
+    required this.area,
+    required this.imagenQr,
   });
 
   String getBarcodeContent() => "${rut.rut}";
 
   toJson() => {
     'nombre': nombre,
-    'profilePictureURL': profilePictureURL,
+    'imagenPerfil': imagenPerfil,
     'rut': rut.toString(),
-    'carrera': carrera,
+    'area': area,
+    'imagenQr': imagenQr,
   };
 
   @override

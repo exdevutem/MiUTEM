@@ -99,38 +99,48 @@ class FeatureFlag extends StatelessWidget {
       // Get the feature_flags JSON from Remote Config
       final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
 
-      if (featureFlagsJson.isEmpty) {
-        logger.w('FeatureFlag: No "${RemoteConfigServiceKeys.featureFlags}" parameter found in Remote Config');
-        return false;
+      if (featureFlagsJson.isNotEmpty) {
+        final result = _findNestedFlag(jsonDecode(featureFlagsJson), flagKey);
+        if (result != null) return result;
       }
 
-      // Parse the JSON
-      final Map<String, dynamic> featureFlags = jsonDecode(featureFlagsJson);
-
-      // Navigate through the nested structure using dot notation
-      final keyParts = flagKey.split('.');
-      dynamic currentLevel = featureFlags;
-
-      for (final part in keyParts) {
-        if (currentLevel is Map<String, dynamic> && currentLevel.containsKey(part)) {
-          currentLevel = currentLevel[part];
-        } else {
-          logger.w('FeatureFlag: Feature flag "$flagKey" not found in remote config, defaulting to false');
-          return false;
+      // Fallback: try to find the flag in local defaults
+      final defaultJson = remoteConfigDefaults[RemoteConfigServiceKeys.featureFlags];
+      if (defaultJson is String && defaultJson.isNotEmpty) {
+        final result = _findNestedFlag(jsonDecode(defaultJson), flagKey);
+        if (result != null) {
+          logger.d('FeatureFlag: Flag "$flagKey" not found in remote, using local default: $result');
+          return result;
         }
       }
 
-      // Return the boolean value, defaulting to false if it's not a boolean
-      if (currentLevel is bool) {
-        return currentLevel;
-      } else {
-        logger.w('FeatureFlag: Value for "$flagKey" is not a boolean: $currentLevel, defaulting to false');
-        return false;
-      }
+      logger.w('FeatureFlag: Feature flag "$flagKey" not found in remote config or local defaults, defaulting to false');
+      return false;
     } catch (e) {
       logger.e('FeatureFlag: Error parsing feature flags JSON for "$flagKey": $e, defaulting to false');
       return false;
     }
+  }
+
+  /// Navigates a nested map using dot notation and returns the boolean value, or null if not found.
+  static bool? _findNestedFlag(dynamic json, String flagKey) {
+    if (json is! Map<String, dynamic>) return null;
+
+    final keyParts = flagKey.split('.');
+    dynamic currentLevel = json;
+
+    for (final part in keyParts) {
+      if (currentLevel is Map<String, dynamic> && currentLevel.containsKey(part)) {
+        currentLevel = currentLevel[part];
+      } else {
+        return null;
+      }
+    }
+
+    if (currentLevel is bool) {
+      return currentLevel;
+    }
+    return null;
   }
 
   /// Gets the string value of a nested feature flag

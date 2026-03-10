@@ -73,7 +73,7 @@ class AsignaturaMallaCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Space.xSmall,
+              Space.extraSmall,
               Text(
                 asignatura.tipo,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -81,7 +81,7 @@ class AsignaturaMallaCard extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              Space.xSmall,
+              Space.extraSmall,
               Wrap(
                 alignment: WrapAlignment.center,
                 spacing: 4,
