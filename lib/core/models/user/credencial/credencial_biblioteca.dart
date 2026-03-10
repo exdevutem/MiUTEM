@@ -6,14 +6,14 @@ import 'package:miutem/core/models/user/persona/rut.dart';
 class CredencialBiblioteca {
 
   final String nombre;
-  final String profilePictureURL;
+  final String imagenPerfil;
   final Rut rut;
   final String area;
   final String imagenQr;
 
   const CredencialBiblioteca({
     required this.nombre,
-    required this.profilePictureURL,
+    required this.imagenPerfil,
     required this.rut,
     required this.area,
     required this.imagenQr,
@@ -23,7 +23,7 @@ class CredencialBiblioteca {
 
   toJson() => {
     'nombre': nombre,
-    'profilePictureURL': profilePictureURL,
+    'imagenPerfil': imagenPerfil,
     'rut': rut.toString(),
     'area': area,
     'imagenQr': imagenQr,

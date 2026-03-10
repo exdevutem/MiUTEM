@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:miutem/core/models/user/credencial/credencial_biblioteca.dart';
@@ -77,20 +79,38 @@ class CredencialBibliotecaFront extends StatelessWidget {
   );
 
   Widget _buildAvatar() {
-    final url = credencial?.profilePictureURL;
+    final rawImage = credencial?.imagenPerfil.trim();
+    final hasValidImage = _hasValidProfileImage(rawImage);
+
     return CircleAvatar(
       radius: 96,
       backgroundColor: AppTheme.colorScheme.primary.withValues(alpha: 0.2),
-      backgroundImage: url != null && url.isNotEmpty && !url.contains('sin_imagen') ? NetworkImage(url) : null,
-      child: (url == null || url.isEmpty || url.contains('sin_imagen')) ? Text(
-        credencial?.nombre.isNotEmpty == true ? credencial!.nombre[0].toUpperCase() : 'U',
+      backgroundImage: hasValidImage ? _buildProfileImage(rawImage!) : null,
+      child: hasValidImage ? null : Text(credencial?.nombre.isNotEmpty == true ? credencial!.nombre[0].toUpperCase() : 'U',
         style: TextStyle(
           fontSize: 72,
           fontWeight: FontWeight.bold,
           color: AppTheme.colorScheme.primary,
         ),
-      ) : null,
+      ),
     );
+  }
+
+  bool _hasValidProfileImage(String? value) =>
+      value != null && value.isNotEmpty && !value.contains('sin_imagen');
+
+  ImageProvider _buildProfileImage(String imageValue) {
+    final normalized = imageValue.trim();
+
+    if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
+      return NetworkImage(normalized);
+    }
+
+    final base64Data = normalized.contains(',')
+        ? normalized.substring(normalized.indexOf(',') + 1)
+        : normalized;
+
+    return MemoryImage(base64Decode(base64Data));
   }
 
   Widget _buildBarcode(BuildContext context) {

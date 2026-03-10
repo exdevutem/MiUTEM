@@ -61,7 +61,7 @@ class MiUTEMCredencialService {
 
     return CredencialBiblioteca(
       nombre: nombre,
-      profilePictureURL: url,
+      imagenPerfil: url,
       rut: Rut.fromString(rut),
       area: area,
       imagenQr: imagenQr,

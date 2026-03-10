@@ -9,7 +9,7 @@ void main() {
     setUp(() {
       credencial = CredencialBiblioteca(
         nombre: 'Juan Pérez',
-        profilePictureURL: 'https://example.com/foto.jpg',
+        imagenPerfil: 'https://example.com/foto.jpg',
         rut: Rut(21342119),
         area: 'Ingeniería en Informática',
         imagenQr: 'https://example.com/qr.png',
@@ -19,7 +19,7 @@ void main() {
     group('constructor', () {
       test('debería crear una credencial virtual', () {
         expect(credencial.nombre, 'Juan Pérez');
-        expect(credencial.profilePictureURL, 'https://example.com/foto.jpg');
+        expect(credencial.imagenPerfil, 'https://example.com/foto.jpg');
         expect(credencial.rut.rut, 21342119);
         expect(credencial.area, 'Ingeniería en Informática');
         expect(credencial.imagenQr, 'https://example.com/qr.png');
