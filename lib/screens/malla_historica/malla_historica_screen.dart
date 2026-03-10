@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
 import 'package:miutem/core/models/exceptions/custom_exception.dart';
 import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
@@ -29,7 +30,7 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
   }
 
   Future<List<AsignaturaMalla>> _getMalla({bool forceRefresh = false}) async {
-    return await MiUTEMMallaService.get.getMalla(forceRefresh: forceRefresh);
+    return await Get.find<MiUTEMMallaService>().getMalla(forceRefresh: forceRefresh);
   }
 
   @override

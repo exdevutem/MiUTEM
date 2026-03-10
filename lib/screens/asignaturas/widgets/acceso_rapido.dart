@@ -10,7 +10,7 @@ class AccesoRapido extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text("Accesos rápidos", style: Theme.of(context).textTheme.bodyLarge),
-      Space.xSmall,
+      Space.extraSmall,
       SizedBox(
         height: 130,
         child: ListView(
@@ -24,7 +24,7 @@ class AccesoRapido extends StatelessWidget {
               icon: AppIcons.timetable,
               onTap: () => visitarHorario(context),
             ),
-            HorizontalSpace.xSmall,
+            HorizontalSpace.extraSmall,
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,
@@ -33,7 +33,7 @@ class AccesoRapido extends StatelessWidget {
               fill: 0,
               onTap: () => visitarCalculadoraNotas(context),
             ),
-            HorizontalSpace.xSmall,
+            HorizontalSpace.extraSmall,
             CardAccesoRapido(
               color: AppTheme.lightSalmonCard,
               colorDark: AppTheme.darkSalmonCard,

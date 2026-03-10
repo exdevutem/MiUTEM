@@ -43,7 +43,7 @@ class SeccionHorario extends StatelessWidget {
             ),
           ],
         )),
-        const Skeleton.keep(child: Space.xSmall),
+        const Skeleton.keep(child: Space.extraSmall),
         ...(bloques.isEmpty ? dummyBloques : bloques).map((bloque) => CardHorario(bloque: bloque))
       ],
     ),

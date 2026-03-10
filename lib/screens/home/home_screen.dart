@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text("Ver más", style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
-                    Space.xSmall,
+                    Space.extraSmall,
                     CardNovedades(novedad: novedades!.first),
                   ],
                 ),

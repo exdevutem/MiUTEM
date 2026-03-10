@@ -5,6 +5,9 @@ export 'home/home_screen.dart';
 // ASIGNATURAS
 export 'asignaturas/lista_asignaturas_screen.dart';
 
+// CREDENCIAL
+export 'credencial/credencial_screen.dart';
+
 // APUNTES
 export 'tasklist/task_list_screen.dart';
 

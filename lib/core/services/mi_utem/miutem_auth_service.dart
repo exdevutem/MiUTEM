@@ -7,8 +7,6 @@ import 'package:miutem/core/utils/utils.dart';
 
 class MiUTEMAuthService {
 
-  static MiUTEMAuthService get get => Get.find<MiUTEMAuthService>();
-
   final SecureStorageRepository _secureStorageRepository = Get.find<SecureStorageRepository>();
 
   /// Obtiene las cookies de la sesión de Mi.UTEM.

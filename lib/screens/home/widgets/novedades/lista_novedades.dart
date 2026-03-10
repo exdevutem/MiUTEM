@@ -16,7 +16,7 @@ class ListaNovedades extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text("Novedades", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
-      Space.xSmall,
+      Space.extraSmall,
       ExpandableCarousel(
         options: ExpandableCarouselOptions(
           showIndicator: false,

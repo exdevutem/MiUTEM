@@ -5,6 +5,7 @@ import 'package:miutem/core/models/user/estudiante.dart';
 import 'package:miutem/core/services/carrera_service.dart';
 import 'package:miutem/core/utils/utils.dart';
 import 'package:miutem/styles/styles.dart';
+import 'package:miutem/widgets/user_avatar.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:logger/logger.dart';
 
@@ -64,16 +65,9 @@ class _ProfileHeaderState extends State<ProfileHeader> {
         children: [
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: CircleAvatar(
+            child: UserAvatar(
+              estudiante: widget.estudiante,
               radius: 50,
-              backgroundColor: AppTheme.colorScheme.primary.withOpacity(0.2),
-              child: Text(widget.estudiante?.iniciales[0] ?? 'J',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.colorScheme.primary,
-                ),
-              ),
             ),
           ),
           Space.small,
@@ -83,21 +77,21 @@ class _ProfileHeaderState extends State<ProfileHeader> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
-          Space.xSmall,
+          Space.extraSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
             child: Text(capitalize(widget.estudiante?.nombreCompleto ?? 'John Doe'),
               style: Theme.of(context).textTheme.labelMedium,
             ),
           ),
-          Space.xSmall,
+          Space.extraSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
             child: Text((widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
               style: Theme.of(context).textTheme.bodyLarge
             ),
           ),
-          Space.xSmall,
+          Space.extraSmall,
           Skeletonizer(
             enabled: carrera == null,
             child: SizedBox(
