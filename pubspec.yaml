@@ -72,7 +72,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - .env
     - assets/launcher_icons/prod/icon_splash.png
     - assets/videos/login_bg.mp4
     - assets/images/login_bg.png

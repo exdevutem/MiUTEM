@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// UUID Namespace es para generar IDs determinísticos usando UUID v5, por ejemplo para generar un ID de usuario a partir de su correo electrónico sin necesidad de guardar el ID en la base de datos.
 const miutemUuidNamespace = 'a590b229-221c-4d24-a41d-23f5b60ce757';
-final sigaHost = dotenv.env['SIGA_ENDPOINT'] ?? 'https://siga.utem.cl';
+final sigaHost = 'https://siga.utem.cl';
 const miUtemHost = 'https://mi.utem.cl';
 final sigaServiceUri = '$sigaHost/servicios'; // UTEM SIGA API URL
 
