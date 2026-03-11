@@ -14,6 +14,7 @@ jobs:
     - name: Configurar Flutter
       uses: subosito/flutter-action@v2
       with:
+        cache: true
         channel: stable
         flutter-version-file: pubspec.yaml
     - name: Instalar librerías
