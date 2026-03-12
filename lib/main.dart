@@ -2,7 +2,6 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:miutem/core/models/preferencia.dart';
 import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
 import 'package:miutem/core/services/service_manager.dart';
@@ -11,7 +10,6 @@ import 'package:miutem/styles/styles.dart';
 
 void runMainApp(FirebaseOptions firebaseOptions) async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
