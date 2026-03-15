@@ -1,5 +1,5 @@
-import 'package:miutem/core/utils/utils.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:miutem/core/utils/utils.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 enum Preferencia {
   apodo,
@@ -52,7 +52,7 @@ enum Preferencia {
   Future<num?> getAsNum({ int defaultValue = 0, bool guardar = false }) async => let<String, num?>(await get(defaultValue: defaultValue.toString(), guardar: guardar), (data) => num.tryParse(data));
 
   /// Guarda la preferencia en el storage
-  set(String value) async {
+  Future<void> set(String value) async {
     if(!memory) {
       await secureStorage.write(key: name, value: value);
       return;
@@ -64,14 +64,14 @@ enum Preferencia {
 
   /// Guarda la preferencia en el storage solo si no existe
   /// Si la preferencia ya existe, no se guardará nada
-  add(String value) async {
+  Future<void> add(String value) async {
     if (!(await exists())) {
       await set(value);
     }
   }
 
   /// Elimina la preferencia del storage
-  delete() async {
+  Future<void> delete() async {
     if(!memory) {
       await secureStorage.delete(key: name);
       return;

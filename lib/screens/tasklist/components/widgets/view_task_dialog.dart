@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/tasklist/components/components.dart';
-import 'package:miutem/core/models/Task/task.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/tasklist/components/components.dart";
+import "package:miutem/core/models/Task/task.dart";
 
 
 class ViewTaskDialog extends StatelessWidget {
@@ -31,20 +31,20 @@ class ViewTaskDialog extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Content: ${task.content}'),
+              Text("Content: ${task.content}"),
               const SizedBox(height: 10),
               Text('State: ${task.state.toString().split('.').last}'),
               const SizedBox(height: 10),
-              Text('Created At: ${task.createdAt}'),
+              Text("Created At: ${task.createdAt}"),
               const SizedBox(height: 10),
-              Text('Modified At: ${task.modifiedAt}'),
+              Text("Modified At: ${task.modifiedAt}"),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text("Close"),
           ),
         ],
       ),

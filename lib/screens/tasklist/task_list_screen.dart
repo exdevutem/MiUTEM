@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/Task/models/task_model.dart';
-import 'package:miutem/core/services/controllers/local_notifications_controller.dart';
-import 'package:miutem/core/services/controllers/task_controller.dart';
-import 'package:miutem/screens/tasklist/actions/refresh_tasks_action.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/Task/models/task_model.dart";
+import "package:miutem/core/services/controllers/local_notifications_controller.dart";
+import "package:miutem/core/services/controllers/task_controller.dart";
+import "package:miutem/screens/tasklist/actions/refresh_tasks_action.dart";
+import "package:miutem/styles/styles.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
-import '../../core/utils/utils.dart';
-import 'actions/update_task_action.dart';
-import 'components/components.dart';
+import "../../core/utils/utils.dart";
+import "actions/update_task_action.dart";
+import "components/components.dart";
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -47,11 +47,11 @@ class _TaskListScreenState extends State<TaskListScreen> {
     try {
       final categorys = await _taskController.asignaturasCategory();
       setState(() {
-        logger.i('Categorias: $categorys');
+        logger.i("Categorias: $categorys");
         this.categorys = categorys;
       });
     } catch (e) {
-      logger.e('Error al obtener categorias para Tasks', error: e);
+      logger.e("Error al obtener categorias para Tasks", error: e);
     }
   }
 
@@ -61,7 +61,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: const TopNavigation(
-      title: 'Apuntes',
+      title: "Apuntes",
     ),
     body: SafeArea(child: Column(
       children: [
@@ -86,7 +86,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
           child: ElevatedButton(
             onPressed: () => NotificationController.createNotification(),
             //onPressed: () => addTask(context, categorys, _refresh),
-            child: const Text('Agregar Nota'),
+            child: const Text("Agregar Nota"),
           ),
         )
       ],

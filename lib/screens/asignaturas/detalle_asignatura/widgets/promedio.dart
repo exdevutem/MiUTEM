@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/evaluacion/grades.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/evaluacion/grades.dart";
+import "package:miutem/styles/styles.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 class Promedio extends StatelessWidget {
 
@@ -57,7 +57,7 @@ class Promedio extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  formatoNota(grades?.notaPresentacion) ?? '--',
+                                  formatoNota(grades?.notaPresentacion) ?? "--",
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   textAlign: TextAlign.center,
                                 ),

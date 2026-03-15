@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/services/controllers/notas_controller.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class NotaExamen extends StatelessWidget {
 
@@ -20,7 +20,7 @@ class NotaExamen extends StatelessWidget {
     decoration: InputDecoration(
       hintText: formatoNota(notasController.minimumRequiredExamGrade) ?? "--",
       filled: !notasController.canTakeExam,
-      fillColor: Colors.grey.withOpacity(0.2),
+      fillColor: Colors.grey.withValues(alpha: 0.2),
       disabledBorder: Theme.of(context).inputDecorationTheme.border?.copyWith(
         borderSide: BorderSide(
           color: Colors.grey[300]!,

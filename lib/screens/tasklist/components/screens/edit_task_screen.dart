@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:miutem/core/models/Task/task.dart';
+import "package:flutter/material.dart";
+import "package:flutter_colorpicker/flutter_colorpicker.dart";
+import "package:miutem/core/models/Task/task.dart";
 
 class EditTaskScreen extends StatefulWidget {
   final Task task;
@@ -18,8 +18,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   late Color _color;
   late TaskState _state;
   late DateTime _createdAt;
-  late DateTime _modifiedAt;
-
   @override
   void initState() {
     super.initState();
@@ -28,7 +26,6 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     _color = widget.task.color;
     _state = widget.task.state;
     _createdAt = widget.task.createdAt;
-    _modifiedAt = widget.task.modifiedAt;
   }
 
   @override
@@ -64,7 +61,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Task'),
+        title: const Text("Edit Task"),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
@@ -89,10 +86,10 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                   children: [
                     TextFormField(
                       controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Title'),
+                      decoration: const InputDecoration(labelText: "Title"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
+                          return "Please enter a title";
                         }
                         return null;
                       },
@@ -102,19 +99,19 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                       child: TextFormField(
                         controller: _contentController,
                         decoration: const InputDecoration(
-                          labelText: 'Content',
+                          labelText: "Content",
                           alignLabelWithHint: true,
                         ),
                         maxLines: 7,
                       ),
                     ),
                     DropdownButtonFormField<TaskState>(
-                      value: _state,
-                      decoration: const InputDecoration(labelText: 'State'),
+                      initialValue: _state,
+                      decoration: const InputDecoration(labelText: "State"),
                       items: TaskState.values.map((TaskState value) {
                         return DropdownMenuItem<TaskState>(
                           value: value,
-                          child: Text(value.toString().split('.').last),
+                          child: Text(value.toString().split(".").last),
                         );
                       }).toList(),
                       onChanged: (newValue) {
@@ -127,14 +124,14 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text('Color: '),
+                        const Text("Color: "),
                         const SizedBox(width: 8),
                         GestureDetector(
                           onTap: () async {
                             final Color? pickedColor = await showDialog<Color>(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('Pick a color'),
+                                title: const Text("Pick a color"),
                                 content: SingleChildScrollView(
                                   child: BlockPicker(
                                     pickerColor: _color,
@@ -148,11 +145,11 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(),
-                                    child: const Text('Cancel'),
+                                    child: const Text("Cancel"),
                                   ),
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(_color),
-                                    child: const Text('Select'),
+                                    child: const Text("Select"),
                                   ),
                                 ],
                               ),
@@ -182,7 +179,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _saveTask,
-                      child: const Text('Save'),
+                      child: const Text("Save"),
                     ),
                   ],
                 ),

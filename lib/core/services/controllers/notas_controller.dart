@@ -1,7 +1,7 @@
-import 'package:extended_masked_text/extended_masked_text.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/evaluacion/evaluacion.dart';
-import 'package:miutem/core/models/evaluacion/grades.dart';
+import "package:extended_masked_text/extended_masked_text.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/evaluacion/evaluacion.dart";
+import "package:miutem/core/models/evaluacion/grades.dart";
 
 class NotasController {
   static const maxPercentage = 100;

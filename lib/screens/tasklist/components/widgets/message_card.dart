@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/styles/styles.dart";
 
 class MessageCard extends StatelessWidget {
   const MessageCard({super.key});
@@ -27,11 +27,11 @@ class MessageCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Organiza tu día a día',
+                    Text("Organiza tu día a día",
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 2.0),
-                    Text('Crea tareas y recordatorios. Mantén todo bajo control, directo desde tu App Mi UTEM',
+                    Text("Crea tareas y recordatorios. Mantén todo bajo control, directo desde tu App Mi UTEM",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ],

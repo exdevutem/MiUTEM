@@ -1,10 +1,10 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/screens/home/widgets/clases_de_hoy/lista_clases.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/utils/utilities.dart";
+import "package:miutem/screens/home/widgets/clases_de_hoy/lista_clases.dart";
+import "package:miutem/styles/styles.dart";
 
 class SeccionClasesDeHoy extends StatefulWidget {
   final String? errorAlCargarHorario;

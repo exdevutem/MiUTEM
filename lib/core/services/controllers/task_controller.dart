@@ -1,6 +1,6 @@
-import 'package:miutem/core/services/asignaturas_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/tasklist/db_helper/db_task.dart';
+import "package:miutem/core/services/asignaturas_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/tasklist/db_helper/db_task.dart";
 
 class TaskController {
   final AsignaturasService _asignaturaService = AsignaturasService();
@@ -18,7 +18,7 @@ class TaskController {
 
       await Future.wait(futures);
     } catch (e) {
-      logger.e('Error al obtener categorias para Tasks', error: e);
+      logger.e("Error al obtener categorias para Tasks", error: e);
     }
     return asignaturasNames;
   }

@@ -1,37 +1,37 @@
-import 'package:dio/dio.dart';
-import 'package:miutem/core/models/carrera.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/http/functions.dart';
+import "package:dio/dio.dart";
+import "package:miutem/core/models/carrera.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/core/utils/http/functions.dart";
 
 class CarreraService {
 
   Future<Carrera> getCarrera({ bool forceRefresh = false }) async {
     try {
-      final response = await sigaClientRequest('estudiante/carreras/',
-        method: 'POST',
+      final response = await sigaClientRequest("estudiante/carreras/",
+        method: "POST",
         contentType: Headers.formUrlEncodedContentType,
         forceRefresh: forceRefresh,
       );
 
-      if(response.data['status_code'] != 200) {
+      if(response.data["status_code"] != 200) {
         throw CustomException.fromSiga(response.data);
       }
 
-      final carreras = (response.data['response'] as List<dynamic>).map((it) => Carrera.fromJson(it)).toList();
+      final carreras = (response.data["response"] as List<dynamic>).map((it) => Carrera.fromJson(it)).toList();
       final estados = ["causal de eliminacion", "regular"].toList();
 
       carreras.sort((a,b) => estados.indexOf(b.estado.toLowerCase()).compareTo(estados.indexOf(a.estado.toLowerCase())));
       return carreras.first;
     } on DioException catch(e) {
       final data = e.response?.data ?? {
-        'response': 'Error al obtener carrera. Por favor intenta nuevamente.',
-        'status_code': 500,
+        "response": "Error al obtener carrera. Por favor intenta nuevamente.",
+        "status_code": 500,
       };
-      logger.e('Error al obtener carrera', error: e);
+      logger.e("Error al obtener carrera", error: e);
       throw CustomException.fromSiga(data);
     } catch(e) {
-      logger.e('Error al obtener carrera', error: e);
+      logger.e("Error al obtener carrera", error: e);
       rethrow;
     }
   }

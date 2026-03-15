@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import "package:dio/dio.dart";
+import "package:package_info_plus/package_info_plus.dart";
 
 class HeadersInterceptor extends Interceptor {
 
@@ -10,15 +10,15 @@ class HeadersInterceptor extends Interceptor {
     final headers = options.headers;
     if(_userAgent == null) { // Obtiene la versión de la app una sola vez para mejorar rendimiento
       final info = await PackageInfo.fromPlatform();
-      _userAgent = 'App/MiUTEM v${info.version} (${info.buildNumber})';
+      _userAgent = "App/MiUTEM v${info.version} (${info.buildNumber})";
     }
 
-    if(!headers.containsKey('User-Agent')) {
-      headers['User-Agent'] = _userAgent;
+    if(!headers.containsKey("User-Agent")) {
+      headers["User-Agent"] = _userAgent;
     }
 
-    if(options.data != null && !headers.containsKey('Content-Type')) {
-      headers['Content-Type'] = 'application/json';
+    if(options.data != null && !headers.containsKey("Content-Type")) {
+      headers["Content-Type"] = "application/json";
     }
     options.headers = headers;
 

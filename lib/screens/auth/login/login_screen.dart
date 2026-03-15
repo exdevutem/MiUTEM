@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/auth/login/widgets/background_video.dart';
-import 'package:miutem/screens/auth/login/widgets/login_form.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/auth/login/widgets/background_video.dart";
+import "package:miutem/screens/auth/login/widgets/login_form.dart";
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

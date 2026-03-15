@@ -1,6 +1,6 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 /// Widget reutilizable de tarjeta con animación de volteo (flip).
 /// Muestra [front] o [back] dependiendo del estado de la animación.

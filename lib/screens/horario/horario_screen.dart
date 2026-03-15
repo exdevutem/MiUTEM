@@ -1,16 +1,16 @@
-import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/controllers/horario_controller.dart';
-import 'package:miutem/screens/horario/widgets/widgets.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
+import "dart:io";
+import "package:dio/dio.dart";
+import "package:file_saver/file_saver.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/services/controllers/horario_controller.dart";
+import "package:miutem/screens/horario/widgets/widgets.dart";
+import "package:miutem/styles/styles.dart";
+import "package:path_provider/path_provider.dart";
+import "package:screenshot/screenshot.dart";
+import "package:share_plus/share_plus.dart";
 
 class HorarioScreen extends StatefulWidget {
   const HorarioScreen({super.key});
@@ -150,9 +150,9 @@ class _HorarioScreenState extends State<HorarioScreen> {
 
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
       await FileSaver.instance.saveFile(
-        name: 'horario',
+        name: "horario",
         bytes: image,
-        ext: 'png',
+        ext: "png",
         mimeType: MimeType.png,
       );
       // Mostrar toast de éxito
@@ -162,7 +162,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
       }
     } else {
       final directory = await getApplicationDocumentsDirectory();
-      final imagePath = await File('${directory.path}/horario.png').create();
+      final imagePath = await File("${directory.path}/horario.png").create();
       await imagePath.writeAsBytes(image);
 
       if(context.mounted) Navigator.pop(context);

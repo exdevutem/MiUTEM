@@ -1,4 +1,4 @@
-import 'dart:convert';
+import "dart:convert";
 
 class Credentials {
 
@@ -9,18 +9,18 @@ class Credentials {
     required this.password,
   });
 
-  toJson() => {
-    'username': username,
-    'password': password,
+  Map<String, String> toJson() => {
+    "username": username,
+    "password": password,
   };
 
   @override
   String toString() => jsonEncode(toJson());
 
-  String toFormUrlEncoded() => 'username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}';
+  String toFormUrlEncoded() => "username=${Uri.encodeComponent(username)}&password=${Uri.encodeComponent(password)}";
   
   factory Credentials.fromJson(Map<String, dynamic> json) => Credentials(
-    username: json['username'] as String,
-    password: json['password'] as String,
+    username: json["username"] as String,
+    password: json["password"] as String,
   );
 }

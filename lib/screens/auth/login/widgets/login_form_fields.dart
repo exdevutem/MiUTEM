@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/auth/login/widgets/utem_email_input_formatter.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/auth/login/widgets/utem_email_input_formatter.dart";
 
 class LoginFormFields extends StatelessWidget {
   final TextEditingController usernameController, passwordController;
@@ -15,11 +15,11 @@ class LoginFormFields extends StatelessWidget {
     children: [
       TextField(
         decoration: const InputDecoration(
-          labelText: 'Usuario/Correo',
-          hintText: 'usuario',
+          labelText: "Usuario/Correo",
+          hintText: "usuario",
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.alternate_email),
-          suffixText: '@utem.cl',
+          suffixText: "@utem.cl",
         ),
         controller: usernameController,
         autocorrect: false,
@@ -34,8 +34,8 @@ class LoginFormFields extends StatelessWidget {
       const SizedBox(height: 10),
       TextField(
         decoration: const InputDecoration(
-          labelText: 'Contraseña',
-          hintText: '••••••••••',
+          labelText: "Contraseña",
+          hintText: "••••••••••",
           border: OutlineInputBorder(),
           prefixIcon: Icon(Icons.password),
         ),
@@ -44,7 +44,7 @@ class LoginFormFields extends StatelessWidget {
         textInputAction: TextInputAction.go,
         focusNode: passwordFocus,
         obscureText: true,
-        obscuringCharacter: '•',
+        obscuringCharacter: "•",
         controller: passwordController,
         onSubmitted: (_) => onLogin(),
       ),
@@ -55,7 +55,7 @@ class LoginFormFields extends StatelessWidget {
           minimumSize: const Size(double.infinity, 50),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: const Text('Ingresar'),
+        child: const Text("Ingresar"),
       ),
       const SizedBox(height: 10)
     ],

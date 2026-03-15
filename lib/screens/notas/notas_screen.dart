@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/models/evaluacion/evaluacion.dart';
-import 'package:miutem/core/models/evaluacion/grades.dart';
-import 'package:miutem/core/models/user/persona/persona.dart';
-import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/screens/notas/actions/cargar_asignaturas_con_notas.dart';
-import 'package:miutem/screens/notas/widgets/notas.dart';
-import 'package:miutem/screens/notas/widgets/promedio.dart';
-import 'package:miutem/screens/notas/widgets/selector_asignatura.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/models/evaluacion/evaluacion.dart";
+import "package:miutem/core/models/evaluacion/grades.dart";
+import "package:miutem/core/models/user/persona/persona.dart";
+import "package:miutem/core/services/controllers/notas_controller.dart";
+import "package:miutem/screens/notas/actions/cargar_asignaturas_con_notas.dart";
+import "package:miutem/screens/notas/widgets/notas.dart";
+import "package:miutem/screens/notas/widgets/promedio.dart";
+import "package:miutem/screens/notas/widgets/selector_asignatura.dart";
 
 final emptyAsignatura = Asignatura(id: "id", nombre: "Calcular Notas", codigo: "--", tipoHora: "--", estado: "--", seccion: "--", docente: Persona(nombreCompleto: "--"), grades: Grades(notasParciales: [IEvaluacion()]));
 
@@ -68,7 +68,7 @@ class _NotasScreenState extends State<NotasScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Notas')),
+    appBar: AppBar(title: const Text("Notas")),
     body: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: SingleChildScrollView(

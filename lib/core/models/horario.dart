@@ -1,15 +1,15 @@
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
+import "package:miutem/core/models/asignaturas/asignatura.dart";
 
 class Horario {
   List<Asignatura>? asignaturas;
   List<List<BloqueHorario>>? horario;
   List<dynamic>? dias = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado'
+    "Lunes",
+    "Martes",
+    "Miércoles",
+    "Jueves",
+    "Viernes",
+    "Sábado"
   ];
   List<Periodo>? periodos = [
     Periodo(
@@ -63,7 +63,7 @@ class Horario {
 
   factory Horario.fromJson(Map<String, dynamic>? json) => json != null ? Horario(
     // asignaturas: Asignatura.fromJsonList(json['asignaturas']),
-    horario: BloqueHorario.fromJsonMatrix(json['horario']),
+    horario: BloqueHorario.fromJsonMatrix(json["horario"]),
     // dias: json["dias"],
     // periodos: Periodo.fromJsonList(json["periodos"]),
   ) : Horario();
@@ -161,16 +161,16 @@ class BloqueHorario {
   });
 
   factory BloqueHorario.fromJson(Map<String, dynamic>? json) => json != null ? BloqueHorario(
-    asignatura: Asignatura.fromJson(json['asignatura']),
-    sala: json['asignatura']['sala'],
+    asignatura: Asignatura.fromJson(json["asignatura"]),
+    sala: json["asignatura"]["sala"],
     codigo: "${json['asignatura']['codigo']}/${json['asignatura']['seccion']}",
   ) : BloqueHorario();
 
   static List<List<BloqueHorario>>? fromJsonMatrix(dynamic json) => json == null ? null : (json as List<dynamic>? ?? []).map((bloque) => (bloque as List<dynamic>? ?? []).map((dia) => BloqueHorario.fromJson(dia)).toList()).toList();
 
-  toJson() => {
-    'asignatura': asignatura?.toJson(),
-    'sala': sala,
-    'codigo': codigo,
+  Map<String, Object?> toJson() => {
+    "asignatura": asignatura?.toJson(),
+    "sala": sala,
+    "codigo": codigo,
   };
 }

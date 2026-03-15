@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/screens/credencial/widgets/perfil_badge.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:miutem/widgets/user_avatar.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/utils/utilities.dart";
+import "package:miutem/screens/credencial/widgets/perfil_badge.dart";
+import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/user_avatar.dart";
+import "package:qr_flutter/qr_flutter.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 /// Frente de la credencial con avatar, nombre, QR y RUT.
 class CredencialFront extends StatelessWidget {
@@ -125,7 +125,7 @@ class CredencialFront extends StatelessWidget {
   Widget _buildRut(BuildContext context) {
     return Center(
       child: Text(
-        usuario?.rut?.toString() ?? '12.345.678-9',
+        usuario?.rut?.toString() ?? "12.345.678-9",
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
@@ -135,27 +135,27 @@ class CredencialFront extends StatelessWidget {
   }
 
   String _getNombres() {
-    if (usuario == null) return 'Nombre';
-    final parts = usuario!.nombreCompletoCapitalizado.split(' ');
+    if (usuario == null) return "Nombre";
+    final parts = usuario!.nombreCompletoCapitalizado.split(" ");
     if (parts.length >= 3) {
-      return parts.sublist(0, parts.length - 2).join(' ');
+      return parts.sublist(0, parts.length - 2).join(" ");
     }
     return parts.first;
   }
 
   String _getApellidos() {
-    if (usuario == null) return 'Apellido';
-    final parts = usuario!.nombreCompletoCapitalizado.split(' ');
+    if (usuario == null) return "Apellido";
+    final parts = usuario!.nombreCompletoCapitalizado.split(" ");
     if (parts.length >= 3) {
-      return parts.sublist(parts.length - 2).join(' ');
+      return parts.sublist(parts.length - 2).join(" ");
     }
     if (parts.length == 2) return parts.last;
-    return '';
+    return "";
   }
 
   String _getQrData() {
-    if (usuario?.rut == null) return '0';
-    return '${usuario!.rut!.rut}';
+    if (usuario?.rut == null) return "0";
+    return "${usuario!.rut!.rut}";
   }
 }
 

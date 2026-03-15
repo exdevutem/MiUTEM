@@ -1,6 +1,6 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/constants.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
+import "package:flutter/material.dart";
+import "package:miutem/core/utils/constants.dart";
 
 /// Esta función ejecuta la función `op` si es que el objeto no es nulo, además retorna lo que retorne la función op.
 ///
@@ -58,8 +58,8 @@ String capitalize(String text) => text.split(" ").map((e) {
 /// Convierte un string hexadecimal a un color de Flutter
 Color fromHex(String hexString) {
   final buffer = StringBuffer();
-  if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-  buffer.write(hexString.replaceFirst('#', ''));
+  if (hexString.length == 6 || hexString.length == 7) buffer.write("ff");
+  buffer.write(hexString.replaceFirst("#", ""));
   return Color(int.parse(buffer.toString(), radix: 16));
 }
 

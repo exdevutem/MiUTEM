@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/lista_asignaturas.dart';
+import "package:flutter/material.dart";
+import "package:google_fonts/google_fonts.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/lista_asignaturas.dart";
 
 class AsignaturasEnCurso extends StatelessWidget {
 

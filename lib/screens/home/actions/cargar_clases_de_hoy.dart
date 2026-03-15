@@ -1,7 +1,7 @@
-import 'package:get/get.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/horario_service.dart';
+import "package:get/get.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/services/horario_service.dart";
 
 Future<List<BloqueHorario>?> cargarClasesDeHoy({ bool forceRefresh = false }) async {
   try {

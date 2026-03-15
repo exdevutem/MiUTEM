@@ -1,4 +1,4 @@
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import "package:dart_jsonwebtoken/dart_jsonwebtoken.dart";
 
 mixin TokenizedObject {
 
@@ -8,7 +8,7 @@ mixin TokenizedObject {
   JWT? decodeToken() => JWT.tryDecode(token);
 
   bool isTokenExpired() {
-    final exp = decodeToken()?.payload['exp'];
+    final exp = decodeToken()?.payload["exp"];
     if(exp == null) {
       return true;
     }

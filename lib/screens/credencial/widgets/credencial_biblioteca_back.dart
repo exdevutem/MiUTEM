@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'dart:ffi';
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/credencial/credencial_biblioteca.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "dart:convert";
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/credencial/credencial_biblioteca.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/styles/styles.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 /// Dorso de la credencial SIBUTEM con QR, perfil, URL, texto legal y logo.
 class CredencialBibliotecaBack extends StatelessWidget {
@@ -56,7 +55,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Space.extraSmall,
-              Text('https://biblioteca.utem.cl/',
+              Text("https://biblioteca.utem.cl/",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppTheme.primary,
                   fontWeight: FontWeight.w500,
@@ -64,7 +63,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Space.small,
-              Text('Este documento es personal e intransferible. El atraso en la devolución del material solicitado será sancionado por la biblioteca.',
+              Text("Este documento es personal e intransferible. El atraso en la devolución del material solicitado será sancionado por la biblioteca.",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.4,
@@ -90,8 +89,8 @@ class CredencialBibliotecaBack extends StatelessWidget {
       try {
         // Remover el prefijo data:image si existe
         String base64String = imageBase64;
-        if (imageBase64.contains(',')) {
-          base64String = imageBase64.split(',').last;
+        if (imageBase64.contains(",")) {
+          base64String = imageBase64.split(",").last;
         }
 
         final bytes = base64Decode(base64String);
@@ -136,7 +135,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
   Widget _buildSibutemLogo(BuildContext context) {
     // Load image /assets/images/sibutem.png
     return Image.asset(
-      'assets/images/sibutem.png',
+      "assets/images/sibutem.png",
       height: 72,
       fit: BoxFit.contain,
       color: themedColor(context, light: Colors.black, dark: Colors.white),
@@ -144,9 +143,9 @@ class CredencialBibliotecaBack extends StatelessWidget {
   }
 
   String _getPerfilLabel() {
-    if (estudiante == null) return 'Estudiante';
+    if (estudiante == null) return "Estudiante";
     final perfil = estudiante!.perfiles.firstOrNull;
-    if (perfil == null) return 'Estudiante';
+    if (perfil == null) return "Estudiante";
     return capitalize(perfil.name);
   }
 }

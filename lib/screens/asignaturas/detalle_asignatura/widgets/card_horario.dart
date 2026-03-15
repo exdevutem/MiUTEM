@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart";
 
 class CardHorario extends StatelessWidget {
   final HorarioBloque bloque;

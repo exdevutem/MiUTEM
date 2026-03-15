@@ -1,18 +1,18 @@
 /* Aquí se exportan las screens y widgets importantes para la navegación del sistema */
 // HOME
-export 'home/home_screen.dart';
+export "home/home_screen.dart";
 
 // ASIGNATURAS
-export 'asignaturas/lista_asignaturas_screen.dart';
+export "asignaturas/lista_asignaturas_screen.dart";
 
 // CREDENCIAL
-export 'credencial/credencial_screen.dart';
+export "credencial/credencial_screen.dart";
 
 // APUNTES
-export 'tasklist/task_list_screen.dart';
+export "tasklist/task_list_screen.dart";
 
 // PERFIL
-export 'profile/profile_screen.dart';
+export "profile/profile_screen.dart";
 
 // NOTAS
-export 'notas/notas_screen.dart';
+export "notas/notas_screen.dart";

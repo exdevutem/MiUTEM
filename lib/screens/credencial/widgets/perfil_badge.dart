@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/perfil.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/perfil.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class PerfilBadge extends StatelessWidget {
   final Perfil? perfil;
@@ -9,7 +9,7 @@ class PerfilBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = perfil != null ? capitalize(perfil!.name) : 'Estudiante';
+    final label = perfil != null ? capitalize(perfil!.name) : "Estudiante";
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

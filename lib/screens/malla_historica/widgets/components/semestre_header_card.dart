@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class SemestreHeaderCard extends StatelessWidget {
   final int semestre;
@@ -20,14 +20,14 @@ class SemestreHeaderCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Sem.',
+            "Sem.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.normal,
             ),
           ),
           Text(
-            '$semestre',
+            "$semestre",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class IBanner {
   final String id;

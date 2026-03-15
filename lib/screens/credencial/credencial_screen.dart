@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/user/credencial/credencial_biblioteca.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/services/mi_utem/miutem_credencial_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/credencial/widgets/credencial_back.dart';
-import 'package:miutem/screens/credencial/widgets/credencial_biblioteca_back.dart';
-import 'package:miutem/screens/credencial/widgets/credencial_biblioteca_front.dart';
-import 'package:miutem/screens/credencial/widgets/credencial_front.dart';
-import 'package:miutem/screens/credencial/widgets/flip_card.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/user/credencial/credencial_biblioteca.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/core/services/mi_utem/miutem_credencial_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/credencial/widgets/credencial_back.dart";
+import "package:miutem/screens/credencial/widgets/credencial_biblioteca_back.dart";
+import "package:miutem/screens/credencial/widgets/credencial_biblioteca_front.dart";
+import "package:miutem/screens/credencial/widgets/credencial_front.dart";
+import "package:miutem/screens/credencial/widgets/flip_card.dart";
+import "package:miutem/styles/styles.dart";
 
 enum TipoCredencial { institucional, sibutem }
 
@@ -37,7 +37,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
       final est = await Get.find<AuthService>().login(forceRefresh: forceRefresh);
       if (mounted) setState(() => estudiante = est);
     } catch (e) {
-      logger.e('Error loading estudiante: $e');
+      logger.e("Error loading estudiante: $e");
     }
   }
 
@@ -46,7 +46,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
       final cred = await Get.find<MiUTEMCredencialService>().getCredencialBiblioteca();
       if (mounted) setState(() => credencialBiblioteca = cred);
     } catch (e) {
-      logger.e('Error loading credencial biblioteca: $e');
+      logger.e("Error loading credencial biblioteca: $e");
     }
   }
 
@@ -85,7 +85,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Credencial',
+                      Text("Credencial",
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Space.medium,
@@ -95,11 +95,11 @@ class _CredencialScreenState extends State<CredencialScreen> {
                           segments: const [
                             ButtonSegment(
                               value: TipoCredencial.institucional,
-                              label: Text('Institucional'),
+                              label: Text("Institucional"),
                             ),
                             ButtonSegment(
                               value: TipoCredencial.sibutem,
-                              label: Text('SIBUTEM'),
+                              label: Text("SIBUTEM"),
                             ),
                           ],
                           selected: {_tipoCredencial},
@@ -110,7 +110,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: _tipoCredencial == TipoCredencial.institucional ? FlipCard(
-                          key: const ValueKey('institucional'),
+                          key: const ValueKey("institucional"),
                           front: CredencialFront(
                             usuario: estudiante,
                             availableHeight: cardHeight,
@@ -119,7 +119,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
                             availableHeight: cardHeight,
                           ),
                         ) : FlipCard(
-                          key: const ValueKey('sibutem'),
+                          key: const ValueKey("sibutem"),
                           front: CredencialBibliotecaFront(
                             credencial: credencialBiblioteca,
                             availableHeight: cardHeight,
@@ -133,7 +133,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
                       ),
                       Space.small,
                       Center(
-                        child: Text('Toca la credencial para voltear',
+                        child: Text("Toca la credencial para voltear",
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),

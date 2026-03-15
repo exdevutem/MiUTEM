@@ -1,12 +1,12 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/http/interceptors/error_interceptor.dart';
-import 'package:miutem/core/utils/http/interceptors/headers_interceptor.dart';
-import 'package:miutem/core/utils/http/interceptors/log_interceptor.dart';
-import 'package:uuid/uuid.dart';
+import "package:dio/dio.dart";
+import "package:dio_cache_interceptor/dio_cache_interceptor.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/core/utils/http/interceptors/error_interceptor.dart";
+import "package:miutem/core/utils/http/interceptors/headers_interceptor.dart";
+import "package:miutem/core/utils/http/interceptors/log_interceptor.dart";
+import "package:uuid/uuid.dart";
 
 final cacheOptions = CacheOptions(
   store: MemCacheStore(),

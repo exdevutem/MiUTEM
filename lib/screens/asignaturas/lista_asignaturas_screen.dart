@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/asignaturas_service.dart';
-import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/asignaturas/widgets/acceso_rapido.dart';
-import 'package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart';
-import 'package:miutem/screens/auth/login/login_screen.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/services/asignaturas_service.dart";
+import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/asignaturas/widgets/acceso_rapido.dart";
+import "package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart";
+import "package:miutem/screens/auth/login/login_screen.dart";
 
-import 'package:miutem/styles/styles.dart';
+import "package:miutem/styles/styles.dart";
 
 class AsignaturasScreen extends StatefulWidget {
   const AsignaturasScreen({super.key});
@@ -39,7 +39,7 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
         .getAsignaturas()
         .then((asignaturas) => setState(() => this.asignaturas = asignaturas),
             onError: (err) {
-      logger.e('Error al cargar asignaturas', error: err);
+      logger.e("Error al cargar asignaturas", error: err);
     });
   }
 

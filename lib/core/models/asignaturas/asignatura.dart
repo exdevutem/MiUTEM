@@ -1,10 +1,10 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asistencia.dart';
-import 'package:miutem/core/models/evaluacion/grades.dart';
-import 'package:miutem/core/models/user/persona/persona.dart';
-import 'package:miutem/core/models/user/persona/rut.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "dart:convert";
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asistencia.dart";
+import "package:miutem/core/models/evaluacion/grades.dart";
+import "package:miutem/core/models/user/persona/persona.dart";
+import "package:miutem/core/models/user/persona/rut.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class Asignatura {
   String id;
@@ -56,17 +56,17 @@ class Asignatura {
   }
 
   factory Asignatura.fromJson(Map<String, dynamic> json) => Asignatura(
-    id: json['seccion_id'],
-    codigo: json['codigo_asignatura'],
-    nombre: capitalize(json['nombre_asignatura'] ?? ''),
-    tipoHora: capitalize(json['tipo_hora'] ?? ''),
-    estado: '', // TODO: Agregar estado de aprobado, reprobado o inscrito.
-    docente: let<String, Persona?>(json['profesor'] ?? json['docente'], (String? docente) {
+    id: json["seccion_id"],
+    codigo: json["codigo_asignatura"],
+    nombre: capitalize(json["nombre_asignatura"] ?? ""),
+    tipoHora: capitalize(json["tipo_hora"] ?? ""),
+    estado: "", // TODO: Agregar estado de aprobado, reprobado o inscrito.
+    docente: let<String, Persona?>(json["profesor"] ?? json["docente"], (String? docente) {
       if(docente == null || docente.isEmpty) {
         return null;
       }
 
-      final partes = docente.split(RegExp(r'\s*-\s*')).map((it) => it.trim()).toList();
+      final partes = docente.split(RegExp(r"\s*-\s*")).map((it) => it.trim()).toList();
       if(partes.length <= 1) {
         return Persona(nombreCompleto: capitalize(partes.first));
       }
@@ -77,11 +77,11 @@ class Asignatura {
         rut: numeroRut != null ? Rut(numeroRut) : null,
       );
     }) ?? Persona(nombreCompleto: "Sin Docente"),
-    seccion: json['seccion'],
+    seccion: json["seccion"],
     // asistencia: Asistencia(asistidos: json['asistencia_al_dia']), // TODO: Implementar asistencia de sisei (entrega un porcentaje)
-    tipoAsignatura: capitalize(json['tipo_asignatura'] as String? ?? ''),
-    sala: capitalize(json['sala'] ?? ''),
-    horario: json['horario'],
+    tipoAsignatura: capitalize(json["tipo_asignatura"] as String? ?? ""),
+    sala: capitalize(json["sala"] ?? ""),
+    horario: json["horario"],
     intentos: num.tryParse('${json['intentos'] ?? ''}') ?? 1,
     // tipoSala: capitalize(json['tipoSala'] ?? ''), // TODO: Obtener tipo de sala desde api-mi-utem
   );
@@ -89,21 +89,21 @@ class Asignatura {
   static List<Asignatura> fromJsonList(dynamic json) => json != null ? (json as List<dynamic>).map((it) => Asignatura.fromJson(it)).toList() : [];
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'codigo': codigo,
-    'nombre': nombre,
-    'tipoHora': tipoHora,
-    'estado': estado,
-    'docente': docente,
-    'seccion': seccion,
-    'estudiantes': estudiantes,
-    'notas': grades?.toJson() ?? [],
-    'asistencia': asistencia?.toJson() ?? {},
-    'tipoAsignatura': tipoAsignatura,
-    'sala': sala,
-    'horario': horario,
-    'intentos': intentos,
-    'tipoSala': tipoSala,
+    "id": id,
+    "codigo": codigo,
+    "nombre": nombre,
+    "tipoHora": tipoHora,
+    "estado": estado,
+    "docente": docente,
+    "seccion": seccion,
+    "estudiantes": estudiantes,
+    "notas": grades?.toJson() ?? [],
+    "asistencia": asistencia?.toJson() ?? {},
+    "tipoAsignatura": tipoAsignatura,
+    "sala": sala,
+    "horario": horario,
+    "intentos": intentos,
+    "tipoSala": tipoSala,
   };
 
   @override

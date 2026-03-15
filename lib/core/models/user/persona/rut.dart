@@ -36,18 +36,18 @@ class Rut {
       return rut;
     }
     var rutLength = rut.length;
-    var verificationDigit = '-${rut.substring(rutLength - 1)}';
+    var verificationDigit = "-${rut.substring(rutLength - 1)}";
 
-    var result = '';
+    var result = "";
     for (var i = 1; i < rutLength; i += 1) {
       var start = rutLength - i - 1;
       var end = rutLength - i;
-      result = '${rut.substring(start, end)}$result';
+      result = "${rut.substring(start, end)}$result";
       if (i % 3 == 0) {
-        result = '.$result';
+        result = ".$result";
       }
     }
-    return '$result$verificationDigit';
+    return "$result$verificationDigit";
   }
 
 }

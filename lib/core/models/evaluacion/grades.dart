@@ -1,6 +1,6 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:miutem/core/models/evaluacion/evaluacion.dart';
+import "package:miutem/core/models/evaluacion/evaluacion.dart";
 
 class Grades {
   List<REvaluacion> notasParciales;
@@ -16,17 +16,17 @@ class Grades {
   });
 
   factory Grades.fromJson(Map<String, dynamic> json) => Grades(
-    notasParciales: REvaluacion.fromJsonList(json['notas_parciales']),
-    notaFinal: json['nota_final_asignatura'] as num?,
-    notaPresentacion: json['nota_seccion_asignatura'] as num?,
-    notaExamen: json['nota_examen'] as num?,
+    notasParciales: REvaluacion.fromJsonList(json["notas_parciales"]),
+    notaFinal: json["nota_final_asignatura"] as num?,
+    notaPresentacion: json["nota_seccion_asignatura"] as num?,
+    notaExamen: json["nota_examen"] as num?,
   );
 
   Map<String, dynamic> toJson() => {
-    'notas_parciales': notasParciales.map((nota) => nota.toJson()).toList(),
-    'nota_final_asignatura': notaFinal,
-    'nota_seccion_asignatura': notaPresentacion,
-    'nota_examen': notaExamen,
+    "notas_parciales": notasParciales.map((nota) => nota.toJson()).toList(),
+    "nota_final_asignatura": notaFinal,
+    "nota_seccion_asignatura": notaPresentacion,
+    "nota_examen": notaExamen,
   };
 
   @override

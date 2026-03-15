@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/screens/profile/widgets/profile_logout.dart';
-import 'package:miutem/screens/profile/widgets/profile_header.dart';
-import 'package:miutem/screens/profile/widgets/profile_settings.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/screens/profile/widgets/profile_logout.dart";
+import "package:miutem/screens/profile/widgets/profile_header.dart";
+import "package:miutem/screens/profile/widgets/profile_settings.dart";
+import "package:miutem/styles/styles.dart";
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
