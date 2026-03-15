@@ -13,12 +13,12 @@ class HorarioBloque {
     required this.sala,
   });
 
-  toJson() => {
-    'dia': dia,
-    'horaInicio': horaInicio,
-    'horaFin': horaFin,
-    'nombreAsignatura': nombreAsignatura,
-    'sala': sala,
+  Map<String, String> toJson() => {
+    "dia": dia,
+    "horaInicio": horaInicio,
+    "horaFin": horaFin,
+    "nombreAsignatura": nombreAsignatura,
+    "sala": sala,
   };
 
 }

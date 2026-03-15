@@ -1,11 +1,11 @@
-import 'package:get/get.dart';
-import 'package:html/parser.dart' show parse;
-import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/services/mi_utem/miutem_auth_service.dart';
-import 'package:miutem/core/utils/constants.dart';
-import 'package:miutem/core/utils/http/functions.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:get/get.dart";
+import "package:html/parser.dart" show parse;
+import "package:miutem/core/models/asignaturas/asignatura_malla.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/services/mi_utem/miutem_auth_service.dart";
+import "package:miutem/core/utils/constants.dart";
+import "package:miutem/core/utils/http/functions.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class MiUTEMMallaService {
 
@@ -16,8 +16,8 @@ class MiUTEMMallaService {
     final response = await httpClientRequest("$miUtemHost/academicos/mi-malla",
       forceRefresh: forceRefresh,
       headers: {
-        'Cookie': cookie ?? '',
-        'User-Agent': genericUserAgent,
+        "Cookie": cookie ?? "",
+        "User-Agent": genericUserAgent,
       },
     );
 

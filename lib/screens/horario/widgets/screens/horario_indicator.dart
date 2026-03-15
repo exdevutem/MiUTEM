@@ -1,10 +1,10 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/services/controllers/horario_controller.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/services/controllers/horario_controller.dart";
 
-import '../widgets.dart';
+import "../widgets.dart";
 
 
 class HorarioIndicator extends StatefulWidget {

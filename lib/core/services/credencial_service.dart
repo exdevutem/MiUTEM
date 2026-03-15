@@ -1,6 +1,6 @@
-import 'package:get/get.dart';
-import 'package:miutem/core/models/user/credencial/credencial_institucional.dart';
-import 'package:miutem/core/services/auth_service.dart';
+import "package:get/get.dart";
+import "package:miutem/core/models/user/credencial/credencial_institucional.dart";
+import "package:miutem/core/services/auth_service.dart";
 
 class CredencialService {
 

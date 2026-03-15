@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/persona/persona.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/persona/persona.dart";
 
 class ModalPersona extends StatelessWidget {
   final Persona persona;

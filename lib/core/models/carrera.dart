@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'package:miutem/core/utils/utils.dart';
+import "dart:convert";
+import "package:miutem/core/utils/utils.dart";
 
 class Carrera {
   final String id;
@@ -15,19 +15,19 @@ class Carrera {
   });
 
   factory Carrera.fromJson(Map<String, dynamic> json) => Carrera(
-    id: json['carrera_id'],
-    nombre: capitalize(json['nombre_carrera']),
-    estado: capitalize(json['situacion_academica']).trim(),
-    codigo: (json['codigo_carrera'] as int).toString(),
+    id: json["carrera_id"],
+    nombre: capitalize(json["nombre_carrera"]),
+    estado: capitalize(json["situacion_academica"]).trim(),
+    codigo: (json["codigo_carrera"] as int).toString(),
   );
 
   static List<Carrera> fromJsonList(dynamic json) => json != null ? (json as List).map((it) => Carrera.fromJson(it)).toList() : [];
 
-  toJson() => {
-    'id': id,
-    'nombre': nombre,
-    'estado': estado,
-    'codigo': codigo,
+  Map<String, String> toJson() => {
+    "id": id,
+    "nombre": nombre,
+    "estado": estado,
+    "codigo": codigo,
   };
 
   @override

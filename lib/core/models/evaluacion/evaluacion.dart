@@ -1,4 +1,4 @@
-import 'dart:convert';
+import "dart:convert";
 
 class REvaluacion {
   String? descripcion;
@@ -12,17 +12,17 @@ class REvaluacion {
   });
 
   factory REvaluacion.fromJson(Map<String, dynamic> json) => REvaluacion(
-    porcentaje: json['ponderador'],
-    descripcion: json['descripcion'],
-    nota: json['nota'],
+    porcentaje: json["ponderador"],
+    descripcion: json["descripcion"],
+    nota: json["nota"],
   );
 
   static List<REvaluacion> fromJsonList(List<dynamic>? json) => json?.map((it) => REvaluacion.fromJson(it)).toList() ?? [];
 
   Map<String, dynamic> toJson() => {
-    'ponderador': porcentaje,
-    'descripcion': descripcion,
-    'nota': nota,
+    "ponderador": porcentaje,
+    "descripcion": descripcion,
+    "nota": nota,
   };
 
   @override

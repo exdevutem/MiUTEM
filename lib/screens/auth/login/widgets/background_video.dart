@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import "package:flutter/material.dart";
+import "package:video_player/video_player.dart";
 
 class BackgroundVideo extends StatefulWidget {
   final Widget child;
@@ -16,7 +16,7 @@ class _BackgroundVideoState extends State<BackgroundVideo> {
 
   @override
   void initState() {
-    _videoPlayerController = VideoPlayerController.asset('assets/videos/login_bg.mp4',
+    _videoPlayerController = VideoPlayerController.asset("assets/videos/login_bg.mp4",
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true)
     )..setVolume(0)
       ..play()
@@ -35,7 +35,7 @@ class _BackgroundVideoState extends State<BackgroundVideo> {
   Widget build(BuildContext context) {
     const backgroundDecoration = BoxDecoration(
       image: DecorationImage(
-        image: AssetImage('assets/images/login_bg.png'),
+        image: AssetImage("assets/images/login_bg.png"),
         fit: BoxFit.cover,
       )
     );

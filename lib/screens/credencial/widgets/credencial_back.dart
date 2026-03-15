@@ -1,7 +1,7 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/styles/styles.dart";
 
 /// Painter para el arte abstracto del dorso de la credencial.
 class AbstractArtPainter extends CustomPainter {
@@ -142,7 +142,7 @@ class CredencialBack extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
-                    'assets/images/utem_logo_color_blanco.png',
+                    "assets/images/utem_logo_color_blanco.png",
                     height: 60,
                     errorBuilder: (_, __, ___) => const Icon(
                       AppIcons.credential,
@@ -152,7 +152,7 @@ class CredencialBack extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Universidad Tecnológica\nMetropolitana',
+                    "Universidad Tecnológica\nMetropolitana",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,

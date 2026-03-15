@@ -1,13 +1,13 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide Response;
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/models/preferencia.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/repositories/secure_storage_repository.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/http/http_client.dart';
-import 'package:miutem/screens/auth/login/login_screen.dart';
+import "package:dio/dio.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart" hide Response;
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/models/preferencia.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/repositories/secure_storage_repository.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/core/utils/http/http_client.dart";
+import "package:miutem/screens/auth/login/login_screen.dart";
 
 class AuthService {
 
@@ -20,7 +20,7 @@ class AuthService {
 
   Future<Estudiante> login({ bool forceRefresh = false }) async {
     if (forceRefresh) {
-      logger.d('Forzando refresco de sesión');
+      logger.d("Forzando refresco de sesión");
     }
     final credentials = await _secureStorageRepository.getCredentials();
     if(credentials == null) {
@@ -44,11 +44,11 @@ class AuthService {
         )
       );
 
-      if(response.statusCode != 200 || response.data['status_code'] != 200) {
+      if(response.statusCode != 200 || response.data["status_code"] != 200) {
         throw CustomException.custom(message: "No logramos autenticarte.");
       }
 
-      estudiante = Estudiante.fromJson(response.data['response'] as Map<String, dynamic>);
+      estudiante = Estudiante.fromJson(response.data["response"] as Map<String, dynamic>);
       await _secureStorageRepository.setEstudiante(estudiante);
       await Preferencia.lastLogin.set(DateTime.now().toIso8601String());
       if(!idHasBeenSet) {
@@ -60,7 +60,7 @@ class AuthService {
       if(e.response?.statusCode == 401) {
         throw CustomException(message: "Credenciales incorrectas. Por favor intenta nuevamente.", statusCode: 401);
       }
-      throw CustomException(message: e.response?.statusMessage ?? 'Error al iniciar sesión.', statusCode: e.response?.statusCode ?? 0, internalCode: 0.1);
+      throw CustomException(message: e.response?.statusMessage ?? "Error al iniciar sesión.", statusCode: e.response?.statusCode ?? 0, internalCode: 0.1);
     } catch (e) {
       logger.e(e);
       throw CustomException(message: "Ocurrió un error al autenticar. Por favor intenta más tarde.", internalCode: 0.2);
@@ -71,7 +71,7 @@ class AuthService {
   Future<String> activeToken() async {
     Estudiante estudiante = await login();
     if(estudiante.isTokenExpired()) {
-      logger.d('Se encontró un token expirado, solicitando uno nuevo.');
+      logger.d("Se encontró un token expirado, solicitando uno nuevo.");
       estudiante = await login(forceRefresh: true);
     }
 

@@ -1,20 +1,20 @@
-import 'package:dio/dio.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:dio/dio.dart";
+import "package:miutem/core/utils/utils.dart";
 
 /// Headers whose values must never appear in logs.
 const _sensitiveHeaders = {
-  'authorization', 'cookie', 'set-cookie',
-  'x-api-key', 'api-key', 'api_key',
-  'x-auth-token', 'refresh-token', 'session-id',
+  "authorization", "cookie", "set-cookie",
+  "x-api-key", "api-key", "api_key",
+  "x-auth-token", "refresh-token", "session-id",
 };
 
 /// Form-encoded / JSON body keys whose values must never appear in logs.
-const _sensitiveBodyKeys = {'password', 'token', 'rut', 'pass'};
+const _sensitiveBodyKeys = {"password", "token", "rut", "pass"};
 
 /// Pre-compiled regex that matches sensitive key=value pairs in
 /// application/x-www-form-urlencoded strings.
 final _sensitiveBodyRegex = RegExp(
-  r'((?:^|&)(?:' + _sensitiveBodyKeys.join('|') + r')=)([^&]*)',
+  r"((?:^|&)(?:" + _sensitiveBodyKeys.join("|") + r")=)([^&]*)",
   caseSensitive: false,
 );
 
@@ -22,7 +22,7 @@ final _sensitiveBodyRegex = RegExp(
 Map<String, dynamic> _redactHeaders(Map<String, dynamic> headers) => {
   for (final entry in headers.entries)
     entry.key: _sensitiveHeaders.contains(entry.key.toLowerCase())
-        ? '[REDACTED]'
+        ? "[REDACTED]"
         : entry.value,
 };
 
@@ -30,12 +30,12 @@ Map<String, dynamic> _redactHeaders(Map<String, dynamic> headers) => {
 /// Redacts known sensitive keys when [data] is a [Map].
 /// When [data] is a URL-encoded string the sensitive keys are also redacted.
 String _redactBody(dynamic data) {
-  if (data == null) return '';
+  if (data == null) return "";
   if (data is Map) {
     final redacted = {
       for (final entry in data.entries)
         entry.key: entry.key is String && _sensitiveBodyKeys.contains((entry.key as String).toLowerCase())
-            ? '[REDACTED]'
+            ? "[REDACTED]"
             : entry.value,
     };
     return redacted.toString();
@@ -44,7 +44,7 @@ String _redactBody(dynamic data) {
     // Redact values in application/x-www-form-urlencoded strings.
     return data.replaceAllMapped(
       _sensitiveBodyRegex,
-      (m) => '${m[1]}[REDACTED]',
+      (m) => "${m[1]}[REDACTED]",
     );
   }
   return data.toString();

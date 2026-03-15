@@ -1,6 +1,6 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class TickerTimeText extends StatefulWidget {
   final DateTime time;

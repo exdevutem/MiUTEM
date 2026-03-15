@@ -1,11 +1,11 @@
-import 'dart:convert';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/services/firebase/keys.dart';
-import 'package:miutem/core/services/firebase/remote_config_service.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "dart:convert";
+import "package:firebase_remote_config/firebase_remote_config.dart";
+import "package:flutter/foundation.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/services/firebase/keys.dart";
+import "package:miutem/core/services/firebase/remote_config_service.dart";
+import "package:miutem/core/utils/utils.dart";
 
 /// A widget that conditionally renders its child based on feature flag values from Firebase Remote Config.
 ///
@@ -126,7 +126,7 @@ class FeatureFlag extends StatelessWidget {
   static bool? _findNestedFlag(dynamic json, String flagKey) {
     if (json is! Map<String, dynamic>) return null;
 
-    final keyParts = flagKey.split('.');
+    final keyParts = flagKey.split(".");
     dynamic currentLevel = json;
 
     for (final part in keyParts) {
@@ -144,7 +144,7 @@ class FeatureFlag extends StatelessWidget {
   }
 
   /// Gets the string value of a nested feature flag
-  static String getString(String flagKey, {String defaultValue = ''}) {
+  static String getString(String flagKey, {String defaultValue = ""}) {
     try {
       final remoteConfig = FirebaseRemoteConfig.instance;
       final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);
@@ -154,7 +154,7 @@ class FeatureFlag extends StatelessWidget {
       }
 
       final Map<String, dynamic> featureFlags = jsonDecode(featureFlagsJson);
-      final keyParts = flagKey.split('.');
+      final keyParts = flagKey.split(".");
       dynamic currentLevel = featureFlags;
 
       for (final part in keyParts) {
@@ -183,7 +183,7 @@ class FeatureFlag extends StatelessWidget {
       }
 
       final Map<String, dynamic> featureFlags = jsonDecode(featureFlagsJson);
-      final keyParts = flagKey.split('.');
+      final keyParts = flagKey.split(".");
       dynamic currentLevel = featureFlags;
 
       for (final part in keyParts) {
@@ -218,7 +218,7 @@ class FeatureFlag extends StatelessWidget {
       }
 
       final Map<String, dynamic> featureFlags = jsonDecode(featureFlagsJson);
-      final keyParts = flagKey.split('.');
+      final keyParts = flagKey.split(".");
       dynamic currentLevel = featureFlags;
 
       for (final part in keyParts) {
@@ -253,7 +253,7 @@ class FeatureFlag extends StatelessWidget {
       }
 
       final Map<String, dynamic> featureFlags = jsonDecode(featureFlagsJson);
-      final keyParts = flagKey.split('.');
+      final keyParts = flagKey.split(".");
       dynamic currentLevel = featureFlags;
 
       for (final part in keyParts) {
@@ -291,7 +291,7 @@ class FeatureFlag extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 color: isEnabled ? Colors.green[800] : Colors.red[800],
-                fontFamily: 'monospace',
+                fontFamily: "monospace",
               ),
             ),
           ),
@@ -319,12 +319,12 @@ class FeatureFlag extends StatelessWidget {
   /// Gets debug information string
   String _getDebugInfo() {
     if (flagKeys != null && flagKeys!.isNotEmpty) {
-      final flags = flagKeys!.map((f) => '$f = ${evaluateSync(f)}').join(', ');
-      return 'FeatureFlags (OR): [$flags]';
+      final flags = flagKeys!.map((f) => "$f = ${evaluateSync(f)}").join(", ");
+      return "FeatureFlags (OR): [$flags]";
     } else if (flagKey != null) {
-      return 'FeatureFlag: $flagKey = ${evaluateSync(flagKey!)}';
+      return "FeatureFlag: $flagKey = ${evaluateSync(flagKey!)}";
     }
-    return 'FeatureFlag: No flags configured';
+    return "FeatureFlag: No flags configured";
   }
 }
 

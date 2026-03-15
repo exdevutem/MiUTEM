@@ -1,13 +1,13 @@
 
-import 'package:adaptive_theme/adaptive_theme.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
 
 String getThemeModeText(AdaptiveThemeMode mode) {
   switch (mode) {
     case AdaptiveThemeMode.light:
-      return 'Claro';
+      return "Claro";
     case AdaptiveThemeMode.dark:
-      return 'Oscuro';
+      return "Oscuro";
     case AdaptiveThemeMode.system:
-      return 'Sistema';
+      return "Sistema";
   }
 }

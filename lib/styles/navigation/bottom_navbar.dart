@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/navigation/navigation_item.dart';
-import 'package:miutem/screens/asignaturas/lista_asignaturas_screen.dart';
-import 'package:miutem/screens/credencial/credencial_screen.dart';
-import 'package:miutem/screens/home/home_screen.dart';
-import 'package:miutem/screens/profile/profile_screen.dart';
-import 'package:miutem/screens/tasklist/task_list_screen.dart';
-import 'package:miutem/styles/theme/icons.dart';
-import 'package:miutem/widgets/feature_flag.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/navigation/navigation_item.dart";
+import "package:miutem/screens/asignaturas/lista_asignaturas_screen.dart";
+import "package:miutem/screens/credencial/credencial_screen.dart";
+import "package:miutem/screens/home/home_screen.dart";
+import "package:miutem/screens/profile/profile_screen.dart";
+import "package:miutem/screens/tasklist/task_list_screen.dart";
+import "package:miutem/styles/theme/icons.dart";
+import "package:miutem/widgets/feature_flag.dart";
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -61,7 +61,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     if (enabled.isEmpty) {
       return const Scaffold(
         body: Center(
-          child: Text('No navigation items available'),
+          child: Text("No navigation items available"),
         ),
       );
     }

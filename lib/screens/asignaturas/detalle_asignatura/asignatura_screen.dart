@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/actions/cargar_notas_asignatura.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/widgets/promedio.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/widgets/seccion_horario.dart';
-import 'package:miutem/screens/notas/notas_screen.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/actions/cargar_notas_asignatura.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/widgets/promedio.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/widgets/seccion_horario.dart";
+import "package:miutem/screens/notas/notas_screen.dart";
+import "package:miutem/styles/styles.dart";
 
 class AsignaturaScreen extends StatefulWidget {
 
@@ -39,7 +39,7 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
     cargarHorarioBloque(asignatura: asignatura).then((bloques) {
       if (mounted) setState(() => bloquesHorario = bloques);
     }).catchError((error) {
-      logger.e('Error al cargar bloques de horario', error: error);
+      logger.e("Error al cargar bloques de horario", error: error);
     });
   }
 
@@ -65,7 +65,7 @@ class _AsignaturaScreenState extends State<AsignaturaScreen> {
               });
             }
           } catch (error) {
-            logger.e('Error al recargar vista asignatura', error: error);
+            logger.e("Error al recargar vista asignatura", error: error);
             if (context.mounted) {
               setState(() {
                 bloquesHorario = tmp; // Revertir a los bloques anteriores en caso de error

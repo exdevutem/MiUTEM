@@ -10,17 +10,17 @@ class Novedad {
   });
 
   factory Novedad.fromJson(Map<String, dynamic> json) => Novedad(
-    icon: json['icon'],
-    title: json['title'],
-    subtitle: json['subtitle'],
-    url: json['url'],
+    icon: json["icon"],
+    title: json["title"],
+    subtitle: json["subtitle"],
+    url: json["url"],
   );
 
   Map<String, dynamic> toJson() => {
-    'icon': icon,
-    'title': title,
-    'subtitle': subtitle,
-    'url': url,
+    "icon": icon,
+    "title": title,
+    "subtitle": subtitle,
+    "url": url,
   };
 
   static List<Novedad> fromJsonList(List<dynamic> json) => json.map((e) => Novedad.fromJson(e)).toList();

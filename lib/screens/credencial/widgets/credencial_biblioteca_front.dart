@@ -1,11 +1,11 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/credencial/credencial_biblioteca.dart';
-import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:barcode_widget/barcode_widget.dart";
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/credencial/credencial_biblioteca.dart";
+import "package:miutem/core/utils/utilities.dart";
+import "package:miutem/styles/styles.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 /// Frente de la credencial SIBUTEM con avatar, nombre, RUT, área y código de barras.
 class CredencialBibliotecaFront extends StatelessWidget {
@@ -45,7 +45,7 @@ class CredencialBibliotecaFront extends StatelessWidget {
             const Spacer(),
             _buildAvatar(),
             Space.large,
-            Text(credencial?.nombre ?? 'Nombre Completo',
+            Text(credencial?.nombre ?? "Nombre Completo",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w900,
               ),
@@ -54,7 +54,7 @@ class CredencialBibliotecaFront extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Space.large,
-            Text(credencial?.rut.toString() ?? '12.345.678-9',
+            Text(credencial?.rut.toString() ?? "12.345.678-9",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1.2,
@@ -63,7 +63,7 @@ class CredencialBibliotecaFront extends StatelessWidget {
             ),
             Space.large,
             Text(
-              credencial?.area ?? 'Área',
+              credencial?.area ?? "Área",
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
@@ -86,7 +86,7 @@ class CredencialBibliotecaFront extends StatelessWidget {
       radius: 96,
       backgroundColor: AppTheme.colorScheme.primary.withValues(alpha: 0.2),
       backgroundImage: hasValidImage ? _buildProfileImage(rawImage!) : null,
-      child: hasValidImage ? null : Text(credencial?.nombre.isNotEmpty == true ? credencial!.nombre[0].toUpperCase() : 'U',
+      child: hasValidImage ? null : Text(credencial?.nombre.isNotEmpty == true ? credencial!.nombre[0].toUpperCase() : "U",
         style: TextStyle(
           fontSize: 72,
           fontWeight: FontWeight.bold,
@@ -97,17 +97,17 @@ class CredencialBibliotecaFront extends StatelessWidget {
   }
 
   bool _hasValidProfileImage(String? value) =>
-      value != null && value.isNotEmpty && !value.contains('sin_imagen');
+      value != null && value.isNotEmpty && !value.contains("sin_imagen");
 
   ImageProvider _buildProfileImage(String imageValue) {
     final normalized = imageValue.trim();
 
-    if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
+    if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
       return NetworkImage(normalized);
     }
 
-    final base64Data = normalized.contains(',')
-        ? normalized.substring(normalized.indexOf(',') + 1)
+    final base64Data = normalized.contains(",")
+        ? normalized.substring(normalized.indexOf(",") + 1)
         : normalized;
 
     return MemoryImage(base64Decode(base64Data));
@@ -124,7 +124,7 @@ class CredencialBibliotecaFront extends StatelessWidget {
       child: BarcodeWidget(
         color: themedColor(context, light: Colors.black87, dark: Colors.white),
         barcode: Barcode.code128(),
-        data: credencial?.getBarcodeContent() ?? '0',
+        data: credencial?.getBarcodeContent() ?? "0",
         width: double.infinity,
         height: 80,
         drawText: false,

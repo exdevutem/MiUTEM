@@ -1,13 +1,13 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:dio/dio.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:get/get.dart' hide Response;
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/models/preferencia.dart';
-import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/http/http_client.dart';
+import "package:dio/dio.dart";
+import "package:dio_cache_interceptor/dio_cache_interceptor.dart";
+import "package:get/get.dart" hide Response;
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/models/preferencia.dart";
+import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/core/utils/http/http_client.dart";
 
 
 /// Función para realizar solicitudes mediante el httpClient a Siga.UTEM.
@@ -37,8 +37,8 @@ Future<Response> sigaClientRequest(String path, {
     Map<String, dynamic> params = {
       ...sigaParams
     };
-    if((extra?['noToken'] ?? false) != true) {
-      params['token'] = await Get.find<AuthService>().activeToken();
+    if((extra?["noToken"] ?? false) != true) {
+      params["token"] = await Get.find<AuthService>().activeToken();
     }
 
     return await HttpClient.httpCachedClient.request("$sigaServiceUri/$path",
@@ -56,7 +56,7 @@ Future<Response> sigaClientRequest(String path, {
       ),
     );
   } on SocketException {
-    throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
+    throw CustomException(message: "Error al conectar con la API. Por favor intenta más tarde.");
   } catch (e) {
     rethrow;
   }
@@ -90,7 +90,7 @@ Future<Response> httpClientRequest(String uri, {
       ),
     );
   } on SocketException {
-    throw CustomException(message: 'Error al conectar con la API. Por favor intenta más tarde.');
+    throw CustomException(message: "Error al conectar con la API. Por favor intenta más tarde.");
   } catch (e) {
     rethrow;
   }

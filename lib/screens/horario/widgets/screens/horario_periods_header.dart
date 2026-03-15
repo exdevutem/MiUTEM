@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/controllers/horario_controller.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/services/controllers/horario_controller.dart";
 
-import '../widgets.dart';
+import "../widgets.dart";
 
 
 class HorarioPeriodsHeader extends StatelessWidget {

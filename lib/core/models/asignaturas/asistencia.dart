@@ -12,18 +12,18 @@ class Asistencia {
   });
 
   factory Asistencia.fromJson(Map<String, dynamic>? json) => json != null ? Asistencia(
-    total: json['total'] ?? 0,
-    asistidos: json['asistida'] ?? 0,
-    noAsistidos: json['noAsistidos'] ?? 0,
-    sinRegistro: json['sinRegistro'] ?? 0,
+    total: json["total"] ?? 0,
+    asistidos: json["asistida"] ?? 0,
+    noAsistidos: json["noAsistidos"] ?? 0,
+    sinRegistro: json["sinRegistro"] ?? 0,
   ) : Asistencia();
 
   static List<Asistencia> fromJsonList(dynamic json) => json != null ? (json as List<dynamic>).map((it) => Asistencia.fromJson(it)).toList() : [];
 
   Map<String, dynamic> toJson() => {
-    'total': total,
-    'asistidos': asistidos,
-    'noAsistidos': noAsistidos,
-    'sinRegistro': sinRegistro,
+    "total": total,
+    "asistidos": asistidos,
+    "noAsistidos": noAsistidos,
+    "sinRegistro": sinRegistro,
   };
 }

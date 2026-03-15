@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class Space {
   /// 28 PX para separar secciones muy distintas o elementos muy importantes

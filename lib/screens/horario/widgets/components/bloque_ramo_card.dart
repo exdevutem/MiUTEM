@@ -1,14 +1,14 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/asignaturas_service.dart';
-import 'package:miutem/core/services/controllers/horario_controller.dart';
-import 'package:miutem/core/services/grades_service.dart';
-import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart';
-import 'package:miutem/screens/notas/notas_screen.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/services/asignaturas_service.dart";
+import "package:miutem/core/services/controllers/horario_controller.dart";
+import "package:miutem/core/services/grades_service.dart";
+import "package:miutem/core/utils/utilities.dart";
+import "package:miutem/screens/horario/widgets/modals/vista_previa_asignatura_modal.dart";
+import "package:miutem/screens/notas/notas_screen.dart";
+import "package:miutem/styles/styles.dart";
 
 class ClassBlockCard extends StatelessWidget {
   final BloqueHorario? bloqueHorario;
@@ -58,11 +58,11 @@ class ClassBlockCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('${bloqueHorario!.asignatura!.codigo}/${bloqueHorario!.asignatura!.seccion}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
+            Text("${bloqueHorario!.asignatura!.codigo}/${bloqueHorario!.asignatura!.seccion}", style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
             Space.medium,
             Text(bloqueHorario!.asignatura!.nombre, style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700, color: textColor), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis),
             Space.medium,
-            Text(bloqueHorario!.sala ?? 'SIN SALA', style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
+            Text(bloqueHorario!.sala ?? "SIN SALA", style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal, color: textColor)),
           ],
         ),
       ),
@@ -80,7 +80,7 @@ class ClassBlockCard extends StatelessWidget {
     return content;
   }
 
-  _onTap(BloqueHorario block, BuildContext context) async {
+  Future<void> _onTap(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final asignatura = (await Get.find<AsignaturasService>()
         .getAsignaturas())
@@ -97,7 +97,7 @@ class ClassBlockCard extends StatelessWidget {
     }
   }
 
-  _onLongPress(BloqueHorario block, BuildContext context) async {
+  Future<void> _onLongPress(BloqueHorario block, BuildContext context) async {
     showLoadingDialog(context);
     final asignatura = (await Get.find<AsignaturasService>()
         .getAsignaturas(forceRefresh: true))

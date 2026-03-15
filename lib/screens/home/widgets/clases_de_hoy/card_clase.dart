@@ -1,6 +1,6 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
+import "dart:async";
+import "package:flutter/material.dart";
+import "package:miutem/styles/styles.dart";
 
 class CardClase extends StatefulWidget {
   final String horaInicio;
@@ -27,8 +27,8 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
     Timer.periodic(const Duration(seconds: 30), (timer) {
       // Si es la hora de inicio o fin de la clase (en el mismo minuto) forzamos un rebuild
       final now = DateTime.now();
-      final isHoraInicio = now.hour == int.parse(widget.horaInicio.split(':')[0]) && now.minute == int.parse(widget.horaInicio.split(':')[1]);
-      final isHoraFin = now.hour == int.parse(widget.horaFin.split(':')[0]) && now.minute == int.parse(widget.horaFin.split(':')[1]);
+      final isHoraInicio = now.hour == int.parse(widget.horaInicio.split(":")[0]) && now.minute == int.parse(widget.horaInicio.split(":")[1]);
+      final isHoraFin = now.hour == int.parse(widget.horaFin.split(":")[0]) && now.minute == int.parse(widget.horaFin.split(":")[1]);
 
       // Se verifica que sea la hora de inicio (o la de fin) para actualizar la tarjeta.
       if((isHoraInicio || isHoraFin) && context.mounted) {
@@ -52,16 +52,16 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   }
 
   String formatTime(String time) {
-    final parts = time.split(':');
-    final hours = parts[0].padLeft(2, '0');
-    final minutes = parts[1].padLeft(2, '0');
-    return '$hours:$minutes';
+    final parts = time.split(":");
+    final hours = parts[0].padLeft(2, "0");
+    final minutes = parts[1].padLeft(2, "0");
+    return "$hours:$minutes";
   }
 
   bool isCurrentClassActive() {
     final now = DateTime.now();
-    final start = DateTime(now.year, now.month, now.day, int.parse(widget.horaInicio.split(':')[0]), int.parse(widget.horaInicio.split(':')[1]));
-    final end = DateTime(now.year, now.month, now.day, int.parse(widget.horaFin.split(':')[0]), int.parse(widget.horaFin.split(':')[1]));
+    final start = DateTime(now.year, now.month, now.day, int.parse(widget.horaInicio.split(":")[0]), int.parse(widget.horaInicio.split(":")[1]));
+    final end = DateTime(now.year, now.month, now.day, int.parse(widget.horaFin.split(":")[0]), int.parse(widget.horaFin.split(":")[1]));
     return now.isAfter(start) && now.isBefore(end);
   }
 

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:miutem/screens/asignaturas/actions/acceso_rapido.dart';
+import "package:flutter/material.dart";
+import "package:miutem/styles/styles.dart";
+import "package:miutem/screens/asignaturas/actions/acceso_rapido.dart";
 
 class AccesoRapido extends StatelessWidget {
   const AccesoRapido({super.key});
@@ -20,7 +20,7 @@ class AccesoRapido extends StatelessWidget {
             CardAccesoRapido(
               color: AppTheme.lightBlueCard,
               colorDark: AppTheme.darkBlueCard,
-              label: 'Horario',
+              label: "Horario",
               icon: AppIcons.timetable,
               onTap: () => visitarHorario(context),
             ),
@@ -28,7 +28,7 @@ class AccesoRapido extends StatelessWidget {
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,
-              label: 'Notas',
+              label: "Notas",
               icon: AppIcons.calculator,
               fill: 0,
               onTap: () => visitarCalculadoraNotas(context),
@@ -37,7 +37,7 @@ class AccesoRapido extends StatelessWidget {
             CardAccesoRapido(
               color: AppTheme.lightSalmonCard,
               colorDark: AppTheme.darkSalmonCard,
-              label: 'Malla Histórica',
+              label: "Malla Histórica",
               icon: AppIcons.historicTimetable,
               fill: 0,
               onTap: () => visitarMallaHistorica(context),

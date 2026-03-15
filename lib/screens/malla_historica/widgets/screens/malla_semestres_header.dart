@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/malla_historica/widgets/components/semestre_header_card.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/malla_historica/widgets/components/semestre_header_card.dart";
 
 class MallaSemestresHeader extends StatelessWidget {
   final int cantidadSemestres;

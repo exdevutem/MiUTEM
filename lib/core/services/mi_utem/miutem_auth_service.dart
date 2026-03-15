@@ -1,9 +1,9 @@
-import 'package:dio/dio.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/repositories/secure_storage_repository.dart';
-import 'package:miutem/core/utils/http/http_client.dart';
-import 'package:miutem/core/utils/utils.dart';
+import "package:dio/dio.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/repositories/secure_storage_repository.dart";
+import "package:miutem/core/utils/http/http_client.dart";
+import "package:miutem/core/utils/utils.dart";
 
 class MiUTEMAuthService {
 
@@ -20,7 +20,7 @@ class MiUTEMAuthService {
       return await _secureStorageRepository.getMiUTEMCookies();
     }
 
-    List<String>? cookies = (await HttpClient.httpClient.get("$miUtemHost/pasaporte/")).headers['set-cookie'];
+    List<String>? cookies = (await HttpClient.httpClient.get("$miUtemHost/pasaporte/")).headers["set-cookie"];
     if(cookies?.isNotEmpty != true) {
       throw CustomException(message: "No se pudo encontrar el token necesario. Por favor intenta más tarde.");
     }
@@ -30,9 +30,9 @@ class MiUTEMAuthService {
       data: "csrfmiddlewaretoken=$csrfToken&txt_usuario=${Uri.encodeComponent(credentials.username)}&txt_password=${Uri.encodeComponent(credentials.password)}",
       options: Options(
         headers: {
-          'Cookie': cookies?.map((it) => it.split(";").firstOrNull).where((it) => it != null).join(";"),
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': genericUserAgent,
+          "Cookie": cookies?.map((it) => it.split(";").firstOrNull).where((it) => it != null).join(";"),
+          "Content-Type": "application/x-www-form-urlencoded",
+          "User-Agent": genericUserAgent,
         },
         validateStatus: (status) => status == 302
       )
@@ -42,7 +42,7 @@ class MiUTEMAuthService {
       throw CustomException.custom(message: "No logramos autenticarte. Por favor intenta más tarde.");
     }
 
-    final cookiesHeader = result.headers['set-cookie']?.map((it) => it.split(";").firstOrNull).where((it) => it != null).join(";");
+    final cookiesHeader = result.headers["set-cookie"]?.map((it) => it.split(";").firstOrNull).where((it) => it != null).join(";");
     await _secureStorageRepository.setMiUTEMCookies(cookiesHeader);
 
     return cookiesHeader;
@@ -63,8 +63,8 @@ class MiUTEMAuthService {
     final result = await HttpClient.httpClient.get("$miUtemHost/academicos/mi-perfil-estudiante",
       options: Options(
         headers: {
-          'Cookie': cookies,
-          'User-Agent': genericUserAgent
+          "Cookie": cookies,
+          "User-Agent": genericUserAgent
         }
       )
     );

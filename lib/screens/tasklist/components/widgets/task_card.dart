@@ -1,7 +1,7 @@
 
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/Task/task.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/Task/task.dart";
+import "package:miutem/styles/styles.dart";
 
 
 class TaskCard extends StatelessWidget {
@@ -63,7 +63,7 @@ class TaskCard extends StatelessWidget {
                         children: [
                           const Expanded(
                             child: Text(
-                              'titulo',
+                              "titulo",
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -75,7 +75,7 @@ class TaskCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Text(
-                              'message',
+                              "message",
                               // style: StyleText.labelSmall.copyWith(
                               //   color: getEstadoTextColor(estado),
                               // ),
@@ -85,7 +85,7 @@ class TaskCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'asunto',
+                        "asunto",
                         // style: StyleText.description.copyWith(
                         //   color: Theme.of(context).colorScheme.onPrimaryContainer,
                         // ),

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
-import 'package:miutem/screens/malla_historica/widgets/components/asignatura_malla_card.dart';
-import 'package:miutem/screens/malla_historica/widgets/components/semestre_header_card.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura_malla.dart";
+import "package:miutem/screens/malla_historica/widgets/components/asignatura_malla_card.dart";
+import "package:miutem/screens/malla_historica/widgets/components/semestre_header_card.dart";
 
 class MallaMainScroller extends StatelessWidget {
   final List<AsignaturaMalla> asignaturas;
@@ -33,7 +33,7 @@ class MallaMainScroller extends StatelessWidget {
   Widget build(BuildContext context) {
     if (asignaturas.isEmpty) {
       return const Center(
-        child: Text('No hay asignaturas para mostrar'),
+        child: Text("No hay asignaturas para mostrar"),
       );
     }
 
@@ -149,7 +149,7 @@ class MallaMainScroller extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Text(
-                'Semestre ${semestreIndex + 1}',
+                "Semestre ${semestreIndex + 1}",
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),

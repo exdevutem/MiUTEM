@@ -1,10 +1,10 @@
-import 'package:get/get.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/services/grades_service.dart';
-import 'package:miutem/core/services/horario_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/core/utils/horario_data.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
+import "package:get/get.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/services/grades_service.dart";
+import "package:miutem/core/services/horario_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/core/utils/horario_data.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart";
 
 Future<Asignatura> cargarAsignaturaConNotas({required Asignatura asignatura, bool forceRefresh = false}) async {
   final grades = await Get.find<GradesService>().getGrades(asignatura, forceRefresh: forceRefresh);
@@ -22,17 +22,17 @@ Future<List<HorarioBloque>> cargarHorarioBloque({required Asignatura asignatura}
         bloquesPorDia[idxDia] ??= {};
         bloquesPorDia[idxDia]![idx] = HorarioBloque(
           dia: diasHorario[idxDia],
-          nombreAsignatura: bloque.asignatura?.nombre ?? 'N/A',
-          sala: bloque.sala ?? 'N/A',
-          horaInicio: bloquesHorario[idx].split('-')[0].trim(),
-          horaFin: bloquesHorario[idx].split('-')[1].trim(),
+          nombreAsignatura: bloque.asignatura?.nombre ?? "N/A",
+          sala: bloque.sala ?? "N/A",
+          horaInicio: bloquesHorario[idx].split("-")[0].trim(),
+          horaFin: bloquesHorario[idx].split("-")[1].trim(),
         );
       }
     }
 
     return bloquesPorDia.values.expand((diaBloques) => diaBloques.values).toList();
   } catch (error) {
-    logger.e('Error al cargar horario bloque', error: error);
+    logger.e("Error al cargar horario bloque", error: error);
     return [];
   }
 }
