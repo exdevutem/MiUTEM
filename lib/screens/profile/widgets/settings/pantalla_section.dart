@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:get/get.dart";
 import "package:miutem/core/models/config/user_config.dart";
 import "package:miutem/screens/profile/actions/theme.dart";
 import "package:miutem/screens/profile/widgets/modals/theme_mode_dialog.dart";
@@ -8,7 +9,7 @@ class PantallaSection extends StatelessWidget {
   const PantallaSection({super.key});
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Obx(() => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Space.small,
@@ -19,7 +20,7 @@ class PantallaSection extends StatelessWidget {
         onTap: () => _showThemeModeDialog(context, UserConfig.to),
       ),
     ],
-  );
+  ));
 
   // Muestra el dialogo para cambiar el tema
   void _showThemeModeDialog(BuildContext context, UserConfig userConfig) {
