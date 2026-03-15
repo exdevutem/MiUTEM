@@ -1,0 +1,22 @@
+name: Pruebas
+on:
+  push:
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          channel: stable
+          flutter-version-file: pubspec.yaml
+      - name: Instalar librerías
+        run: flutter pub get
+      - name: Ejecutar pruebas unitarias
+        run: flutter test --coverage --test-randomize-ordering-seed=random
