@@ -19,5 +19,7 @@ jobs:
         flutter-version-file: pubspec.yaml
     - name: Instalar librerías
       run: flutter pub get
+    - name: Analizar código
+      run: flutter analyze --fatal-infos --fatal-warnings
     - name: Ejecutar Pruebas
       run: flutter test
