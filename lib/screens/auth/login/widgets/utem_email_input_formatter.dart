@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+import "package:flutter/services.dart";
 
 /// Custom TextInputFormatter that blocks @ symbol input
 /// to restrict users to only @utem.cl domain
@@ -9,7 +9,7 @@ class UtemEmailInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     // Remove any @ symbols from the new text
-    final filteredText = newValue.text.replaceAll('@utem.cl', '').replaceAll('@', '');
+    final filteredText = newValue.text.replaceAll("@utem.cl", "").replaceAll("@", "");
 
     if (filteredText == newValue.text) {
       return newValue;

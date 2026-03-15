@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/evaluacion/evaluacion.dart';
-import 'package:miutem/core/services/controllers/notas_controller.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/evaluacion/evaluacion.dart";
+import "package:miutem/core/services/controllers/notas_controller.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/styles/styles.dart";
 
 class Notas extends StatelessWidget {
 

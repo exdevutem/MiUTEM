@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/asignatura_screen.dart';
-import 'package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/card_asignatura.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/asignatura_screen.dart";
+import "package:miutem/screens/asignaturas/widgets/asignaturas_inscritas/card_asignatura.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 const defaultCard = CardAsignatura(tipo: "Club", nombre: "Desarrollo Experimental", codigo: "Dart");
 

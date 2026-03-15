@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
-import 'package:miutem/core/utils/utilities.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura_malla.dart";
+import "package:miutem/core/utils/utilities.dart";
+import "package:miutem/styles/styles.dart";
 
 class AsignaturaMallaCard extends StatelessWidget {
   final AsignaturaMalla asignatura;
@@ -13,17 +13,17 @@ class AsignaturaMallaCard extends StatelessWidget {
 
   Color _getBackgroundColor(BuildContext context) {
     final estado = asignatura.estado.toLowerCase();
-    if (estado.contains('aprobado') || estado.contains('aprobada')) {
+    if (estado.contains("aprobado") || estado.contains("aprobada")) {
       return themedColor(context,
         light: AppTheme.lightGreenCard,
         dark: AppTheme.darkGreenCard,
       );
-    } else if (estado.contains('reprobado') || estado.contains('reprobada')) {
+    } else if (estado.contains("reprobado") || estado.contains("reprobada")) {
       return themedColor(context,
         light: AppTheme.lightSalmonCard,
         dark: AppTheme.darkSalmonCard,
       );
-    } else if (estado.contains('cursando') || estado.contains('inscrit')) {
+    } else if (estado.contains("cursando") || estado.contains("inscrit")) {
       return themedColor(context,
         light: AppTheme.lightBlueCard,
         dark: AppTheme.darkBlueCard,
@@ -154,11 +154,11 @@ class AsignaturaMallaCard extends StatelessWidget {
                 ),
               ),
               Space.medium,
-              _buildDetailRow(context, 'Tipo', asignatura.tipo),
-              _buildDetailRow(context, 'Estado', asignatura.estado),
-              _buildDetailRow(context, 'Nota', asignatura.nota),
-              _buildDetailRow(context, 'Nivel', asignatura.nivel.toString()),
-              _buildDetailRow(context, 'Intentos', asignatura.intentos.toString()),
+              _buildDetailRow(context, "Tipo", asignatura.tipo),
+              _buildDetailRow(context, "Estado", asignatura.estado),
+              _buildDetailRow(context, "Nota", asignatura.nota),
+              _buildDetailRow(context, "Nivel", asignatura.nivel.toString()),
+              _buildDetailRow(context, "Intentos", asignatura.intentos.toString()),
               Space.large,
             ],
           ),

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
+import "package:flutter/material.dart";
+import "package:material_symbols_icons/material_symbols_icons.dart";
 
 class AppIcons {
   /// Iconos de la barra de navegación.
@@ -31,30 +31,30 @@ class AppIcons {
   static const IconData error = Symbols.error_rounded;
 
   static const _iconMap = {
-    'home': home,
-    'subjects': subjects,
-    'subjectsMarker': subjectsMarker,
-    'updates': updates,
-    'profile': profile,
-    'notes': notes,
-    'credential': credential,
-    'timetable': timetable,
-    'historicTimetable': historicTimetable,
-    'grades': grades,
-    'calculator': calculator,
-    'idea': idea,
-    'location': location,
-    'mail': mail,
-    'password': password,
-    'delete': delete,
-    'settings': settings,
-    'dropdown': dropdown,
-    'add': add,
-    'close': close,
-    'more': more,
-    'edit': edit,
-    'refresh': refresh,
-    'error': error,
+    "home": home,
+    "subjects": subjects,
+    "subjectsMarker": subjectsMarker,
+    "updates": updates,
+    "profile": profile,
+    "notes": notes,
+    "credential": credential,
+    "timetable": timetable,
+    "historicTimetable": historicTimetable,
+    "grades": grades,
+    "calculator": calculator,
+    "idea": idea,
+    "location": location,
+    "mail": mail,
+    "password": password,
+    "delete": delete,
+    "settings": settings,
+    "dropdown": dropdown,
+    "add": add,
+    "close": close,
+    "more": more,
+    "edit": edit,
+    "refresh": refresh,
+    "error": error,
   };
 
   static IconData getIcon(String name) => _iconMap[name] ?? error;

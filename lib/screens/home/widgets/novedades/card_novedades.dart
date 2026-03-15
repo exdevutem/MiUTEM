@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/home/models/novedad.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/home/models/novedad.dart";
+import "package:url_launcher/url_launcher_string.dart";
+import "package:miutem/styles/styles.dart";
 
 class CardNovedades extends StatelessWidget {
   final Novedad novedad;

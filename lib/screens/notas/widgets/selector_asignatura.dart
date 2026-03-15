@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/styles/styles.dart";
 
 class SelectorAsignatura extends StatelessWidget {
   final Asignatura? asignatura;

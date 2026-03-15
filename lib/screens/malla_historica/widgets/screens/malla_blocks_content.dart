@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
-import 'package:miutem/screens/malla_historica/widgets/components/asignatura_malla_card.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura_malla.dart";
+import "package:miutem/screens/malla_historica/widgets/components/asignatura_malla_card.dart";
 
 class MallaBlocksContent extends StatelessWidget {
   final List<List<AsignaturaMalla>> asignaturasPorSemestre;

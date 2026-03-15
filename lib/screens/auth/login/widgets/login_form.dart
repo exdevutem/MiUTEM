@@ -1,11 +1,11 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/screens/auth/login/actions/login_action.dart';
-import 'package:miutem/screens/auth/login/widgets/login_form_fields.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/screens/auth/login/actions/login_action.dart";
+import "package:miutem/screens/auth/login/widgets/login_form_fields.dart";
+import "package:miutem/styles/styles.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -54,7 +54,7 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
               padding: const EdgeInsets.all(15),
               child: ValueListenableBuilder<AdaptiveThemeMode>(
                 valueListenable: AdaptiveTheme.of(context).modeChangeNotifier,
-                builder: (ctx, mode, child) => Image.asset(mode == AdaptiveThemeMode.light ? 'assets/images/miutem_oscuro.png' : 'assets/images/miutem_claro.png', height: 80, fit: BoxFit.fitWidth),
+                builder: (ctx, mode, child) => Image.asset(mode == AdaptiveThemeMode.light ? "assets/images/miutem_oscuro.png" : "assets/images/miutem_claro.png", height: 80, fit: BoxFit.fitWidth),
               ),
             ),
             const Padding(
@@ -97,11 +97,11 @@ class _LoginFormState extends State<LoginForm> with WidgetsBindingObserver {
                     },
                   ),
                   TextButton(
-                    onPressed: () => launchUrl(Uri.https('pasaporte.utem.cl', 'reset')),
+                    onPressed: () => launchUrl(Uri.https("pasaporte.utem.cl", "reset")),
                     style: TextButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.secondary,
                     ),
-                    child: const Text('¿Olvidaste tu contraseña?'),
+                    child: const Text("¿Olvidaste tu contraseña?"),
                   ),
                 ],
               ),

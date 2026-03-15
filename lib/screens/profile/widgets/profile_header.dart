@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/carrera.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/services/carrera_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:miutem/widgets/user_avatar.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-import 'package:logger/logger.dart';
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/carrera.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/services/carrera_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/user_avatar.dart";
+import "package:skeletonizer/skeletonizer.dart";
+import "package:logger/logger.dart";
 
 class ProfileHeader extends StatefulWidget {
   final Estudiante? estudiante;
@@ -44,7 +44,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           setState(() => carrera = loadedCarrera);
         }
       } catch (e) {
-        _logger.e('Error loading carrera: $e');
+        _logger.e("Error loading carrera: $e");
       }
     }
   }
@@ -73,21 +73,21 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           Space.small,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text(widget.estudiante?.primerNombre ?? 'John',
+            child: Text(widget.estudiante?.primerNombre ?? "John",
               style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
           Space.extraSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text(capitalize(widget.estudiante?.nombreCompleto ?? 'John Doe'),
+            child: Text(capitalize(widget.estudiante?.nombreCompleto ?? "John Doe"),
               style: Theme.of(context).textTheme.labelMedium,
             ),
           ),
           Space.extraSmall,
           Skeletonizer(
             enabled: widget.estudiante == null,
-            child: Text((widget.estudiante?.correoUtem ?? 'correo@utem.cl').toLowerCase(),
+            child: Text((widget.estudiante?.correoUtem ?? "correo@utem.cl").toLowerCase(),
               style: Theme.of(context).textTheme.bodyLarge
             ),
           ),
@@ -96,7 +96,7 @@ class _ProfileHeaderState extends State<ProfileHeader> {
             enabled: carrera == null,
             child: SizedBox(
               height: 40, 
-              child: Text(carrera?.nombre ?? 'Carrera\nen Curso',
+              child: Text(carrera?.nombre ?? "Carrera\nen Curso",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge,
                 maxLines: 2,

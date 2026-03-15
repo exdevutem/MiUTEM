@@ -1,15 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart';
-import 'package:miutem/screens/asignaturas/detalle_asignatura/widgets/card_horario.dart';
-import 'package:miutem/screens/horario/horario_screen.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/models/horario_bloque.dart";
+import "package:miutem/screens/asignaturas/detalle_asignatura/widgets/card_horario.dart";
+import "package:miutem/screens/horario/horario_screen.dart";
+import "package:miutem/styles/styles.dart";
+import "package:skeletonizer/skeletonizer.dart";
 
 final dummyBloques = [
-  const HorarioBloque(dia: 'Lunes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  const HorarioBloque(dia: 'Martes', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  const HorarioBloque(dia: 'Miércoles', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
-  const HorarioBloque(dia: 'Jueves', horaInicio: '8:00', horaFin: '20:00', nombreAsignatura: 'Club de Desarrollo Experimental', sala: 'M8-103'),
+  const HorarioBloque(dia: "Lunes", horaInicio: "8:00", horaFin: "20:00", nombreAsignatura: "Club de Desarrollo Experimental", sala: "M8-103"),
+  const HorarioBloque(dia: "Martes", horaInicio: "8:00", horaFin: "20:00", nombreAsignatura: "Club de Desarrollo Experimental", sala: "M8-103"),
+  const HorarioBloque(dia: "Miércoles", horaInicio: "8:00", horaFin: "20:00", nombreAsignatura: "Club de Desarrollo Experimental", sala: "M8-103"),
+  const HorarioBloque(dia: "Jueves", horaInicio: "8:00", horaFin: "20:00", nombreAsignatura: "Club de Desarrollo Experimental", sala: "M8-103"),
 ];
 
 class SeccionHorario extends StatelessWidget {
@@ -31,12 +31,12 @@ class SeccionHorario extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Horario',
+              "Horario",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
             ),
             GestureDetector(
               child: Text(
-                'Ver más',
+                "Ver más",
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
               ),
               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (ctx) => const HorarioScreen())),

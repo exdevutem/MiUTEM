@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:flutter/services.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:flutter/services.dart";
 
 class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
 
@@ -14,7 +14,7 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
   const TopNavigation({
     super.key,
     this.isMainScreen = false,
-    this.title = '',
+    this.title = "",
     this.estudiante
   });
 
@@ -29,7 +29,7 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
       child: CircleAvatar(
         radius: 30,
         backgroundColor: Theme.of(context).colorScheme.primary, // Asegúrate de que se note
-        child: Text(estudiante?.primerNombre.substring(0, 1) ?? '',
+        child: Text(estudiante?.primerNombre.substring(0, 1) ?? "",
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontSize: 24,
             color: Theme.of(context).colorScheme.onPrimary, // Asegúrate de que el texto sea visible
@@ -39,7 +39,7 @@ class TopNavigation extends StatelessWidget implements PreferredSizeWidget {
     ) : Container()) : BackButton(color: Theme.of(context).colorScheme.onSurface),
     title: Row(
       children: [
-        if (title != '') Text(title,
+        if (title != "") Text(title,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20,

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:miutem/screens/home/models/novedad.dart';
-import 'package:miutem/screens/home/widgets/novedades/card_novedades.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:flutter_carousel_widget/flutter_carousel_widget.dart";
+import "package:miutem/screens/home/models/novedad.dart";
+import "package:miutem/screens/home/widgets/novedades/card_novedades.dart";
+import "package:miutem/styles/styles.dart";
 
 const defaultCard = CardNovedades(novedad: Novedad(icon: "updates", title: "¡Nueva Versión!", subtitle: "Te presentamos la nueva versión de la app Mi UTEM"));
 

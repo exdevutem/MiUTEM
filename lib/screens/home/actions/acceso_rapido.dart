@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/screens/horario/horario_screen.dart';
-import 'package:miutem/screens/widgets_screens.dart';
+import "package:flutter/material.dart";
+import "package:miutem/screens/horario/horario_screen.dart";
+import "package:miutem/screens/widgets_screens.dart";
 
 void visitarApuntes(BuildContext context) => Navigator.push(context, MaterialPageRoute(builder: (ctx) => const TaskListScreen()));
 

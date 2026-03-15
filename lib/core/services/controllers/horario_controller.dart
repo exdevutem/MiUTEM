@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/core/services/firebase/remote_config_service.dart';
-import 'package:miutem/core/services/horario_service.dart';
-import 'package:miutem/core/utils/utils.dart';
-import 'package:miutem/screens/horario/widgets/widgets.dart';
-import 'package:vector_math/vector_math_64.dart' as vector;
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:get_storage/get_storage.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/core/services/firebase/remote_config_service.dart";
+import "package:miutem/core/services/horario_service.dart";
+import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/horario/widgets/widgets.dart";
+import "package:vector_math/vector_math_64.dart" as vector;
 
 class HorarioController {
   final _storage = GetStorage();
@@ -60,7 +60,7 @@ class HorarioController {
 
   num daysCount = 6;
   num periodsCount = 9;
-  String startTime = '07:55';
+  String startTime = "07:55";
   Duration periodDuration = const Duration(minutes: 90);
   Duration periodGap = const Duration(minutes: 5);
   List<Color> usedColors = [];
@@ -84,7 +84,7 @@ class HorarioController {
     return avaliableColors.isEmpty?[..._randomColors]:avaliableColors;
   }
 
-  double get minutesFromStart => _now.difference(DateTime(_now.year, _now.month, _now.day, int.parse(startTime.split(':')[0]), int.parse(startTime.split(':')[1]))).inMinutes.toDouble();
+  double get minutesFromStart => _now.difference(DateTime(_now.year, _now.month, _now.day, int.parse(startTime.split(":")[0]), int.parse(startTime.split(":")[1]))).inMinutes.toDouble();
   int? get indexOfCurrentDayStartingAtMonday => _now.weekday > daysCount ? null : _now.weekday - 1;
   int? get indexOfCurrentPeriod {
     final periodBlockDuration = periodDuration.inMinutes + (periodGap.inMinutes * 2);
@@ -119,26 +119,29 @@ class HorarioController {
   }
 
   /// Funciones para manejo de colores
-  void _setRandomColorsByHorario(Horario horario) => horario.horario?.forEach((dia)=> dia.forEach((bloque){
-    final asignatura = bloque.asignatura;
-    if(asignatura == null) return;
-
-    addAsignaturaAndSetColor(bloque.asignatura!);
-  }));
+  void _setRandomColorsByHorario(Horario horario) {
+    for (final dia in horario.horario ?? []) {
+      for (final bloque in dia) {
+        final asignatura = bloque.asignatura;
+        if (asignatura == null) continue;
+        addAsignaturaAndSetColor(asignatura);
+      }
+    }
+  }
 
   void addAsignaturaAndSetColor(Asignatura asignatura, {Color? color}){
     bool hasColor = getColor(asignatura) != null;
     if(hasColor) return;
 
     final newColor = color ?? unusedColors.first;
-    final key = '${asignatura.codigo}_${asignatura.tipoHora}';
+    final key = "${asignatura.codigo}_${asignatura.tipoHora}";
     usedColors.add(newColor);
     _storage.write(key, newColor.toARGB32());
   }
 
   Color? getColor(Asignatura? asignatura){
     if(asignatura == null) return null;
-    return let(_storage.read('${asignatura.codigo}_${asignatura.tipoHora}'), (dynamic element)=> Color(element));
+    return let(_storage.read("${asignatura.codigo}_${asignatura.tipoHora}"), (dynamic element)=> Color(element));
   }
 
   /// Obtiene el color de fondo y el color de texto con contraste para una asignatura

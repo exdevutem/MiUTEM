@@ -1,26 +1,26 @@
 
-import 'dart:io';
+import "dart:io";
 
-import 'package:sqflite/sqflite.dart';
-import 'package:miutem/core/models/Task/task.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:async';
+import "package:sqflite/sqflite.dart";
+import "package:miutem/core/models/Task/task.dart";
+import "package:path_provider/path_provider.dart";
+import "dart:async";
 
 
 class DatabaseHelper {
   static Database? _database;
 
-  static const String _databaseName = 'tasks.db';
-  static const String noteTable = 'task_table';
+  static const String _databaseName = "tasks.db";
+  static const String noteTable = "task_table";
 
-  String colId = 'id';
-  String colCategory = 'category';
-  String colTitle = 'title';
-  String colDescription = 'content';
-  String colColor = 'color';
-  String colState = 'state';
-  String colCreatedAt = 'createdAt';
-  String colModifiedAt = 'modifiedAt';
+  String colId = "id";
+  String colCategory = "category";
+  String colTitle = "title";
+  String colDescription = "content";
+  String colColor = "color";
+  String colState = "state";
+  String colCreatedAt = "createdAt";
+  String colModifiedAt = "modifiedAt";
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -38,15 +38,15 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE $noteTable'
-            '($colId INTEGER PRIMARY KEY AUTOINCREMENT, '
-            '$colCategory TEXT, '
-            '$colTitle TEXT, '
-            '$colDescription TEXT, '
-            '$colColor INTEGER, '
-            '$colState INTEGER,'
-            '$colCreatedAt TEXT, '
-            '$colModifiedAt TEXT)'
+        "CREATE TABLE $noteTable"
+            "($colId INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "$colCategory TEXT, "
+            "$colTitle TEXT, "
+            "$colDescription TEXT, "
+            "$colColor INTEGER, "
+            "$colState INTEGER,"
+            "$colCreatedAt TEXT, "
+            "$colModifiedAt TEXT)"
     );
   }
 
@@ -55,7 +55,7 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getNoteMapList() async {
     Database db = await database;
 
-    var result = await db.query(noteTable, orderBy: '$colCreatedAt ASC');
+    var result = await db.query(noteTable, orderBy: "$colCreatedAt ASC");
     return result;
   }
 
@@ -69,14 +69,14 @@ class DatabaseHelper {
   // Update Operation: Update a Note object and save it to database
   Future<int> updateTask(Task task) async {
     var db = await database;
-    var result = await db.update(noteTable, task.toMap(), where: '$colId = ?', whereArgs: [task.id]);
+    var result = await db.update(noteTable, task.toMap(), where: "$colId = ?", whereArgs: [task.id]);
     return result;
   }
 
   // Delete Operation: Delete a Note object from database
   Future<int> deleteTask(int id) async {
     var db = await database;
-    int result = await db.rawDelete('DELETE FROM $noteTable WHERE $colId = $id');
+    int result = await db.rawDelete("DELETE FROM $noteTable WHERE $colId = $id");
     return result;
   }
   

@@ -1,6 +1,6 @@
 
-import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:flutter/material.dart';
+import "package:awesome_notifications/awesome_notifications.dart";
+import "package:flutter/material.dart";
 
 class NotificationController {
 
@@ -12,9 +12,9 @@ class NotificationController {
         null,
         [
           NotificationChannel(
-              channelKey: 'Test notifications alertas',
-              channelName: 'Test notifications',
-              channelDescription: 'Notification tests para tasks',
+              channelKey: "Test notifications alertas",
+              channelName: "Test notifications",
+              channelDescription: "Notification tests para tasks",
               playSound: true,
               onlyAlertOnce: true,
               defaultColor: Colors.deepPurple,
@@ -38,9 +38,9 @@ class NotificationController {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 10,
-        channelKey: 'Test notifications alertas',
-        title: 'Hello Notification',
-        body: 'This is a test notification',
+        channelKey: "Test notifications alertas",
+        title: "Hello Notification",
+        body: "This is a test notification",
       ),
     );
   }
@@ -55,9 +55,9 @@ class NotificationController {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 20,
-        channelKey: 'Test notifications alertas',
-        title: 'Scheduled Notification',
-        body: 'This notification was scheduled to appear at a specific time',
+        channelKey: "Test notifications alertas",
+        title: "Scheduled Notification",
+        body: "This notification was scheduled to appear at a specific time",
       ),
       schedule: NotificationCalendar.fromDate(
         date: DateTime.now().add(const Duration(minutes: 2)),

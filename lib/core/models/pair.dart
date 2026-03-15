@@ -1,4 +1,4 @@
-import 'dart:convert';
+import "dart:convert";
 
 class Pair<A, B> {
   final A a;
@@ -6,9 +6,9 @@ class Pair<A, B> {
 
   Pair(this.a, this.b);
 
-  toJson() => {
-    'a': a,
-    'b': b,
+  Map<String, Object?> toJson() => {
+    "a": a,
+    "b": b,
   };
 
   @override

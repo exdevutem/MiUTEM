@@ -1,16 +1,16 @@
-import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:file_saver/file_saver.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/asignaturas/asignatura_malla.dart';
-import 'package:miutem/core/models/exceptions/custom_exception.dart';
-import 'package:miutem/core/services/mi_utem/miutem_malla_service.dart';
-import 'package:miutem/screens/malla_historica/widgets/widgets.dart';
-import 'package:miutem/styles/styles.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:share_plus/share_plus.dart';
+import "dart:io";
+import "package:dio/dio.dart";
+import "package:file_saver/file_saver.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/asignaturas/asignatura_malla.dart";
+import "package:miutem/core/models/exceptions/custom_exception.dart";
+import "package:miutem/core/services/mi_utem/miutem_malla_service.dart";
+import "package:miutem/screens/malla_historica/widgets/widgets.dart";
+import "package:miutem/styles/styles.dart";
+import "package:path_provider/path_provider.dart";
+import "package:screenshot/screenshot.dart";
+import "package:share_plus/share_plus.dart";
 
 class MallaHistoricaScreen extends StatefulWidget {
   const MallaHistoricaScreen({super.key});
@@ -141,9 +141,9 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
 
     if (Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
       await FileSaver.instance.saveFile(
-        name: 'malla_historica',
+        name: "malla_historica",
         bytes: image,
-        ext: 'png',
+        ext: "png",
         mimeType: MimeType.png,
       );
       // Mostrar toast de éxito
@@ -153,7 +153,7 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
       }
     } else {
       final directory = await getApplicationDocumentsDirectory();
-      final imagePath = await File('${directory.path}/malla_historica.png').create();
+      final imagePath = await File("${directory.path}/malla_historica.png").create();
       await imagePath.writeAsBytes(image);
 
       if(context.mounted) Navigator.pop(context);

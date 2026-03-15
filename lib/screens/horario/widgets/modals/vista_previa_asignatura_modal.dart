@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/models/horario.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/models/horario.dart";
+import "package:miutem/styles/styles.dart";
 
 class VistaPreviaAsignaturaModal extends StatelessWidget {
 
@@ -28,23 +28,23 @@ class VistaPreviaAsignaturaModal extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                if(asignatura.docente.nombreCompletoCapitalizado != 'Sin Asignar') {
+                if(asignatura.docente.nombreCompletoCapitalizado != "Sin Asignar") {
                   showModalBottomSheet(context: context, builder: (ctx) => ModalPersona(persona: asignatura.docente));
                 }
               },
               child: ListTile(
                 title: Text(asignatura.nombre),
-                subtitle: Text('Docente: ${asignatura.docente.nombreCompletoCapitalizado}'),
+                subtitle: Text("Docente: ${asignatura.docente.nombreCompletoCapitalizado}"),
               ),
             ),
             const Divider(),
             ListTile(
-              title: const Text('Código'),
+              title: const Text("Código"),
               subtitle: Text(asignatura.codigo),
             ),
             const Divider(),
             ListTile(
-              title: const Text('Sección'),
+              title: const Text("Sección"),
               subtitle: Text(asignatura.seccion),
             ),
           ],

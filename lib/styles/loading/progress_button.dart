@@ -1,6 +1,6 @@
-import 'dart:async';
+import "dart:async";
 
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class ProgressButton extends StatefulWidget {
   final Function callback;
@@ -26,7 +26,7 @@ class _ProgressButtonState extends State<ProgressButton>
   }
 
   @override
-  dispose() {
+  void dispose() {
     _controller.dispose();
     super.dispose();
   }
@@ -87,7 +87,7 @@ class _ProgressButtonState extends State<ProgressButton>
   Widget buildButtonChild() {
     if (_state == 0) {
       return const Text(
-        'INICIAR',
+        "INICIAR",
         style: TextStyle(color: Colors.white, fontSize: 16.0),
       );
     } else if (_state == 1) {

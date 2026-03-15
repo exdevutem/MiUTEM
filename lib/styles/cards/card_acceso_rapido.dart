@@ -1,6 +1,6 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:miutem/core/utils/utilities.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
+import "package:flutter/material.dart";
+import "package:miutem/core/utils/utilities.dart";
 
 class CardAccesoRapido extends StatelessWidget {
   final Color color, colorDark;

@@ -1,9 +1,9 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:miutem/core/models/tokenized_object.dart';
-import 'package:miutem/core/models/user/perfil.dart';
-import 'package:miutem/core/models/user/persona/persona.dart';
-import 'package:miutem/core/models/user/persona/rut.dart';
+import "package:miutem/core/models/tokenized_object.dart";
+import "package:miutem/core/models/user/perfil.dart";
+import "package:miutem/core/models/user/persona/persona.dart";
+import "package:miutem/core/models/user/persona/rut.dart";
 
 class Estudiante extends PersonaUtem with TokenizedObject {
 
@@ -28,30 +28,30 @@ class Estudiante extends PersonaUtem with TokenizedObject {
   });
 
   factory Estudiante.fromJson(Map<String, dynamic> json) {
-    final datosPersona = json['datos_persona'];
+    final datosPersona = json["datos_persona"];
 
     return Estudiante(
-      token: json['token'],
+      token: json["token"],
       rut: Rut.fromString("${datosPersona['rut']}"),
-      nombreCompleto: datosPersona['nombre_completo'],
-      correoPersonal: datosPersona['correo_personal'],
-      correoUtem: datosPersona['correo_utem'],
-      fotoUrl: datosPersona['foto'],
-      perfiles: Perfil.values.where((perfil) => (datosPersona['perfiles'] as List).map((perfil) => (perfil as String).toLowerCase()).contains(perfil.name)).toList(),
-      ignoreTokenExpiration: json['ignore_token_expiration'] ?? false,
+      nombreCompleto: datosPersona["nombre_completo"],
+      correoPersonal: datosPersona["correo_personal"],
+      correoUtem: datosPersona["correo_utem"],
+      fotoUrl: datosPersona["foto"],
+      perfiles: Perfil.values.where((perfil) => (datosPersona["perfiles"] as List).map((perfil) => (perfil as String).toLowerCase()).contains(perfil.name)).toList(),
+      ignoreTokenExpiration: json["ignore_token_expiration"] ?? false,
     );
   }
 
   @override
   Map<String, dynamic> toJson() => {
-    'token': token,
-    'datos_persona': {
-      'rut': rut?.rut,
-      'nombre_completo': nombreCompleto,
-      'correo_personal': correoPersonal,
-      'correo_utem': correoUtem,
-      'foto': fotoUrl,
-      'perfiles': perfiles.map((perfil) => perfil.name).toList(),
+    "token": token,
+    "datos_persona": {
+      "rut": rut?.rut,
+      "nombre_completo": nombreCompleto,
+      "correo_personal": correoPersonal,
+      "correo_utem": correoUtem,
+      "foto": fotoUrl,
+      "perfiles": perfiles.map((perfil) => perfil.name).toList(),
     },
   };
 

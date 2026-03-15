@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/asignaturas/asignatura.dart';
-import 'package:miutem/core/models/carrera.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/asignaturas/asignatura.dart";
+import "package:miutem/core/models/carrera.dart";
 
 class NotificationService {
-  static const announcementsChannelKey = 'announcements_channel';
-  static const gradeChangesChannelKey = 'grade_channel';
+  static const announcementsChannelKey = "announcements_channel";
+  static const gradeChangesChannelKey = "grade_channel";
 
   // static AwesomeNotifications get notifications => AwesomeNotifications();
   // static AwesomeNotificationsFcm get fcm => AwesomeNotificationsFcm();

@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:flutter/material.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/styles/styles.dart";
 
 /// Widget global de avatar del usuario.
 /// Se puede usar en perfil, credencial, y cualquier otro lugar.
@@ -24,7 +24,7 @@ class UserAvatar extends StatelessWidget {
       radius: radius,
       backgroundColor: AppTheme.colorScheme.primary.withValues(alpha: 0.2),
       child: Text(
-        estudiante?.iniciales[0] ?? 'J',
+        estudiante?.iniciales[0] ?? "J",
         style: TextStyle(
           fontSize: effectiveFontSize,
           fontWeight: FontWeight.bold,

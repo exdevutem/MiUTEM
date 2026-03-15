@@ -1,9 +1,9 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:miutem/core/models/config/user_config.dart';
-import 'package:miutem/core/services/auth_service.dart';
-import 'package:miutem/styles/styles.dart';
+import "package:adaptive_theme/adaptive_theme.dart";
+import "package:flutter/material.dart";
+import "package:get/get.dart";
+import "package:miutem/core/models/config/user_config.dart";
+import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/styles/styles.dart";
 
 class LogOutButton extends StatefulWidget {
   const LogOutButton({super.key});
@@ -53,7 +53,7 @@ class _LogOutButtonState extends State<LogOutButton> {
                     ),
                     elevation: WidgetStateProperty.all(0),
                   ),
-                  child: const Text('Cerrar Sesión'),
+                  child: const Text("Cerrar Sesión"),
                   onPressed: () => Get.find<AuthService>().logout(context: context),
                 ),
               ),

@@ -1,7 +1,6 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/models/user/persona/rut.dart';
+import "package:miutem/core/models/user/persona/rut.dart";
 
 class CredencialBiblioteca {
 
@@ -21,12 +20,12 @@ class CredencialBiblioteca {
 
   String getBarcodeContent() => "${rut.rut}";
 
-  toJson() => {
-    'nombre': nombre,
-    'imagenPerfil': imagenPerfil,
-    'rut': rut.toString(),
-    'area': area,
-    'imagenQr': imagenQr,
+  Map<String, String> toJson() => {
+    "nombre": nombre,
+    "imagenPerfil": imagenPerfil,
+    "rut": rut.toString(),
+    "area": area,
+    "imagenQr": imagenQr,
   };
 
   @override

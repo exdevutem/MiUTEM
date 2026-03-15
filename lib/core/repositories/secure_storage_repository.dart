@@ -1,8 +1,8 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:miutem/core/models/user/credential.dart';
-import 'package:miutem/core/models/user/estudiante.dart';
-import 'package:miutem/core/utils/constants.dart';
+import "package:miutem/core/models/user/credential.dart";
+import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/utils/constants.dart";
 
 const String credentialsKey = "auth_credentials";
 const String estudianteKey = "estudiante";

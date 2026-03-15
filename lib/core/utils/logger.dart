@@ -1,5 +1,5 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:logger/logger.dart';
+import "package:firebase_crashlytics/firebase_crashlytics.dart";
+import "package:logger/logger.dart";
 
 final logger = Logger(
   printer: PrettyPrinter(),
@@ -13,8 +13,11 @@ class _ConsoleOutput extends LogOutput {
     // Only send warning-level and above to Crashlytics to avoid leaking
     // sensitive request/response data (headers, credentials) from debug logs.
     if (event.level.index >= Level.warning.index) {
-      FirebaseCrashlytics.instance.log(event.lines.join('\n'));
+      FirebaseCrashlytics.instance.log(event.lines.join("\n"));
     }
-    event.lines.forEach(print);
+    for (final line in event.lines) {
+      // ignore: avoid_print
+      print(line);
+    }
   }
 }

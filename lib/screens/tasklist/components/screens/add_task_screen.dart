@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:miutem/core/models/Task/task.dart';
+import "package:flutter/material.dart";
+import "package:flutter_colorpicker/flutter_colorpicker.dart";
+import "package:miutem/core/models/Task/task.dart";
 
 
 class AddTaskScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Añadir Task'),
+        title: const Text("Añadir Task"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,10 +69,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   children: [
                     TextFormField(
                       controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Titulo'),
+                      decoration: const InputDecoration(labelText: "Titulo"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter a title';
+                          return "Please enter a title";
                         }
                         return null;
                       },
@@ -82,19 +82,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       child: TextFormField(
                         controller: _contentController,
                         decoration: const InputDecoration(
-                            labelText: 'Contenido',
+                            labelText: "Contenido",
                             alignLabelWithHint: true,
                         ),
                         maxLines: 7,
                       ),
                     ),
                     DropdownButtonFormField<TaskState>(
-                      value: _state,
-                      decoration: const InputDecoration(labelText: 'Estado'),
+                      initialValue: _state,
+                      decoration: const InputDecoration(labelText: "Estado"),
                       items: TaskState.values.map((TaskState value) {
                         return DropdownMenuItem<TaskState>(
                           value: value,
-                          child: Text(value.toString().split('.').last),
+                          child: Text(value.toString().split(".").last),
                         );
                       }).toList(),
                       onChanged: (newValue) {
@@ -105,7 +105,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     ),
                     const SizedBox(height: 20),
                     DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(labelText: 'Category'),
+                      decoration: const InputDecoration(labelText: "Category"),
                       items: [...widget.categorys].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -122,14 +122,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Text('Color: '),
+                        const Text("Color: "),
                         const SizedBox(width: 8),
                         GestureDetector(
                           onTap: () async {
                             final Color? pickedColor = await showDialog<Color>(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('Elige un color'),
+                                title: const Text("Elige un color"),
                                 content: SingleChildScrollView(
                                   child: BlockPicker(
                                     pickerColor: _color,
@@ -143,11 +143,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(),
-                                    child: const Text('Cancel'),
+                                    child: const Text("Cancel"),
                                   ),
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(_color),
-                                    child: const Text('Select'),
+                                    child: const Text("Select"),
                                   ),
                                 ],
                               ),
@@ -177,7 +177,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _saveTask,
-                      child: const Text('Save'),
+                      child: const Text("Save"),
                     ),
                   ],
                 ),
