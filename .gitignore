@@ -5,6 +5,10 @@
 .env*
 !.env.example
 
+# Claude
+.claude
+!.claude/settings.local.json
+
 # Miscellaneous
 *.class
 *.lock
