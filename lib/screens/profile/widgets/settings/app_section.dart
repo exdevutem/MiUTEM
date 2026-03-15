@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:miutem/screens/profile/controllers/profile_settings_controller.dart';
 import 'package:miutem/styles/styles.dart';
 import 'package:miutem/widgets/feature_flag.dart';
