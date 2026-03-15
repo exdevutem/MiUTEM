@@ -36,7 +36,7 @@ void main() {
       test('debería serializar a JSON correctamente', () {
         final json = credencial.toJson();
         expect(json['nombre'], 'Juan Pérez');
-        expect(json['profilePictureURL'], 'https://example.com/foto.jpg');
+        expect(json['imagenPerfil'], 'https://example.com/foto.jpg');
         expect(json['rut'], isNotNull);
         expect(json['rut'], '21.342.119-0'); // El dígito verificador se calcula automáticamente
         expect(json['area'], 'Ingeniería en Informática');
