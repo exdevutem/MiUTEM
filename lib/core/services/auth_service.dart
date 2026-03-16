@@ -13,6 +13,11 @@ class AuthService {
 
   final SecureStorageRepository _secureStorageRepository = Get.find<SecureStorageRepository>();
   bool idHasBeenSet = false;
+  Estudiante? _cachedEstudiante;
+
+  /// Returns the currently logged-in student from the in-memory cache.
+  /// Used for synchronous access (e.g. profile-based feature flags).
+  Estudiante? get cachedEstudiante => _cachedEstudiante;
 
   Future<bool> isFirstTime() async => (await Preferencia.lastLogin.exists()) == false;
 
@@ -29,6 +34,7 @@ class AuthService {
 
     Estudiante? estudiante = await _secureStorageRepository.getEstudiante();
     if (estudiante != null && !forceRefresh) {
+      _cachedEstudiante = estudiante;
       if(!idHasBeenSet) {
         setUserIdentifier(estudiante);
         idHasBeenSet = true;
@@ -49,6 +55,7 @@ class AuthService {
       }
 
       estudiante = Estudiante.fromJson(response.data["response"] as Map<String, dynamic>);
+      _cachedEstudiante = estudiante;
       await _secureStorageRepository.setEstudiante(estudiante);
       await Preferencia.lastLogin.set(DateTime.now().toIso8601String());
       if(!idHasBeenSet) {
@@ -83,6 +90,7 @@ class AuthService {
   }
 
   Future<void> logout({ BuildContext? context}) async {
+    _cachedEstudiante = null;
     await _secureStorageRepository.setEstudiante(null);
     await _secureStorageRepository.setCredentials(null);
     await Preferencia.onboardingStep.delete();

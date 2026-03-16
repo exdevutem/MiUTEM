@@ -1,7 +1,11 @@
 enum Perfil {
   estudiante,
   funcionario,
-  profesor,
+  profesor;
 
-  ;
+  String get displayName => switch (this) {
+    Perfil.estudiante => "Estudiante",
+    Perfil.funcionario => "Funcionario",
+    Perfil.profesor => "Profesor",
+  };
 }

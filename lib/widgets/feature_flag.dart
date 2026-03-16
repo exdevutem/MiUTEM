@@ -3,6 +3,8 @@ import "package:firebase_remote_config/firebase_remote_config.dart";
 import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:get/get.dart";
+import "package:miutem/core/models/user/perfil.dart";
+import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/core/services/firebase/keys.dart";
 import "package:miutem/core/services/firebase/remote_config_service.dart";
 import "package:miutem/core/utils/utils.dart";
@@ -25,11 +27,20 @@ class FeatureFlag extends StatelessWidget {
   /// Multiple feature flag keys (at least one must be true to show the child)
   final List<String>? flagKeys;
 
+  /// Profiles allowed to see this feature. If the current user's profile is not
+  /// in this list, a "Característica disponible solo para perfiles: ..." message
+  /// is shown instead of the child.
+  final List<Perfil>? allowedProfiles;
+
   /// The child widget to render if the feature flag(s) is/are enabled
   final Widget child;
 
   /// The fallback widget to render if the feature flag(s) is/are disabled (optional)
   final Widget? fallback;
+
+  /// Whether to show the default profile restriction message when the user's
+  /// profile is not in [allowedProfiles]. When false, renders nothing instead.
+  final bool showProfileRestrictionMessage;
 
   /// Whether to show debug information in development mode
   final bool showDebugInfo;
@@ -38,6 +49,8 @@ class FeatureFlag extends StatelessWidget {
     super.key,
     required this.child,
     this.fallback,
+    this.allowedProfiles,
+    this.showProfileRestrictionMessage = true,
     this.showDebugInfo = false,
   }) : flagKeys = null;
 
@@ -46,8 +59,20 @@ class FeatureFlag extends StatelessWidget {
     super.key,
     required this.child,
     this.fallback,
+    this.allowedProfiles,
+    this.showProfileRestrictionMessage = true,
     this.showDebugInfo = false,
   }) : flagKey = null;
+
+  /// Constructor for profile-only restriction (no Firebase Remote Config flag needed)
+  const FeatureFlag.profiles(
+    List<Perfil> profiles, {
+    super.key,
+    required this.child,
+    this.fallback,
+    this.showProfileRestrictionMessage = false,
+    this.showDebugInfo = false,
+  }) : flagKey = null, flagKeys = null, allowedProfiles = profiles;
 
   /// Evaluates a feature flag and returns its boolean value
   ///
@@ -271,37 +296,121 @@ class FeatureFlag extends StatelessWidget {
     }
   }
 
+  /// Evaluates whether the current user's profile is in the allowed profiles list.
+  ///
+  /// - [allowedProfiles] must be a non-empty list of profiles that are allowed to see
+  ///   the gated content.
+  /// - Returns `true` if the current user has at least one of the allowed profiles.
+  /// - Returns `false` if the user cannot be determined, has no profiles, or an
+  ///   error occurs (fail-closed during loading/errors).
+  static bool evaluateProfileSync(List<Perfil> allowedProfiles) {
+    try {
+      final authService = Get.find<AuthService>();
+      final currentProfiles = authService.cachedEstudiante?.perfiles ?? [];
+      if (currentProfiles.isEmpty) return false;
+      return currentProfiles.any((p) => allowedProfiles.contains(p));
+    } catch (e) {
+      debugPrint("FeatureFlag: Error evaluating profile restriction: $e");
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isEnabled = _isAnyFlagEnabled();
-    final debugInfo = _getDebugInfo();
+    // Check feature flag first (existing behavior)
+    if (flagKey != null || flagKeys != null) {
+      final isEnabled = _isAnyFlagEnabled();
 
-    if (showDebugInfo && kDebugMode) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: isEnabled ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(4),
+      if (showDebugInfo && kDebugMode) {
+        final debugInfo = _getDebugInfo();
+
+        // Apply the same profile restriction logic used in the non-debug path
+        Widget gatedChild;
+        if (!isEnabled) {
+          // Feature flag disabled: use the same fallback logic as below
+          gatedChild = fallback ?? const SizedBox.shrink();
+        } else {
+          // Feature flag enabled: enforce profile restrictions if configured
+          if (allowedProfiles != null && allowedProfiles!.isNotEmpty && !evaluateProfileSync(allowedProfiles!)) {
+            if (fallback != null) {
+              gatedChild = fallback!;
+            } else if (showProfileRestrictionMessage) {
+              gatedChild = _buildProfileRestrictedFallback(context);
+            } else {
+              gatedChild = const SizedBox.shrink();
+            }
+          } else {
+            gatedChild = child;
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: isEnabled ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                debugInfo,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isEnabled ? Colors.green[800] : Colors.red[800],
+                  fontFamily: "monospace",
+                ),
+              ),
             ),
+            const SizedBox(height: 4),
+            gatedChild,
+          ],
+        );
+      }
+
+      if (!isEnabled) return fallback ?? const SizedBox.shrink();
+    }
+
+    // Check profile restriction
+    if (allowedProfiles != null && allowedProfiles!.isNotEmpty) {
+      if (!evaluateProfileSync(allowedProfiles!)) {
+        if (fallback != null) return fallback!;
+        if (showProfileRestrictionMessage) return _buildProfileRestrictedFallback(context);
+        return const SizedBox.shrink();
+      }
+    }
+
+    return child;
+  }
+
+  Widget _buildProfileRestrictedFallback(BuildContext context) {
+    final profileNames = allowedProfiles!.map((p) => p.displayName).join(", ");
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.lock_outline_rounded,
+            size: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
             child: Text(
-              debugInfo,
-              style: TextStyle(
-                fontSize: 10,
-                color: isEnabled ? Colors.green[800] : Colors.red[800],
-                fontFamily: "monospace",
+              "Característica disponible solo para perfiles: $profileNames",
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ),
-          const SizedBox(height: 4),
-          if (isEnabled) child else (fallback ?? const SizedBox.shrink()),
         ],
-      );
-    }
-
-    return isEnabled ? child : (fallback ?? const SizedBox.shrink());
+      ),
+    );
   }
 
   /// Checks if at least one flag is enabled (for multiple flags) or the flag is enabled (for single flag)
