@@ -297,18 +297,21 @@ class FeatureFlag extends StatelessWidget {
   }
 
   /// Evaluates whether the current user's profile is in the allowed profiles list.
-  /// Returns true if allowedProfiles is null (no restriction) or if the user has
-  /// at least one of the allowed profiles. Defaults to true if the user cannot
-  /// be determined (fail-open during loading).
+  ///
+  /// - [allowedProfiles] must be a non-empty list of profiles that are allowed to see
+  ///   the gated content.
+  /// - Returns `true` if the current user has at least one of the allowed profiles.
+  /// - Returns `false` if the user cannot be determined, has no profiles, or an
+  ///   error occurs (fail-closed during loading/errors).
   static bool evaluateProfileSync(List<Perfil> allowedProfiles) {
     try {
       final authService = Get.find<AuthService>();
       final currentProfiles = authService.cachedEstudiante?.perfiles ?? [];
-      if (currentProfiles.isEmpty) return true;
+      if (currentProfiles.isEmpty) return false;
       return currentProfiles.any((p) => allowedProfiles.contains(p));
     } catch (e) {
       debugPrint("FeatureFlag: Error evaluating profile restriction: $e");
-      return true;
+      return false;
     }
   }
 
