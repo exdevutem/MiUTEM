@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   Future<void> _cargarHorario({bool forceRefresh = false}) async {
-    if(!(await Get.find<AuthService>().login()).perfiles.contains(Perfil.estudiante)) {
+    if (estudiante == null || !estudiante!.perfiles.contains(Perfil.estudiante)) {
       return;
     }
 
