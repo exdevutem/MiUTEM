@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
-import "package:miutem/styles/styles.dart";
+import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/screens/asignaturas/actions/acceso_rapido.dart";
+import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/feature_flag.dart";
 
 class AccesoRapido extends StatelessWidget {
   const AccesoRapido({super.key});
@@ -17,12 +19,16 @@ class AccesoRapido extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.horizontal,
           children: [
-            CardAccesoRapido(
-              color: AppTheme.lightBlueCard,
-              colorDark: AppTheme.darkBlueCard,
-              label: "Horario",
-              icon: AppIcons.timetable,
-              onTap: () => visitarHorario(context),
+            FeatureFlag.profiles(
+              const [Perfil.estudiante],
+              showProfileRestrictionMessage: false,
+              child: CardAccesoRapido(
+                color: AppTheme.lightBlueCard,
+                colorDark: AppTheme.darkBlueCard,
+                label: "Horario",
+                icon: AppIcons.timetable,
+                onTap: () => visitarHorario(context),
+              ),
             ),
             HorizontalSpace.extraSmall,
             CardAccesoRapido(
@@ -34,13 +40,17 @@ class AccesoRapido extends StatelessWidget {
               onTap: () => visitarCalculadoraNotas(context),
             ),
             HorizontalSpace.extraSmall,
-            CardAccesoRapido(
-              color: AppTheme.lightSalmonCard,
-              colorDark: AppTheme.darkSalmonCard,
-              label: "Malla Histórica",
-              icon: AppIcons.historicTimetable,
-              fill: 0,
-              onTap: () => visitarMallaHistorica(context),
+            FeatureFlag.profiles(
+              const [Perfil.estudiante],
+              showProfileRestrictionMessage: false,
+              child: CardAccesoRapido(
+                color: AppTheme.lightSalmonCard,
+                colorDark: AppTheme.darkSalmonCard,
+                label: "Malla Histórica",
+                icon: AppIcons.historicTimetable,
+                fill: 0,
+                onTap: () => visitarMallaHistorica(context),
+              ),
             ),
           ],
         ),

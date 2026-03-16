@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:miutem/core/models/horario.dart";
 import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/core/services/firebase/remote_config_service.dart";
 import "package:miutem/core/utils/http/http_client.dart";
@@ -13,6 +14,7 @@ import "package:miutem/screens/home/widgets/clases_de_hoy/seccion_clases_de_hoy.
 import "package:miutem/screens/home/widgets/novedades/card_novedades.dart";
 import "package:miutem/screens/home/widgets/saludo.dart";
 import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/feature_flag.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -95,10 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Space.large,
-              SeccionClasesDeHoy(
-                errorAlCargarHorario: errorAlCargarHorario,
-                bloques: bloques,
-                cargarHorario: _cargarHorario,
+              FeatureFlag.profiles(
+                const [Perfil.estudiante],
+                child: SeccionClasesDeHoy(
+                  errorAlCargarHorario: errorAlCargarHorario,
+                  bloques: bloques,
+                  cargarHorario: _cargarHorario,
+                ),
               ),
             ],
           ),
@@ -108,6 +113,10 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   Future<void> _cargarHorario({bool forceRefresh = false}) async {
+    if(!(await Get.find<AuthService>().login()).perfiles.contains(Perfil.estudiante)) {
+      return;
+    }
+
     setState(() {
       errorAlCargarHorario = null;
       bloques = null;

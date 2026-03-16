@@ -38,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            if (estudiante != null) ProfileHeader(estudiante: estudiante),
+            if (estudiante != null) ProfileHeader(usuario: estudiante),
             Space.extraSmall,
             const LogOutButton(),
             Space.small,

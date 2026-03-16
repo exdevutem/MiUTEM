@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:miutem/core/models/user/credencial/credencial_biblioteca.dart";
 import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/core/services/mi_utem/miutem_credencial_service.dart";
 import "package:miutem/core/utils/utils.dart";
@@ -11,6 +12,7 @@ import "package:miutem/screens/credencial/widgets/credencial_biblioteca_front.da
 import "package:miutem/screens/credencial/widgets/credencial_front.dart";
 import "package:miutem/screens/credencial/widgets/flip_card.dart";
 import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/feature_flag.dart";
 
 enum TipoCredencial { institucional, sibutem }
 
@@ -89,54 +91,62 @@ class _CredencialScreenState extends State<CredencialScreen> {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Space.medium,
-                      SizedBox(
-                        width: double.infinity,
-                        child: SegmentedButton<TipoCredencial>(
-                          segments: const [
-                            ButtonSegment(
-                              value: TipoCredencial.institucional,
-                              label: Text("Institucional"),
+                      FeatureFlag.profiles(
+                        const [Perfil.estudiante, Perfil.profesor],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: SegmentedButton<TipoCredencial>(
+                                segments: const [
+                                  ButtonSegment(
+                                    value: TipoCredencial.institucional,
+                                    label: Text("Institucional"),
+                                  ),
+                                  ButtonSegment(
+                                    value: TipoCredencial.sibutem,
+                                    label: Text("SIBUTEM"),
+                                  ),
+                                ],
+                                selected: {_tipoCredencial},
+                                onSelectionChanged: _onTipoCredencialChanged,
+                              ),
                             ),
-                            ButtonSegment(
-                              value: TipoCredencial.sibutem,
-                              label: Text("SIBUTEM"),
+                            Space.small,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: _tipoCredencial == TipoCredencial.institucional ? FlipCard(
+                                key: const ValueKey("institucional"),
+                                front: CredencialFront(
+                                  usuario: estudiante,
+                                  availableHeight: cardHeight,
+                                ),
+                                back: CredencialBack(
+                                  availableHeight: cardHeight,
+                                ),
+                              ) : FlipCard(
+                                key: const ValueKey("sibutem"),
+                                front: CredencialBibliotecaFront(
+                                  credencial: credencialBiblioteca,
+                                  availableHeight: cardHeight,
+                                ),
+                                back: CredencialBibliotecaBack(
+                                  credencial: credencialBiblioteca,
+                                  estudiante: estudiante,
+                                  availableHeight: cardHeight,
+                                ),
+                              ),
+                            ),
+                            Space.small,
+                            Center(
+                              child: Text("Toca la credencial para voltear",
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
                             ),
                           ],
-                          selected: {_tipoCredencial},
-                          onSelectionChanged: _onTipoCredencialChanged,
-                        ),
-                      ),
-                      Space.small,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: _tipoCredencial == TipoCredencial.institucional ? FlipCard(
-                          key: const ValueKey("institucional"),
-                          front: CredencialFront(
-                            usuario: estudiante,
-                            availableHeight: cardHeight,
-                          ),
-                          back: CredencialBack(
-                            availableHeight: cardHeight,
-                          ),
-                        ) : FlipCard(
-                          key: const ValueKey("sibutem"),
-                          front: CredencialBibliotecaFront(
-                            credencial: credencialBiblioteca,
-                            availableHeight: cardHeight,
-                          ),
-                          back: CredencialBibliotecaBack(
-                            credencial: credencialBiblioteca,
-                            estudiante: estudiante,
-                            availableHeight: cardHeight,
-                          ),
-                        ),
-                      ),
-                      Space.small,
-                      Center(
-                        child: Text("Toca la credencial para voltear",
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
                         ),
                       ),
                     ],

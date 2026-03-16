@@ -2,14 +2,15 @@ import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:miutem/core/models/asignaturas/asignatura.dart";
 import "package:miutem/core/models/user/estudiante.dart";
+import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/services/asignaturas_service.dart";
 import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/core/utils/utils.dart";
 import "package:miutem/screens/asignaturas/widgets/acceso_rapido.dart";
 import "package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart";
 import "package:miutem/screens/auth/login/login_screen.dart";
-
 import "package:miutem/styles/styles.dart";
+import "package:miutem/widgets/feature_flag.dart";
 
 class AsignaturasScreen extends StatefulWidget {
   const AsignaturasScreen({super.key});
@@ -25,21 +26,21 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
   @override
   void initState() {
     super.initState();
-    Get.find<AuthService>()
-        .login()
-        .then((estudiante) => setState(() => this.estudiante = estudiante),
-            onError: (err) {
+    Get.find<AuthService>().login().then((estudiante) {
+      if(mounted) setState(() => this.estudiante = estudiante);
+
+      if(!estudiante.perfiles.contains(Perfil.estudiante)) {
+        return;
+      }
+
+      Get.find<AsignaturasService>().getAsignaturas().then((asignaturas) {
+        if(mounted) setState(() => this.asignaturas = asignaturas);
+      });
+    }, onError: (err) {
       if (mounted) {
         Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (ctx) => const LoginScreen()));
       }
-    });
-    Get.find<AsignaturasService>()
-        .getAsignaturas()
-        .then((asignaturas) => setState(() => this.asignaturas = asignaturas),
-            onError: (err) {
-      logger.e("Error al cargar asignaturas", error: err);
     });
   }
 
@@ -71,7 +72,10 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
               Space.large,
               const AccesoRapido(),
               Space.large,
-              AsignaturasEnCurso(asignaturas: asignaturas),
+              FeatureFlag.profiles(
+                const [Perfil.estudiante],
+                child: AsignaturasEnCurso(asignaturas: asignaturas),
+              ),
             ],
           ),
         ),

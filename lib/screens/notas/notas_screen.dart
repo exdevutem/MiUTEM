@@ -3,7 +3,9 @@ import "package:get/get.dart";
 import "package:miutem/core/models/asignaturas/asignatura.dart";
 import "package:miutem/core/models/evaluacion/evaluacion.dart";
 import "package:miutem/core/models/evaluacion/grades.dart";
+import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/models/user/persona/persona.dart";
+import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/core/services/controllers/notas_controller.dart";
 import "package:miutem/screens/notas/actions/cargar_asignaturas_con_notas.dart";
 import "package:miutem/screens/notas/widgets/notas.dart";
@@ -45,23 +47,29 @@ class _NotasScreenState extends State<NotasScreen> {
       return;
     }
 
-    cargarAsignaturasConNotas().then((asignaturas) {
-      asignaturas = [
-        emptyAsignatura,
-        ...asignaturas
-      ];
-      if(!mounted) return;
-      setState(() {
-        this.asignaturas = asignaturas;
-        asignatura = emptyAsignatura;
-        notasController.updateWithGrades(asignatura?.grades);
-      });
-    }, onError: (err) {
-      if(!mounted) return;
-      setState(() {
-        asignaturas = [emptyAsignatura];
-        asignatura = emptyAsignatura;
-        notasController.updateWithGrades(asignatura?.grades);
+    Get.find<AuthService>().login().then((usuario) {
+      if(!usuario.perfiles.contains(Perfil.estudiante)){
+        return;
+      }
+
+      cargarAsignaturasConNotas().then((asignaturas) {
+        asignaturas = [
+          emptyAsignatura,
+          ...asignaturas
+        ];
+        if(!mounted) return;
+        setState(() {
+          this.asignaturas = asignaturas;
+          asignatura = emptyAsignatura;
+          notasController.updateWithGrades(asignatura?.grades);
+        });
+      }, onError: (err) {
+        if(!mounted) return;
+        setState(() {
+          asignaturas = [emptyAsignatura];
+          asignatura = emptyAsignatura;
+          notasController.updateWithGrades(asignatura?.grades);
+        });
       });
     });
   }

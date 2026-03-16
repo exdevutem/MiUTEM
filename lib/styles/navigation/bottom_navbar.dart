@@ -1,5 +1,8 @@
 import "package:flutter/material.dart";
+import "package:get/get.dart";
 import "package:miutem/core/models/navigation/navigation_item.dart";
+import "package:miutem/core/models/user/perfil.dart";
+import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/screens/asignaturas/lista_asignaturas_screen.dart";
 import "package:miutem/screens/credencial/credencial_screen.dart";
 import "package:miutem/screens/home/home_screen.dart";
@@ -20,14 +23,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int idx = 0;
   final List<NavigationItem> allScreens = [
     NavigationItem(destination: const HomeScreen(), label: "Inicio", featureFlag: "bottom_navigation.home", icon: AppIcons.home),
-    NavigationItem(destination: const AsignaturasScreen(), label: "Asignaturas", featureFlag: "bottom_navigation.asignaturas", icon: AppIcons.subjects),
+    NavigationItem(destination: const AsignaturasScreen(), label: "Asignaturas", featureFlag: "bottom_navigation.asignaturas", icon: AppIcons.subjects, perfiles: [Perfil.estudiante]),
     NavigationItem(destination: const CredencialScreen(), label: "Credencial", featureFlag: "bottom_navigation.credencial", icon: AppIcons.credential),
     NavigationItem(destination: const TaskListScreen(), label: "Apuntes", featureFlag: "bottom_navigation.apuntes", icon: AppIcons.notes),
     NavigationItem(destination: const ProfileScreen(), label: "Perfil", featureFlag: "bottom_navigation.perfil", icon: AppIcons.profile),
   ];
 
   List<NavigationItem> get enabledScreens {
-    return allScreens.where((screen) => FeatureFlag.evaluateSync(screen.featureFlag)).toList();
+    return allScreens.where((screen) => FeatureFlag.evaluateSync(screen.featureFlag)).where((screen) => screen.perfiles.isNotEmpty ? FeatureFlag.evaluateProfileSync(screen.perfiles) : true).toList();
   }
 
   @override
