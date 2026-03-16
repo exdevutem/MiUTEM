@@ -5,6 +5,7 @@ import "package:miutem/core/models/user/estudiante.dart";
 import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/services/asignaturas_service.dart";
 import "package:miutem/core/services/auth_service.dart";
+import "package:miutem/core/utils/logger.dart";
 import "package:miutem/screens/asignaturas/widgets/acceso_rapido.dart";
 import "package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart";
 import "package:miutem/screens/auth/login/login_screen.dart";
@@ -35,7 +36,7 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
       Get.find<AsignaturasService>().getAsignaturas().then((asignaturas) {
         if(mounted) setState(() => this.asignaturas = asignaturas);
       }).catchError((error, stackTrace) {
-        debugPrint('Error loading asignaturas: $error');
+        logger.d("Error loading asignaturas: $error");
       });
     }, onError: (err) {
       if (mounted) {
@@ -52,8 +53,8 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
       child: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            this.estudiante = null;
-            this.asignaturas = null;
+            estudiante = null;
+            asignaturas = null;
           });
           try {
             final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
@@ -64,12 +65,12 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
               this.asignaturas = asignaturas;
             });
           } catch (error, stackTrace) {
-            debugPrint('Error refreshing asignaturas: $error');
+            logger.d("Error refreshing asignaturas: $error");
             if (!mounted) return;
             setState(() {
               // Keep nulls or existing values; here we leave them null to indicate failure.
-              this.estudiante = this.estudiante;
-              this.asignaturas = this.asignaturas;
+              estudiante = null;
+              asignaturas = null;
             });
           }
         },
