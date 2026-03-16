@@ -90,6 +90,7 @@ class AuthService {
   }
 
   Future<void> logout({ BuildContext? context}) async {
+    _cachedEstudiante = null;
     await _secureStorageRepository.setEstudiante(null);
     await _secureStorageRepository.setCredentials(null);
     await Preferencia.onboardingStep.delete();
