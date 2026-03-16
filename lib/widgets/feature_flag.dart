@@ -320,6 +320,27 @@ class FeatureFlag extends StatelessWidget {
 
       if (showDebugInfo && kDebugMode) {
         final debugInfo = _getDebugInfo();
+
+        // Apply the same profile restriction logic used in the non-debug path
+        Widget gatedChild;
+        if (!isEnabled) {
+          // Feature flag disabled: use the same fallback logic as below
+          gatedChild = fallback ?? const SizedBox.shrink();
+        } else {
+          // Feature flag enabled: enforce profile restrictions if configured
+          if (allowedProfiles != null && allowedProfiles!.isNotEmpty && !evaluateProfileSync(allowedProfiles!)) {
+            if (fallback != null) {
+              gatedChild = fallback!;
+            } else if (showProfileRestrictionMessage) {
+              gatedChild = _buildProfileRestrictedFallback(context);
+            } else {
+              gatedChild = const SizedBox.shrink();
+            }
+          } else {
+            gatedChild = child;
+          }
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -339,7 +360,7 @@ class FeatureFlag extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            if (isEnabled) child else (fallback ?? const SizedBox.shrink()),
+            gatedChild,
           ],
         );
       }
