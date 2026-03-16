@@ -34,6 +34,8 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
 
       Get.find<AsignaturasService>().getAsignaturas().then((asignaturas) {
         if(mounted) setState(() => this.asignaturas = asignaturas);
+      }).catchError((error, stackTrace) {
+        debugPrint('Error loading asignaturas: $error');
       });
     }, onError: (err) {
       if (mounted) {
@@ -53,12 +55,23 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
             this.estudiante = null;
             this.asignaturas = null;
           });
-          final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
-          final asignaturas = await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true);
-          setState(() {
-            this.estudiante = estudiante;
-            this.asignaturas = asignaturas;
-          });
+          try {
+            final estudiante = await Get.find<AuthService>().login(forceRefresh: true);
+            final asignaturas = await Get.find<AsignaturasService>().getAsignaturas(forceRefresh: true);
+            if (!mounted) return;
+            setState(() {
+              this.estudiante = estudiante;
+              this.asignaturas = asignaturas;
+            });
+          } catch (error, stackTrace) {
+            debugPrint('Error refreshing asignaturas: $error');
+            if (!mounted) return;
+            setState(() {
+              // Keep nulls or existing values; here we leave them null to indicate failure.
+              this.estudiante = this.estudiante;
+              this.asignaturas = this.asignaturas;
+            });
+          }
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
