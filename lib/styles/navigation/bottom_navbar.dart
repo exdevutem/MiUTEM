@@ -1,8 +1,6 @@
 import "package:flutter/material.dart";
-import "package:get/get.dart";
 import "package:miutem/core/models/navigation/navigation_item.dart";
 import "package:miutem/core/models/user/perfil.dart";
-import "package:miutem/core/services/auth_service.dart";
 import "package:miutem/screens/asignaturas/lista_asignaturas_screen.dart";
 import "package:miutem/screens/credencial/credencial_screen.dart";
 import "package:miutem/screens/home/home_screen.dart";

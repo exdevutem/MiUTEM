@@ -5,7 +5,6 @@ import "package:miutem/core/models/user/estudiante.dart";
 import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/core/services/asignaturas_service.dart";
 import "package:miutem/core/services/auth_service.dart";
-import "package:miutem/core/utils/utils.dart";
 import "package:miutem/screens/asignaturas/widgets/acceso_rapido.dart";
 import "package:miutem/screens/asignaturas/widgets/asignaturas_en_curso.dart";
 import "package:miutem/screens/auth/login/login_screen.dart";
