@@ -64,7 +64,7 @@ class _AsignaturasScreenState extends State<AsignaturasScreen> {
               this.estudiante = estudiante;
               this.asignaturas = asignaturas;
             });
-          } catch (error, stackTrace) {
+          } catch (error) {
             logger.d("Error refreshing asignaturas: $error");
             if (!mounted) return;
             setState(() {
