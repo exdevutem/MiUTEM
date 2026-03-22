@@ -6,16 +6,19 @@ on:
     branches: [ "dev" ]
 jobs:
   analizar:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flutter_version: [ "latest", "3.41.4" ]
+    runs-on: macos-latest
     steps:
       - name: Clonar Repositorio
         uses: actions/checkout@v4
-      - name: Configurar Flutter
-        uses: subosito/flutter-action@v2
+      - name: Configurar Flutter SDK (${{ matrix.flutter_version }})
+        uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
           channel: stable
-          flutter-version-file: pubspec.yaml
+          version: ${{ matrix.flutter_version }}
       - name: Instalar librerías
         run: flutter pub get
       - name: Analizar código
