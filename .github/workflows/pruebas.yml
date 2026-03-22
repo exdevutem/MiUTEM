@@ -17,6 +17,7 @@ jobs:
       - name: Configurar Flutter SDK (${{ matrix.flutter_version }})
         uses: flutter-actions/setup-flutter@v4
         with:
+          cache: true
           channel: stable
           version: ${{ matrix.flutter_version }}
       - name: Instalar librerías
