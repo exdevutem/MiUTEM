@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         flutter_version: [ "latest", "3.41.4" ]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Clonar Repositorio
         uses: actions/checkout@v4

@@ -9,9 +9,8 @@ jobs:
   probar:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
         flutter_version: [ "latest", "3.41.4" ]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     steps:
       - name: Clonar Repositorio
         uses: actions/checkout@v4
