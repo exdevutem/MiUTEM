@@ -18,7 +18,6 @@ void runMainApp(FirebaseOptions firebaseOptions) async {
     ),
   );
 
-  WidgetsFlutterBinding.ensureInitialized();
   await initServices(firebaseOptions);
   runApp(const MiUTEMApp());
 }
