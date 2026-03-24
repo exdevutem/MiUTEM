@@ -46,7 +46,7 @@ class AccesoRapido extends StatelessWidget {
               label: "Novedades",
               icon: AppIcons.updates,
               fill: 0,
-              onTap: () => visitarApuntes(context),
+              onTap: () => visitarNovedades(context),
             ),
           ],
         ),
