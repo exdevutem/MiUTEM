@@ -53,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            this.estudiante = null;
             bloques = null;
             novedades = null;
           });
