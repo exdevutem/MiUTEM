@@ -53,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            this.estudiante = null;
             bloques = null;
             novedades = null;
           });
@@ -75,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Saludo(estudiante: estudiante),
               Space.large,
-              const AccesoRapido(),
+              AccesoRapido(estudiante: estudiante),
               if(novedades?.isNotEmpty == true) GestureDetector(
                 onTap: () => {
                   // TODO: Redirigir a la pantalla de novedades
@@ -88,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Novedades", style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w700)),
-                        Text("Ver más", style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
                     Space.extraSmall,

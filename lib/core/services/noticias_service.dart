@@ -7,6 +7,8 @@ const String noticiasUrl = "https://noticias.utem.cl";
 
 class NoticiasService {
 
+  static List<Noticia>? _cachedNoticias;
+
   final _httpClient = Dio(HttpClient.httpClient.options.copyWith(
       baseUrl: noticiasUrl
   ))..interceptors.addAll([
@@ -14,6 +16,10 @@ class NoticiasService {
   ]);
 
   Future<List<Noticia>> getNoticias({ bool forceRefresh = false }) async {
+    if (!forceRefresh && _cachedNoticias != null) {
+      return _cachedNoticias!;
+    }
+
     final hasta = DateTime.now().toUtc().toIso8601String();
     final desde = DateTime.now().subtract(const Duration(days: 180)).toUtc().toIso8601String();
     final categoryIdResponse = await _httpClient.get("/wp-json/wp/v2/categories",
@@ -38,7 +44,9 @@ class NoticiasService {
       return [];
     }
 
-    return Noticia.fromJsonList(response.data as List<dynamic>);
+    final noticias = Noticia.fromJsonList(response.data as List<dynamic>);
+    _cachedNoticias = noticias;
+    return noticias;
   }
 
 }
