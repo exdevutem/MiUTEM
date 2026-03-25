@@ -70,8 +70,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  default-flavor: production
   assets:
-    - assets/launcher_icons/prod/icon_splash.png
+    # Logos
+    - path: assets/launcher_icons/development/miutem@512h.png
+      flavors: [development]
+    - path: assets/launcher_icons/production/miutem@512h.png
+      flavors: [production]
+    # Otros
     - assets/videos/login_bg.mp4
     - assets/images/login_bg.png
     - assets/images/utem_logo_color_blanco.png
@@ -83,7 +89,6 @@ flutter:
     - assets/images/sibutem.jpg
     - assets/images/sibutem.svg
     - assets/images/sibutem.png
-    - assets/launcher_icons/prod/full_icon.png
     - assets/images/exdev_light.png
     - assets/images/exdev_dark.png
     - assets/images/exdev.png

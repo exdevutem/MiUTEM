@@ -41,7 +41,7 @@ class _AppSectionState extends State<AppSection> {
       ListTile(
         titleTextStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         subtitleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.normal),
-        leading: Image.asset("assets/launcher_icons/prod/icon_splash.png", width: 36),
+        leading: Image.asset("assets/launcher_icons/${appFlavor ?? 'production'}/miutem@512h.png", width: 36),
         title: const Text("Versión de la Aplicación"),
         subtitle: FutureBuilder(
           future: PackageInfo.fromPlatform(),
