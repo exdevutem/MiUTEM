@@ -22,7 +22,6 @@ class CardAccesoRapido extends StatelessWidget {
           color: themedColor(context, light: color, dark: colorDark),
         ),
         child: SizedBox(
-          width: 120,
           height: 120,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12,20,12,20),
