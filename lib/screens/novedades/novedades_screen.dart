@@ -47,7 +47,10 @@ class _SeccionNovedadesRemotas extends StatelessWidget {
 		return Column(
 			crossAxisAlignment: CrossAxisAlignment.start,
 			children: [
-				CardNovedades(novedad: novedades.first),
+				for (int i = 0; i < novedades.length; i++) ...[
+					CardNovedades(novedad: novedades[i]),
+					if (i < novedades.length - 1) const SizedBox(height: 12),
+				],
 			],
 		);
 	}
@@ -62,12 +65,18 @@ class SeccionNoticias extends StatefulWidget {
 
 class _SeccionNoticiasState extends State<SeccionNoticias> {
 	final NoticiasService _noticiasService = NoticiasService();
-	late final Future<List<Noticia>> _noticiasFuture;
+	late Future<List<Noticia>> _noticiasFuture;
 
 	@override
 	void initState() {
 		super.initState();
 		_noticiasFuture = _noticiasService.getNoticias();
+	}
+
+	void _retryNoticias() {
+		setState(() {
+			_noticiasFuture = _noticiasService.getNoticias(forceRefresh: true);
+		});
 	}
 
 	@override
@@ -85,7 +94,34 @@ class _SeccionNoticiasState extends State<SeccionNoticias> {
 				}
 
 				if (snapshot.hasError) {
-					return const SizedBox.shrink();
+					return Container(
+						padding: const EdgeInsets.all(16),
+						decoration: BoxDecoration(
+							borderRadius: BorderRadius.circular(12),
+							border: Border.all(color: Theme.of(context).dividerColor),
+						),
+						child: Column(
+							crossAxisAlignment: CrossAxisAlignment.start,
+							children: [
+								Text(
+									"Error al cargar noticias",
+									style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+										fontWeight: FontWeight.w700,
+									),
+								),
+								const SizedBox(height: 8),
+								Text(
+									"No se pudieron cargar las noticias en este momento.",
+									style: Theme.of(context).textTheme.bodyMedium,
+								),
+								const SizedBox(height: 12),
+								FilledButton(
+									onPressed: _retryNoticias,
+									child: const Text("Reintentar"),
+								),
+							],
+						),
+					);
 				}
 
 				final noticias = snapshot.data ?? <Noticia>[];
