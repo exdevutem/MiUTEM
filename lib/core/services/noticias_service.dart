@@ -17,7 +17,7 @@ class NoticiasService {
 
   Future<List<Noticia>> getNoticias({ bool forceRefresh = false }) async {
     if (!forceRefresh && _cachedNoticias != null) {
-      return List.from(_cachedNoticias!);
+      return _cachedNoticias!;
     }
 
     final hasta = DateTime.now().toUtc().toIso8601String();
