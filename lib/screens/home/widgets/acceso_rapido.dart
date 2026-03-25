@@ -1,11 +1,13 @@
 import "package:flutter/material.dart";
+import "package:miutem/core/models/user/estudiante.dart";
 import "package:miutem/core/models/user/perfil.dart";
 import "package:miutem/screens/home/actions/acceso_rapido.dart";
 import "package:miutem/styles/styles.dart";
-import "package:miutem/widgets/feature_flag.dart";
 
 class AccesoRapido extends StatelessWidget {
-  const AccesoRapido({super.key});
+  final Estudiante? estudiante;
+
+  const AccesoRapido({super.key, this.estudiante});
 
   @override
   Widget build(BuildContext context) => Column(
@@ -19,18 +21,16 @@ class AccesoRapido extends StatelessWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           scrollDirection: Axis.horizontal,
           children: [
-            FeatureFlag.profiles(
-              const [Perfil.estudiante],
-              showProfileRestrictionMessage: false,
-              child: CardAccesoRapido(
+            if (estudiante?.perfiles.contains(Perfil.estudiante) ?? false)
+              CardAccesoRapido(
                 color: AppTheme.lightBlueCard,
                 colorDark: AppTheme.darkBlueCard,
                 label: "Horario",
                 icon: AppIcons.timetable,
                 onTap: () => visitarHorario(context),
               ),
-            ),
-            HorizontalSpace.extraSmall,
+            if (estudiante?.perfiles.contains(Perfil.estudiante) ?? false)
+              HorizontalSpace.extraSmall,
             CardAccesoRapido(
               color: AppTheme.lightPurpleCard,
               colorDark: AppTheme.darkPurpleCard,

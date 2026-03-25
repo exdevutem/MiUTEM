@@ -1,6 +1,10 @@
 import "package:flutter/material.dart";
+import "package:get/get.dart";
 import "package:miutem/core/models/noticia.dart";
+import "package:miutem/core/services/firebase/remote_config_service.dart";
 import "package:miutem/core/services/noticias_service.dart";
+import "package:miutem/screens/home/models/novedad.dart";
+import "package:miutem/screens/home/widgets/novedades/card_novedades.dart";
 import "package:url_launcher/url_launcher_string.dart";
 
 class NovedadesScreen extends StatelessWidget {
@@ -8,12 +12,43 @@ class NovedadesScreen extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		final novedades = Get.find<RemoteConfigService>().fetchNovedades().toList();
+
 		return Scaffold(
 			appBar: AppBar(title: const Text("Novedades")),
-			body: const Padding(
-				padding: EdgeInsets.all(16),
-				child: SeccionNoticias(),
+			body: Padding(
+				padding: const EdgeInsets.all(16),
+				child: SingleChildScrollView(
+					child: Column(
+						crossAxisAlignment: CrossAxisAlignment.start,
+						children: [
+							_SeccionNovedadesRemotas(novedades: novedades),
+							const SizedBox(height: 20),
+							const SeccionNoticias(),
+						],
+					),
+				),
 			),
+		);
+	}
+}
+
+class _SeccionNovedadesRemotas extends StatelessWidget {
+	final List<Novedad> novedades;
+
+	const _SeccionNovedadesRemotas({required this.novedades});
+
+	@override
+	Widget build(BuildContext context) {
+		if (novedades.isEmpty) {
+			return const SizedBox.shrink();
+		}
+
+		return Column(
+			crossAxisAlignment: CrossAxisAlignment.start,
+			children: [
+				CardNovedades(novedad: novedades.first),
+			],
 		);
 	}
 }
