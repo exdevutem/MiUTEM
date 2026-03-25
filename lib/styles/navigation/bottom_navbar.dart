@@ -42,8 +42,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
       if (authService.cachedEstudiante == null) {
         try {
           await authService.login();
-        } catch (_) {
-          // Keep current behavior when login state is not available yet.
+        } catch (e, stackTrace) {
+          // Keep current behavior when login state is not available yet, but log unexpected failures.
+          debugPrint('Auth cache hydration failed in BottomNavBar.initState: $e');
+          debugPrint(stackTrace.toString());
         }
       }
 
