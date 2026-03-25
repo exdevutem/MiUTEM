@@ -11,7 +11,7 @@ class AccesoRapido extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("¿Que quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
+      Text("¿Qué quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
       Space.extraSmall,
       SizedBox(
         height: 130,
