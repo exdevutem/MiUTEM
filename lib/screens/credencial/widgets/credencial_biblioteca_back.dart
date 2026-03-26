@@ -19,13 +19,24 @@ class CredencialBibliotecaBack extends StatelessWidget {
     this.availableHeight,
   });
 
+  double _responsiveScale() {
+    final height = availableHeight ?? 680;
+    return (height / 680).clamp(0.82, 1.0).toDouble();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final scale = _responsiveScale();
+
     return Container(
       width: double.infinity,
       height: availableHeight,
       decoration: BoxDecoration(
-        color: themedColor(context, light: Colors.white, dark: const Color(0xFF2A2A2E)),
+        color: themedColor(
+          context,
+          light: Colors.white,
+          dark: const Color(0xFF2A2A2E),
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -35,7 +46,11 @@ class CredencialBibliotecaBack extends StatelessWidget {
           ),
         ],
         border: Border.all(
-          color: themedColor(context, light: Colors.black.withValues(alpha: 0.06), dark: Colors.white12),
+          color: themedColor(
+            context,
+            light: Colors.black.withValues(alpha: 0.06),
+            dark: Colors.white12,
+          ),
         ),
       ),
       child: Padding(
@@ -46,33 +61,46 @@ class CredencialBibliotecaBack extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              _buildQrImage(context),
-              Space.medium,
-              Text(_getPerfilLabel(),
+              _buildQrImage(context, scale),
+              SizedBox(height: 16 * scale),
+              Text(
+                _getPerfilLabel(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              Space.extraSmall,
-              Text("https://biblioteca.utem.cl/",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
+                  fontSize:
+                      (Theme.of(context).textTheme.titleMedium?.fontSize ??
+                          16) *
+                      scale,
                 ),
                 textAlign: TextAlign.center,
               ),
-              Space.small,
-              Text("Este documento es personal e intransferible. El atraso en la devolución del material solicitado será sancionado por la biblioteca.",
+              SizedBox(height: 8 * scale),
+              Text(
+                "https://biblioteca.utem.cl/",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.w500,
+                  fontSize:
+                      (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
+                      scale,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12 * scale),
+              Text(
+                "Este documento es personal e intransferible. El atraso en la devolución del material solicitado será sancionado por la biblioteca.",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.4,
+                  fontSize:
+                      (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
+                      scale,
                 ),
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
-              _buildSibutemLogo(context),
-              Space.extraSmall,
+              _buildSibutemLogo(context, scale),
+              SizedBox(height: 8 * scale),
             ],
           ),
         ),
@@ -80,8 +108,12 @@ class CredencialBibliotecaBack extends StatelessWidget {
     );
   }
 
-  Widget _buildQrImage(BuildContext context) {
+  Widget _buildQrImage(BuildContext context, double scale) {
     final imageBase64 = credencial?.imagenQr;
+    final qrImageSize = (140 * scale).clamp(112.0, 140.0).toDouble();
+    final qrBoxSize = (192 * scale).clamp(158.0, 192.0).toDouble();
+    final iconSize = (80 * scale).clamp(64.0, 80.0).toDouble();
+    final qrPadding = (12 * scale).clamp(10.0, 12.0).toDouble();
 
     Widget qrWidget;
 
@@ -96,11 +128,19 @@ class CredencialBibliotecaBack extends StatelessWidget {
         final bytes = base64Decode(base64String);
         qrWidget = Image.memory(
           bytes,
-          width: 140,
-          height: 140,
+          width: qrImageSize,
+          height: qrImageSize,
           fit: BoxFit.contain,
           errorBuilder: (_, __, ___) => Center(
-            child: Icon(Icons.qr_code, size: 80, color: themedColor(context, light: Colors.black38, dark: Colors.white38)),
+            child: Icon(
+              Icons.qr_code,
+              size: iconSize,
+              color: themedColor(
+                context,
+                light: Colors.black38,
+                dark: Colors.white38,
+              ),
+            ),
           ),
           color: Colors.white, // Forzar fondo blanco
           colorBlendMode: BlendMode.modulate,
@@ -108,35 +148,53 @@ class CredencialBibliotecaBack extends StatelessWidget {
       } catch (e) {
         // Si falla la decodificación, mostrar icono por defecto
         qrWidget = Center(
-          child: Icon(Icons.qr_code, size: 80, color: themedColor(context, light: Colors.black38, dark: Colors.white38)),
+          child: Icon(
+            Icons.qr_code,
+            size: iconSize,
+            color: themedColor(
+              context,
+              light: Colors.black38,
+              dark: Colors.white38,
+            ),
+          ),
         );
       }
     } else {
       qrWidget = Center(
-        child: Icon(Icons.qr_code, size: 80, color: themedColor(context, light: Colors.black38, dark: Colors.white38)),
+        child: Icon(
+          Icons.qr_code,
+          size: iconSize,
+          color: themedColor(
+            context,
+            light: Colors.black38,
+            dark: Colors.white38,
+          ),
+        ),
       );
     }
 
     // El QR siempre debe tener fondo blanco para ser legible
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(qrPadding),
       decoration: BoxDecoration(
-        color: themedColor(context, light: Colors.white, dark: const Color(0xFF2A2A2E)),
+        color: themedColor(
+          context,
+          light: Colors.white,
+          dark: const Color(0xFF2A2A2E),
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: SizedBox(
-        width: 192,
-        height: 192,
-        child: qrWidget,
-      ),
+      child: SizedBox(width: qrBoxSize, height: qrBoxSize, child: qrWidget),
     );
   }
 
-  Widget _buildSibutemLogo(BuildContext context) {
+  Widget _buildSibutemLogo(BuildContext context, double scale) {
+    final logoHeight = (72 * scale).clamp(58.0, 72.0).toDouble();
+
     // Load image /assets/images/sibutem.png
     return Image.asset(
       "assets/images/sibutem.png",
-      height: 72,
+      height: logoHeight,
       fit: BoxFit.contain,
       color: themedColor(context, light: Colors.black, dark: Colors.white),
     );
