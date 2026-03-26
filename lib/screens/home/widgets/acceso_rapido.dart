@@ -10,50 +10,52 @@ class AccesoRapido extends StatelessWidget {
   const AccesoRapido({super.key, this.estudiante});
 
   @override
-  Widget build(BuildContext context) {
-    final isEstudiante = estudiante?.perfiles.contains(Perfil.estudiante) ?? false;
+Widget build(BuildContext context) {
+  final isEstudiante = estudiante?.perfiles.contains(Perfil.estudiante) ?? false;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("¿Qué quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
-        Space.extraSmall,
-        SizedBox(
-          height: 130,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            children: [
-              if (isEstudiante)
-                CardAccesoRapido(
-                  color: AppTheme.lightBlueCard,
-                  colorDark: AppTheme.darkBlueCard,
-                  label: "Horario",
-                  icon: AppIcons.timetable,
-                  onTap: () => visitarHorario(context),
-                ),
-              if (isEstudiante) HorizontalSpace.extraSmall,
-              CardAccesoRapido(
-                color: AppTheme.lightPurpleCard,
-                colorDark: AppTheme.darkPurpleCard,
-                label: "Notas",
-                icon: AppIcons.calculator,
-                fill: 0,
-                onTap: () => visitarNotas(context),
-              ),
-              HorizontalSpace.extraSmall,
-              CardAccesoRapido(
-                color: AppTheme.lightGreenCard,
-                colorDark: AppTheme.darkGreenCard,
-                label: "Novedades",
-                icon: AppIcons.updates,
-                fill: 0,
-                onTap: () => visitarNovedades(context),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
+  // Definimos las tarjetas siguiendo la lógica de dev
+  final cards = <Widget>[
+    if (isEstudiante)
+      CardAccesoRapido(
+        color: AppTheme.lightBlueCard,
+        colorDark: AppTheme.darkBlueCard,
+        label: "Horario",
+        icon: AppIcons.timetable,
+        onTap: () => visitarHorario(context),
+      ),
+    CardAccesoRapido(
+      color: AppTheme.lightPurpleCard,
+      colorDark: AppTheme.darkPurpleCard,
+      label: "Notas",
+      icon: AppIcons.calculator,
+      fill: 0,
+      onTap: () => visitarNotas(context),
+    ),
+    CardAccesoRapido(
+      color: AppTheme.lightGreenCard,
+      colorDark: AppTheme.darkGreenCard,
+      label: "Novedades",
+      icon: AppIcons.updates,
+      fill: 0,
+      onTap: () => visitarNovedades(context),
+    ),
+  ];
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("¿Qué quieres hacer hoy?", style: Theme.of(context).textTheme.bodyMedium),
+      Space.extraSmall,
+      // Usamos Row con Expanded para el ajuste de pantalla (Fix de la rama antigua)
+      Row(
+        children: [
+          for (int i = 0; i < cards.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            Expanded(child: cards[i]),
+          ]
+        ],
+      ),
+    ],
+  );
+}
 }
