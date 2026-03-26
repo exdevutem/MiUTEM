@@ -19,7 +19,11 @@ class CredencialFront extends StatelessWidget {
     width: double.infinity,
     height: availableHeight,
     decoration: BoxDecoration(
-      color: themedColor(context, light: Colors.white, dark: const Color(0xFF2A2A2E)),
+      color: themedColor(
+        context,
+        light: Colors.white,
+        dark: const Color(0xFF2A2A2E),
+      ),
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -29,7 +33,11 @@ class CredencialFront extends StatelessWidget {
         ),
       ],
       border: Border.all(
-        color: themedColor(context, light: Colors.black.withValues(alpha: 0.06), dark: Colors.white12),
+        color: themedColor(
+          context,
+          light: Colors.black.withValues(alpha: 0.06),
+          dark: Colors.white12,
+        ),
       ),
     ),
     child: Padding(
@@ -43,15 +51,17 @@ class CredencialFront extends StatelessWidget {
             Space.large,
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: PerfilBadge(
-                perfil: usuario?.perfiles.firstOrNull,
-              ),
+              child: PerfilBadge(perfil: usuario?.perfiles.firstOrNull),
             ),
             Space.extraSmall,
             _buildNombre(context),
             _buildApellido(context),
             Space.large,
-            _buildQrCode(),
+            Flexible(
+              child: Center(
+                child: FittedBox(fit: BoxFit.scaleDown, child: _buildQrCode()),
+              ),
+            ),
             Space.small,
             _buildRut(context),
           ],
@@ -65,59 +75,53 @@ class CredencialFront extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        UserAvatar(
-          estudiante: usuario,
-          radius: 80,
-        ),
+        UserAvatar(estudiante: usuario, radius: 80),
         Space.small,
       ],
     );
   }
 
   Widget _buildNombre(BuildContext context) {
-    return Text(_getNombres(),
-      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-        fontWeight: FontWeight.w900,
-      ),
+    return Text(
+      _getNombres(),
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
     );
   }
 
   Widget _buildApellido(BuildContext context) {
-    return Text(_getApellidos(),
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-      ),
+    return Text(
+      _getApellidos(),
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
     );
   }
 
   Widget _buildQrCode() {
-    return Center(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final qrSize = constraints.maxHeight.isFinite ? (constraints.maxHeight - 24).clamp(100.0, constraints.maxWidth - 24) : 256.0;
-          // El QR siempre debe tener fondo blanco para ser legible
-          return Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: QrImageView(
-              data: _getQrData(),
-              version: QrVersions.auto,
-              size: qrSize,
-              backgroundColor: Colors.white,
-              eyeStyle: const QrEyeStyle(
-                eyeShape: QrEyeShape.square,
-                color: Colors.black,
-              ),
-              dataModuleStyle: const QrDataModuleStyle(
-                dataModuleShape: QrDataModuleShape.square,
-                color: Colors.black,
-              ),
-            ),
-          );
-        },
+    // Tamaño visual base: en alto reducido se escala hacia abajo sin romper layout.
+    const qrSize = 256.0;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: QrImageView(
+        data: _getQrData(),
+        version: QrVersions.auto,
+        size: qrSize,
+        backgroundColor: Colors.white,
+        eyeStyle: const QrEyeStyle(
+          eyeShape: QrEyeShape.square,
+          color: Colors.black,
+        ),
+        dataModuleStyle: const QrDataModuleStyle(
+          dataModuleShape: QrDataModuleShape.square,
+          color: Colors.black,
+        ),
       ),
     );
   }
@@ -127,9 +131,9 @@ class CredencialFront extends StatelessWidget {
       child: Text(
         usuario?.rut?.toString() ?? "12.345.678-9",
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1.2,
-            ),
+          fontWeight: FontWeight.w500,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -158,4 +162,3 @@ class CredencialFront extends StatelessWidget {
     return "${usuario!.rut!.rut}";
   }
 }
-

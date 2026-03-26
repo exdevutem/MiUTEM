@@ -36,7 +36,9 @@ class _CredencialScreenState extends State<CredencialScreen> {
 
   Future<void> _loadEstudiante({bool forceRefresh = false}) async {
     try {
-      final est = await Get.find<AuthService>().login(forceRefresh: forceRefresh);
+      final est = await Get.find<AuthService>().login(
+        forceRefresh: forceRefresh,
+      );
       if (mounted) setState(() => estudiante = est);
     } catch (e) {
       logger.e("Error loading estudiante: $e");
@@ -45,7 +47,8 @@ class _CredencialScreenState extends State<CredencialScreen> {
 
   Future<void> _loadCredencialBiblioteca() async {
     try {
-      final cred = await Get.find<MiUTEMCredencialService>().getCredencialBiblioteca();
+      final cred = await Get.find<MiUTEMCredencialService>()
+          .getCredencialBiblioteca();
       if (mounted) setState(() => credencialBiblioteca = cred);
     } catch (e) {
       logger.e("Error loading credencial biblioteca: $e");
@@ -54,7 +57,8 @@ class _CredencialScreenState extends State<CredencialScreen> {
 
   void _onTipoCredencialChanged(Set<TipoCredencial> selected) {
     setState(() => _tipoCredencial = selected.first);
-    if (_tipoCredencial == TipoCredencial.sibutem && credencialBiblioteca == null) {
+    if (_tipoCredencial == TipoCredencial.sibutem &&
+        credencialBiblioteca == null) {
       _loadCredencialBiblioteca();
     }
   }
@@ -76,7 +80,10 @@ class _CredencialScreenState extends State<CredencialScreen> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Padding (16*2) + título (~34) + Space.medium (16) + segmented (~48) + Space.small (12) + Space.small (12) + hint text (~20)
-            final cardHeight = constraints.maxHeight - 32 - 34 - 16 - 48 - 12 - 12 - 20;
+            final cardHeight =
+                (constraints.maxHeight - 32 - 34 - 16 - 48 - 12 - 12 - 20)
+                    .clamp(560.0, double.infinity)
+                    .toDouble();
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               clipBehavior: Clip.none,
@@ -87,7 +94,8 @@ class _CredencialScreenState extends State<CredencialScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Credencial",
+                      Text(
+                        "Credencial",
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Space.medium,
@@ -115,35 +123,45 @@ class _CredencialScreenState extends State<CredencialScreen> {
                             ),
                             Space.small,
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
-                              child: _tipoCredencial == TipoCredencial.institucional ? FlipCard(
-                                key: const ValueKey("institucional"),
-                                front: CredencialFront(
-                                  usuario: estudiante,
-                                  availableHeight: cardHeight,
-                                ),
-                                back: CredencialBack(
-                                  availableHeight: cardHeight,
-                                ),
-                              ) : FlipCard(
-                                key: const ValueKey("sibutem"),
-                                front: CredencialBibliotecaFront(
-                                  credencial: credencialBiblioteca,
-                                  availableHeight: cardHeight,
-                                ),
-                                back: CredencialBibliotecaBack(
-                                  credencial: credencialBiblioteca,
-                                  estudiante: estudiante,
-                                  availableHeight: cardHeight,
-                                ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
                               ),
+                              child:
+                                  _tipoCredencial ==
+                                      TipoCredencial.institucional
+                                  ? FlipCard(
+                                      key: const ValueKey("institucional"),
+                                      front: CredencialFront(
+                                        usuario: estudiante,
+                                        availableHeight: cardHeight,
+                                      ),
+                                      back: CredencialBack(
+                                        availableHeight: cardHeight,
+                                      ),
+                                    )
+                                  : FlipCard(
+                                      key: const ValueKey("sibutem"),
+                                      front: CredencialBibliotecaFront(
+                                        credencial: credencialBiblioteca,
+                                        availableHeight: cardHeight,
+                                      ),
+                                      back: CredencialBibliotecaBack(
+                                        credencial: credencialBiblioteca,
+                                        estudiante: estudiante,
+                                        availableHeight: cardHeight,
+                                      ),
+                                    ),
                             ),
                             Space.small,
                             Center(
-                              child: Text("Toca la credencial para voltear",
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
+                              child: Text(
+                                "Toca la credencial para voltear",
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                               ),
                             ),
                           ],
