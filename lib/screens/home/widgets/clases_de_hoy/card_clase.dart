@@ -68,7 +68,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Card(
     elevation: 0,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: Theme.of(context).dividerColor)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
     margin: const EdgeInsets.only(bottom: 10),
     child: IntrinsicHeight(  // Usamos IntrinsicHeight para igualar las alturas
       child: Row(
@@ -80,6 +80,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
               border: Border(
                 right: BorderSide(
                   color: Theme.of(context).dividerColor,
+                  width: 0.5,
                 ),
               ),
             ),
