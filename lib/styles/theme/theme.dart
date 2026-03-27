@@ -76,7 +76,7 @@ class AppTheme {
     /// Esquema de colores
     colorScheme: colorScheme,
     canvasColor: colorScheme.surface,
-    dividerColor: black,
+    dividerColor: dividerColor,
 
     /// Tema de texto
     textTheme: textTheme(context).apply(
