@@ -20,62 +20,94 @@ class Notas extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.max,
     children: [
       Text("Notas", style: Theme.of(context).textTheme.bodyMedium),
       const SizedBox(height: 12),
-      SizedBox(
-        width: double.infinity,
-        child: Card(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: AppTheme.lightGrey)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Obx(() => GridView(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 3,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                  ),
-                  children: [
-                    const Center(child: Text("Notas")),
-                    const Center(child: Text("Porcentaje")),
-                    const SizedBox.shrink(),
-                    for (int i = 0; i < notasController.percentageTextFieldControllers.length; i++) ...[
-                      _buildTextField(context: context, enabled: true, controller: notasController.gradeTextFieldControllers[i], textInputAction: TextInputAction.next, hintText: formatoNota(notasController.suggestedGrade), formatters: [notaInputFormatter], onChanged: (value) {
-                        final grade = notasController.partialGrades[i];
-                        grade.nota = double.tryParse(value.replaceAll(",", "."));
-                        notasController.updateGradeAt(i, grade);
-                      }),
-                      _buildTextField(context: context,enabled: true, controller: notasController.percentageTextFieldControllers[i], textInputAction: TextInputAction.done, hintText: notasController.suggestedPercentage?.toStringAsFixed(0) ?? "--", onChanged: (value) {
-                        final grade = notasController.partialGrades[i];
-                        grade.porcentaje = double.tryParse(value.replaceAll(",", ".")) ?? 0;
-                        notasController.updateGradeAt(i, grade);
-                      }),
-                      IconButton(onPressed: () => notasController.removeGradeAt(i), icon: const Icon(AppIcons.delete, size: 20)),
+      Card(
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10), 
+          
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Usamos Obx solo para la parte que cambia
+              Obx(() => Column(
+                children: [
+                  // Encabezados manuales para evitar el GridView rígido
+                  const Row(
+                    children: [
+                      Expanded(child: Center(child: Text("Notas"))),
+                      SizedBox(width: 12),
+                      Expanded(child: Center(child: Text("Porcentaje"))),
+                      SizedBox(width: 48), // Espacio para el icono de borrar
                     ],
-                    const SizedBox.shrink(),
-                    SizedBox.expand(child: Center(child: FilledButton.tonalIcon(icon: const Icon(AppIcons.add), label: const Text("Nota"), onPressed: () {
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Filas de Notas
+                  for (int i = 0; i < notasController.percentageTextFieldControllers.length; i++) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            context: context, 
+                            enabled: true, 
+                            controller: notasController.gradeTextFieldControllers[i], 
+                            textInputAction: TextInputAction.next, 
+                            hintText: formatoNota(notasController.suggestedGrade), 
+                            formatters: [notaInputFormatter], 
+                            onChanged: (value) {
+                              final grade = notasController.partialGrades[i];
+                              grade.nota = double.tryParse(value.replaceAll(",", "."));
+                              notasController.updateGradeAt(i, grade);
+                            }
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildTextField(
+                            context: context,
+                            enabled: true, 
+                            controller: notasController.percentageTextFieldControllers[i], 
+                            textInputAction: TextInputAction.done, 
+                            hintText: notasController.suggestedPercentage?.toStringAsFixed(0) ?? "--", 
+                            onChanged: (value) {
+                              final grade = notasController.partialGrades[i];
+                              grade.porcentaje = double.tryParse(value.replaceAll(",", ".")) ?? 0;
+                              notasController.updateGradeAt(i, grade);
+                            }
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => notasController.removeGradeAt(i), 
+                          icon: const Icon(AppIcons.delete, size: 20),
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  
+                  // BOTÓN AGREGAR: Ahora fuera del grid, libre de restricciones
+                  const SizedBox(height: 8),
+                  FilledButton.tonalIcon(
+                    onPressed: () {
                       if(!canAddNotas) {
                         showErrorSnackbar(context, "Las notas están cargando... Intenta más tarde.");
                         return;
                       }
-
                       notasController.addGrade(IEvaluacion());
-                    }))),
-                    const SizedBox.shrink(),
-                  ],
-                )),
-              ],
-            ),
+                    },
+                    icon: const Icon(AppIcons.add),
+                    label: const Text("Agregar Nota"),
+                  ),
+                ],
+              )),
+            ],
           ),
         ),
       ),
