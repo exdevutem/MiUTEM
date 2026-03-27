@@ -25,9 +25,10 @@ class Notas extends StatelessWidget {
       const SizedBox(height: 12),
       Card(
         margin: EdgeInsets.zero,
+        color: Theme.of(context).scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), 
-          
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: AppTheme.lightGrey),
         ),
         child: Padding(
           padding: const EdgeInsets.all(20),
