@@ -26,7 +26,7 @@ class CardNovedades extends StatelessWidget {
         margin: const EdgeInsets.all(0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Theme.of(context).dividerColor, width: 2),
+          side: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
         ),
         child: ListTile(
           contentPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 10),
