@@ -15,7 +15,7 @@ class CardAsignatura extends StatelessWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Theme.of(context).dividerColor),
+        side: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
       ),
       child: SizedBox(
         width: double.infinity,

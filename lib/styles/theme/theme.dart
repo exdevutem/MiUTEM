@@ -76,7 +76,7 @@ class AppTheme {
     /// Esquema de colores
     colorScheme: colorScheme,
     canvasColor: colorScheme.surface,
-    dividerColor: black,
+    dividerColor: dividerColor,
 
     /// Tema de texto
     textTheme: textTheme(context).apply(
@@ -90,7 +90,7 @@ class AppTheme {
     /// Tema de las tarjetas
     cardTheme: CardThemeData(
       color: scaffoldBackgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: const BorderSide(color: dividerColor)),
     ),
 
     /// Tema de la barra de navegación
@@ -184,7 +184,7 @@ class AppTheme {
     /// Tema de las tarjetas
     cardTheme: CardThemeData(
       color: scaffoldBackgroundColorDark,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: Theme.of(context).dividerColor)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: darkLightGrey)),
     ),
 
     /// Tema de la barra de navegación
