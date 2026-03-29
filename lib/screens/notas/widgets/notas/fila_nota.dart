@@ -21,7 +21,7 @@ class FilaNota extends StatelessWidget {
         child: _buildTextField(
           context: context,
           enabled: true,
-          controller: notasController.gradeTextFieldControllers[i],
+          controller: notasController.gradeTextFieldControllers[index],
           textInputAction: TextInputAction.next,
           hintText: formatoNota(notasController.suggestedGrade),
           formatters: [notaInputFormatter],
@@ -39,7 +39,8 @@ class FilaNota extends StatelessWidget {
           enabled: true,
           controller: notasController.percentageTextFieldControllers[index],
           textInputAction: TextInputAction.done,
-          hintText: notasController.suggestedPercentage?.toStringAsFixed(0) ?? "--",
+          hintText:
+              notasController.suggestedPercentage?.toStringAsFixed(0) ?? "--",
           onChanged: (value) {
             final grade = notasController.partialGrades[index];
             grade.porcentaje = double.tryParse(value.replaceAll(",", ".")) ?? 0;

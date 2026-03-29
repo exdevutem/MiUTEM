@@ -52,14 +52,14 @@ class Notas extends StatelessWidget {
                     HorizontalSpace.small,
 
                     // Filas de Notas
-                    ...(notasController.percentageTextFieldControllers
-                                .mapIndexed(
-                                  (i, controller) => FilaNota(
-                                    notasController: notasController,
-                                    index: i,
-                                  ),
-                                )
-                            as List<Widget>)
+                    ...notasController.percentageTextFieldControllers
+                        .mapIndexed<Widget>(
+                          (i, controller) => FilaNota(
+                            notasController: notasController,
+                            index: i,
+                          ),
+                        )
+                        .toList()
                         .intersperse(Space.small),
 
                     Space.extraSmall,
