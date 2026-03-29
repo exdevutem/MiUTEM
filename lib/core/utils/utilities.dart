@@ -43,6 +43,19 @@ extension RotateList<T> on List<T> {
   List<T> rotate(int count) => count > 0 ? (sublist(count)..addAll(sublist(0, count))) : (sublist(length + count)..addAll(sublist(0, length + count)));
 }
 
+/// Esta extensión permite insertar un elemento entre cada elemento de la lista, excepto al final.
+/// Ejemplo:
+/// ```dart
+/// List<String> lista = ["a", "b", "c"];
+/// print(lista.intersperse("-")); // ["a", "-", "b", "-", "c"]
+/// ```
+extension IntersperseList<T> on List<T> {
+  List<T> intersperse(T element) => length > 1 ? expand((e) sync* {
+    yield e;
+    if (e != last) yield element;
+  }).toList() : this;
+}
+
 /// Capitaliza el texto entregado
 /// Ejemplo:
 /// ```dart

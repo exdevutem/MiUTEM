@@ -1,13 +1,13 @@
+import "package:collection/collection.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:get/get.dart";
 import "package:miutem/core/models/evaluacion/evaluacion.dart";
 import "package:miutem/core/services/controllers/notas_controller.dart";
 import "package:miutem/core/utils/utils.dart";
+import "package:miutem/screens/notas/widgets/notas/fila_nota.dart";
 import "package:miutem/styles/styles.dart";
 
 class Notas extends StatelessWidget {
-
   final bool canAddNotas;
   final NotasController notasController;
 
@@ -20,89 +20,70 @@ class Notas extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.max,
     children: [
       Text("Notas", style: Theme.of(context).textTheme.bodyMedium),
-      const SizedBox(height: 12),
-      SizedBox(
-        width: double.infinity,
-        child: Card(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10), side: BorderSide(color: AppTheme.lightGrey)),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Obx(() => GridView(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 3,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                  ),
+      Space.small,
+      Card(
+        margin: EdgeInsets.zero,
+        color: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: AppTheme.lightGrey),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Usamos Obx solo para la parte que cambia
+              Obx(
+                () => Column(
                   children: [
-                    const Center(child: Text("Notas")),
-                    const Center(child: Text("Porcentaje")),
-                    const SizedBox.shrink(),
-                    for (int i = 0; i < notasController.percentageTextFieldControllers.length; i++) ...[
-                      _buildTextField(context: context, enabled: true, controller: notasController.gradeTextFieldControllers[i], textInputAction: TextInputAction.next, hintText: formatoNota(notasController.suggestedGrade), formatters: [notaInputFormatter], onChanged: (value) {
-                        final grade = notasController.partialGrades[i];
-                        grade.nota = double.tryParse(value.replaceAll(",", "."));
-                        notasController.updateGradeAt(i, grade);
-                      }),
-                      _buildTextField(context: context,enabled: true, controller: notasController.percentageTextFieldControllers[i], textInputAction: TextInputAction.done, hintText: notasController.suggestedPercentage?.toStringAsFixed(0) ?? "--", onChanged: (value) {
-                        final grade = notasController.partialGrades[i];
-                        grade.porcentaje = double.tryParse(value.replaceAll(",", ".")) ?? 0;
-                        notasController.updateGradeAt(i, grade);
-                      }),
-                      IconButton(onPressed: () => notasController.removeGradeAt(i), icon: const Icon(AppIcons.delete, size: 20)),
-                    ],
-                    const SizedBox.shrink(),
-                    SizedBox.expand(child: Center(child: FilledButton.tonalIcon(icon: const Icon(AppIcons.add), label: const Text("Nota"), onPressed: () {
-                      if(!canAddNotas) {
-                        showErrorSnackbar(context, "Las notas están cargando... Intenta más tarde.");
-                        return;
-                      }
+                    // Encabezados manuales para evitar el GridView rígido
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(child: Center(child: Text("Notas"))),
+                        HorizontalSpace.small,
+                        Expanded(child: Center(child: Text("Porcentaje"))),
+                        HorizontalSpace.extraExtraLarge,
+                      ],
+                    ),
+                    HorizontalSpace.small,
 
-                      notasController.addGrade(IEvaluacion());
-                    }))),
-                    const SizedBox.shrink(),
+                    // Filas de Notas
+                    ...notasController.percentageTextFieldControllers
+                        .mapIndexed<Widget>(
+                          (i, controller) => FilaNota(
+                            notasController: notasController,
+                            index: i,
+                          ),
+                        )
+                        .toList()
+                        .intersperse(Space.small),
+
+                    Space.extraSmall,
+                    FilledButton.tonalIcon(
+                      onPressed: () {
+                        if (!canAddNotas) {
+                          showErrorSnackbar(
+                            context,
+                            "Las notas están cargando... Intenta más tarde.",
+                          );
+                          return;
+                        }
+                        notasController.addGrade(IEvaluacion());
+                      },
+                      icon: const Icon(AppIcons.add),
+                      label: const Text("Agregar Nota"),
+                    ),
                   ],
-                )),
-              ],
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     ],
-  );
-
-  Widget _buildTextField({
-    required BuildContext context,
-    required bool enabled,
-    required TextEditingController controller,
-    required TextInputAction textInputAction,
-    required String? hintText,
-    Function(String)? onChanged,
-    List<TextInputFormatter>? formatters,
-  }) => TextField(
-    enabled: enabled,
-    controller: controller,
-    style: Theme.of(context).textTheme.bodyMedium,
-    decoration: InputDecoration(
-      hintText: hintText ?? "--",
-      filled: true,
-    ),
-    textAlign: TextAlign.center,
-    textAlignVertical: TextAlignVertical.center,
-    onChanged: onChanged,
-    textInputAction: textInputAction,
-    inputFormatters: formatters,
-
   );
 }

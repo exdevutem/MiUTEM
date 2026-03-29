@@ -14,6 +14,8 @@ class Space {
 }
 
 class HorizontalSpace {
+  /// 48 PX para separar secciones muy distintas o elementos muy importantes
+  static const Widget extraExtraLarge = SizedBox(width: 48);
   /// 28 PX para separar secciones muy distintas o elementos muy importantes
   static const Widget extraLarge = SizedBox(width: 28);
   /// 20 PX para separar elementos muy distintos o secciones
