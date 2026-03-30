@@ -22,7 +22,6 @@ class HorarioScreen extends StatefulWidget {
 
 class _HorarioScreenState extends State<HorarioScreen> {
   late Future<Horario?> _horarioFuture;
-  bool _forceRefresh = false;
   final horarioController = Get.find<HorarioController>();
 
   @override
@@ -38,14 +37,13 @@ class _HorarioScreenState extends State<HorarioScreen> {
     super.dispose();
   }
 
-  Future<Horario?> _loadHorario() async {
-    return await horarioController.getHorario(forceRefresh: _forceRefresh);
+  Future<Horario?> _loadHorario({bool forceRefresh = false}) async {
+    return await horarioController.getHorario(forceRefresh: forceRefresh);
   }
 
   void _reloadData() {
     setState(() {
-      _forceRefresh = true;
-      _horarioFuture = _loadHorario();
+      _horarioFuture = _loadHorario(forceRefresh: true);
     });
   }
 
@@ -124,7 +122,7 @@ class HorarioScreenContent extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Horario"),
         actions: [
-          PopupMenuButton(
+          Obx(() => PopupMenuButton(
             position: PopupMenuPosition.under,
             icon: const Icon(Icons.more_vert),
             itemBuilder: (ctx) => [
@@ -151,7 +149,7 @@ class HorarioScreenContent extends StatelessWidget {
                   ),
                 ),
             ],
-          ),
+          )),
         ],
       ),
       body: SafeArea(
