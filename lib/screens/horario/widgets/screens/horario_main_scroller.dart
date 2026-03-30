@@ -158,14 +158,15 @@ class HorarioMainScrollerState extends State<HorarioMainScroller> {
               child: Stack(
                 children: [
                   widget._horarioPeriodsHeader,
-                  HorarioIndicator(
-                    maxWidth: HorarioMainScroller.daysWidth,
-                    initialMargin: const EdgeInsets.only(
-                      top: HorarioMainScroller.dayHeight,
-                      left: HorarioMainScroller.periodWidth,
+                  if (widget.showActive)
+                    HorarioIndicator(
+                      maxWidth: HorarioMainScroller.daysWidth,
+                      initialMargin: const EdgeInsets.only(
+                        top: HorarioMainScroller.dayHeight,
+                        left: HorarioMainScroller.periodWidth,
+                      ),
+                      heightByMinute: HorarioMainScroller.blockHeight / 100,
                     ),
-                    heightByMinute: HorarioMainScroller.blockHeight / 100,
-                  ),
                 ],
               ),
             ),
