@@ -122,34 +122,11 @@ class HorarioScreenContent extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Horario"),
         actions: [
-          Obx(() => PopupMenuButton(
-            position: PopupMenuPosition.under,
-            icon: const Icon(Icons.more_vert),
-            itemBuilder: (ctx) => [
-              PopupMenuItem(
-                onTap: onReload,
-                child: const ListTile(
-                  leading: Icon(Icons.refresh_sharp),
-                  title: Text("Recargar"),
-                ),
-              ),
-              PopupMenuItem(
-                onTap: () => _captureAndShareScreenshot(context),
-                child: const ListTile(
-                  leading: Icon(Icons.share),
-                  title: Text("Compartir"),
-                ),
-              ),
-              if (!horarioController.isCenteredInCurrentPeriodAndDay.value)
-                PopupMenuItem(
-                  onTap: () => horarioController.moveViewportToCurrentPeriodAndDay(context),
-                  child: const ListTile(
-                    leading: Icon(Icons.center_focus_strong),
-                    title: Text("Centrar en hora actual"),
-                  ),
-                ),
-            ],
-          )),
+          _HorarioMenuButton(
+            horarioController: horarioController,
+            onReload: onReload,
+            onCapture: _captureAndShareScreenshot,
+          ),
         ],
       ),
       body: SafeArea(
@@ -195,5 +172,49 @@ class HorarioScreenContent extends StatelessWidget {
 
       await Share.shareXFiles([XFile(imagePath.path)]);
     }
+  }
+}
+
+/// Widget para el menú del horario
+class _HorarioMenuButton extends StatelessWidget {
+  final HorarioController horarioController;
+  final VoidCallback onReload;
+  final Future<void> Function(BuildContext) onCapture;
+
+  const _HorarioMenuButton({
+    required this.horarioController,
+    required this.onReload,
+    required this.onCapture,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton(
+      position: PopupMenuPosition.under,
+      icon: const Icon(Icons.more_vert),
+      itemBuilder: (ctx) => [
+        PopupMenuItem(
+          onTap: onReload,
+          child: const ListTile(
+            leading: Icon(Icons.refresh_sharp),
+            title: Text("Recargar"),
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () => onCapture(context),
+          child: const ListTile(
+            leading: Icon(Icons.share),
+            title: Text("Compartir"),
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () => horarioController.moveViewportToCurrentPeriodAndDay(context),
+          child: const ListTile(
+            leading: Icon(Icons.center_focus_strong),
+            title: Text("Centrar en hora actual"),
+          ),
+        ),
+      ],
+    );
   }
 }
