@@ -223,6 +223,11 @@ class HorarioController {
   void moveViewportToCurrentPeriodAndDay(BuildContext context){
     final periodIndex = indexOfCurrentPeriod ?? 0;
     final dayIndex = indexOfCurrentDayStartingAtMonday ?? 0;
+    
+    // Resetear el zoom al valor por defecto
+    zoom.value = RemoteConfigService.horarioZoom;
+    setZoom(zoom.value);
+    
     moveViewportToPeriodIndexAndDayIndex(context, periodIndex, dayIndex);
     isCenteredInCurrentPeriodAndDay.value = true;
   }
