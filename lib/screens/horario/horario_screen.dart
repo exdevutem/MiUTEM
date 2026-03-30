@@ -12,6 +12,7 @@ import "package:path_provider/path_provider.dart";
 import "package:screenshot/screenshot.dart";
 import "package:share_plus/share_plus.dart";
 
+/// Widget contenedor que carga el horario
 class HorarioScreen extends StatefulWidget {
   const HorarioScreen({super.key});
 
@@ -20,15 +21,15 @@ class HorarioScreen extends StatefulWidget {
 }
 
 class _HorarioScreenState extends State<HorarioScreen> {
-  final ScreenshotController _screenshotController = ScreenshotController();
-
+  late Future<Horario?> _horarioFuture;
   bool _forceRefresh = false;
   final horarioController = Get.find<HorarioController>();
 
   @override
   void initState() {
-    _forceRefresh = false;
     super.initState();
+    horarioController.init(context);
+    _horarioFuture = _loadHorario();
   }
 
   @override
@@ -37,16 +38,21 @@ class _HorarioScreenState extends State<HorarioScreen> {
     super.dispose();
   }
 
+  Future<Horario?> _loadHorario() async {
+    return await horarioController.getHorario(forceRefresh: _forceRefresh);
+  }
+
+  void _reloadData() {
+    setState(() {
+      _forceRefresh = true;
+      _horarioFuture = _loadHorario();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    horarioController.init(context);
     return FutureBuilder<Horario?>(
-      future: () async {
-        _moveViewportToCurrentTime();
-        final data = await horarioController.getHorario(forceRefresh: _forceRefresh);
-        _forceRefresh = false;
-        return data;
-      }(),
+      future: _horarioFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
@@ -59,6 +65,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
 
         final horario = snapshot.data;
         final esErrorOffline = snapshot.hasError && snapshot.error is DioException && (snapshot.error as DioException).type == DioExceptionType.cancel && (snapshot.error as DioException).response?.extra["offline"] == true;
+        
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || horario == null) {
           String errorMessage = "Ocurrió un error al cargar el horario! Por favor intenta más tarde.";
           final error = snapshot.error;
@@ -86,57 +93,79 @@ class _HorarioScreenState extends State<HorarioScreen> {
           );
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Horario"),
-            actions: [
-              PopupMenuButton(
-                position: PopupMenuPosition.under,
-                icon: const Icon(Icons.more_vert),
-                itemBuilder: (ctx) => [
-                  PopupMenuItem(
-                    onTap: _reloadData,
-                    child: const ListTile(
-                      leading: Icon(Icons.refresh_sharp),
-                      title: Text("Recargar"),
-                    ),
-                  ),
-                  PopupMenuItem(
-                    onTap: () => _captureAndShareScreenshot(context, horario),
-                    child: const ListTile(
-                      leading: Icon(Icons.share),
-                      title: Text("Compartir"),
-                    ),
-                  ),
-                  if (!horarioController.isCenteredInCurrentPeriodAndDay.value) PopupMenuItem(
-                    onTap: _moveViewportToCurrentTime,
-                    child: const ListTile(
-                      leading: Icon(Icons.center_focus_strong),
-                      title: Text("Centrar en hora actual"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: Screenshot(
-              controller: _screenshotController,
-              child: HorarioMainScroller(
-                horario: horario,
-              ),
-            ),
-          ),
+        // Una vez cargado, pasar el horario al widget stateless
+        return HorarioScreenContent(
+          horario: horario,
+          horarioController: horarioController,
+          onReload: _reloadData,
         );
       },
     );
   }
+}
 
-  void _moveViewportToCurrentTime() {
-    horarioController.moveViewportToCurrentPeriodAndDay(context);
+/// Widget sin estado que solo muestra el horario cargado
+class HorarioScreenContent extends StatelessWidget {
+  final Horario horario;
+  final HorarioController horarioController;
+  final VoidCallback onReload;
+  final ScreenshotController _screenshotController = ScreenshotController();
+
+  HorarioScreenContent({
+    super.key,
+    required this.horario,
+    required this.horarioController,
+    required this.onReload,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Horario"),
+        actions: [
+          PopupMenuButton(
+            position: PopupMenuPosition.under,
+            icon: const Icon(Icons.more_vert),
+            itemBuilder: (ctx) => [
+              PopupMenuItem(
+                onTap: onReload,
+                child: const ListTile(
+                  leading: Icon(Icons.refresh_sharp),
+                  title: Text("Recargar"),
+                ),
+              ),
+              PopupMenuItem(
+                onTap: () => _captureAndShareScreenshot(context),
+                child: const ListTile(
+                  leading: Icon(Icons.share),
+                  title: Text("Compartir"),
+                ),
+              ),
+              if (!horarioController.isCenteredInCurrentPeriodAndDay.value)
+                PopupMenuItem(
+                  onTap: () => horarioController.moveViewportToCurrentPeriodAndDay(context),
+                  child: const ListTile(
+                    leading: Icon(Icons.center_focus_strong),
+                    title: Text("Centrar en hora actual"),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Screenshot(
+          controller: _screenshotController,
+          child: HorarioMainScroller(
+            horario: horario,
+          ),
+        ),
+      ),
+    );
   }
 
-  void _captureAndShareScreenshot(BuildContext context, Horario horario) async {
+  Future<void> _captureAndShareScreenshot(BuildContext context) async {
     showLoadingDialog(context);
     final horarioScroller = HorarioMainScroller(
       horario: horario,
@@ -155,8 +184,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
         ext: "png",
         mimeType: MimeType.png,
       );
-      // Mostrar toast de éxito
-      if(context.mounted) {
+      if (context.mounted) {
         Navigator.pop(context);
         showTextSnackbar(context, title: "Horario guardado", message: "El horario se ha guardado correctamente en tu carpeta de descargas.");
       }
@@ -165,11 +193,9 @@ class _HorarioScreenState extends State<HorarioScreen> {
       final imagePath = await File("${directory.path}/horario.png").create();
       await imagePath.writeAsBytes(image);
 
-      if(context.mounted) Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
 
       await Share.shareXFiles([XFile(imagePath.path)]);
     }
   }
-
-  void _reloadData() => setState(() => _forceRefresh = true);
 }
