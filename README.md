@@ -184,6 +184,6 @@ Para el entorno de desarrollo está la configración `Mi UTEM [development]` y p
 ## Créditos
 Este proyecto fue creado por el Club de Desarrollo Experimental (ExDev) de la Universidad Tecnológica Metropolitana y es mantenido por los propios estudiantes con el apoyo del equipo de SISEI. Mira los perfiles que han contribuido a este proyecto:
 
-<a href="https://github.com/exdevutem/mi-utem/graphs/contributors">
-  <img alt="Contribuidores" src="https://contrib.rocks/image?repo=exdevutem/mi-utem" />
+<a href="https://github.com/exdevutem/MiUTEM/graphs/contributors">
+  <img alt="Contribuidores" src="https://contrib.rocks/image?repo=exdevutem/MiUTEM" />
 </a>
