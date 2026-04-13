@@ -1,0 +1,10 @@
+Como estudiante UTEM podrás consultar toda tu información académica en un solo lugar, sin tener que iniciar sesión cada vez que entras, y con una interfaz mucho más amigable pensada completamente en dispositivos móviles.
+
+<b>Desarrollada por estudiantes del Club de Desarrollo Experimental (ExDev)</b> en conjunto con el equipo de SISEI de la Universidad Tecnológica Metropolitana.
+
+Con Mi UTEM podrás:
+• Revisar tu información personal y de contacto.
+• Ver las últimas noticias oficiales de la institución.
+• Consultar todos tus datos académicos como asignaturas, notas y horario.
+• Generar tu credencial virtual de Sistema de Bibliotecas SIBUTEM
+• Y muy pronto nuevas funciones ♥️
