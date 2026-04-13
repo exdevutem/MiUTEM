@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/scheduler.dart";
 import "package:get/get.dart";
 import "package:get_storage/get_storage.dart";
 import "package:miutem/core/models/asignaturas/asignatura.dart";
@@ -98,8 +99,14 @@ class HorarioController {
 
   void init(BuildContext context){
     zoom.value = RemoteConfigService.horarioZoom;
-    moveViewportToCurrentPeriodAndDay(context);
-    setZoom(zoom.value);
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) {
+        setZoom(zoom.value);
+        moveViewportToCurrentPeriodAndDay(context);
+      }
+    });
+
 
     blockContentController.addListener(_blockContentControllerListener);
     daysHeaderController.addListener(_daysHeaderControllerListener);
@@ -216,6 +223,11 @@ class HorarioController {
   void moveViewportToCurrentPeriodAndDay(BuildContext context){
     final periodIndex = indexOfCurrentPeriod ?? 0;
     final dayIndex = indexOfCurrentDayStartingAtMonday ?? 0;
+    
+    // Resetear el zoom al valor por defecto
+    zoom.value = RemoteConfigService.horarioZoom;
+    setZoom(zoom.value);
+    
     moveViewportToPeriodIndexAndDayIndex(context, periodIndex, dayIndex);
     isCenteredInCurrentPeriodAndDay.value = true;
   }
