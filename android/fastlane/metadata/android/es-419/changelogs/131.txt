@@ -1,0 +1,17 @@
+¡Tenemos una nueva versión disponible! Aquí te compartimos las novedades de esta versión:
+
+Añadido
+- Se agrega onboarding.
+- Modo offline.
+- Lista de estudiantes.
+- Navegación desde el horario.
+- Se permite cualquier orientación de pantalla.
+
+Cambios
+- Actualización de dependencias.
+- Orden de clases y widgets en la app.
+- Optimizaciones a la app.
+- Ahora se cargan las noticias de la página https://noticias.utem.cl.
+
+Removido
+- Pestaña de estudiantes en la asignatura.

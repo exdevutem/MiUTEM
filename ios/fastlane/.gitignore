@@ -1,0 +1,5 @@
+*.p8
+*.xml
+*.json
+*.py
+!app_privacy_details.json

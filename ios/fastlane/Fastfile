@@ -1,0 +1,112 @@
+def ensure_keychain()
+  delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}-db")
+  create_keychain(
+    name: ENV["KEYCHAIN_NAME"],
+    password: ENV["KEYCHAIN_PASSWORD"],
+    unlock: true,
+    timeout: 0,
+  )
+end
+
+desc "Sincroniza certificados y perfiles de aprovisionamiento"
+lane :ios_sync_certificates do
+  ensure_keychain()
+  match(
+    app_identifier: [ENV["APP_IDENTIFIER"]],
+    type: ENV["MATCH_TYPE"], # appstore, development
+    git_url: ENV["MATCH_REPO"],
+    readonly: ENV["IS_CI"] == "true",
+    keychain_name: ENV["KEYCHAIN_NAME"],
+    keychain_password: ENV["KEYCHAIN_PASSWORD"]
+  )
+end
+
+desc "Compila la app con flutter"
+lane :ios_flutter_build do
+  scheme = ENV["MATCH_TYPE"] == "appstore" ? "production" : "development"
+  target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
+  skip_clean = ENV["SKIP_CLEAN"] == "true"
+  skip_pods = ENV["SKIP_PODS"] == "true"
+
+  unless skip_clean
+    sh("flutter", "clean")
+    sh("flutter", "pub", "get")
+  end
+
+  unless skip_pods
+    cocoapods(use_bundle_exec: false, podfile: "ios")
+  end
+
+
+  command = ["flutter", "build", "ios", "--release", "--no-codesign", "--flavor=#{scheme}", "--target=#{target}"]
+  command << "--build-name=#{version}" if version && !version.empty?
+  command << "--build-number=#{build_number}" if build_number && !build_number.empty?
+
+  sh(*command)
+end
+
+desc "Compila la aplicación"
+lane :ios_build do
+  skip_flutter_build = ENV["SKIP_FLUTTER_BUILD"] == "true"
+  skip_build_app = ENV["SKIP_BUILD_APP"] == "true"
+  
+  unless skip_flutter_build
+    ios_flutter_build()
+  end
+
+  scheme = ENV["MATCH_TYPE"] == "appstore" ? "production" : "development"
+  export_method = ENV["MATCH_TYPE"] == "appstore" ? "app-store" : "development"
+
+  ios_sync_certificates()
+
+  unless skip_build_app
+    build_app(
+      scheme: scheme,
+      export_method: export_method,
+      workspace: "./ios/Runner.xcworkspace",
+      output_directory: "./build/ios/ipa",
+      output_name: "MiUTEM.ipa"
+    )
+  end
+end
+
+desc "Carga la API Key de App Store Connect para autenticación"
+lane :ios_load_api_key do
+  app_store_connect_api_key(
+    key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+    issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+    key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+    is_key_content_base64: true,
+    in_house: false, # Se especifica false para App Store (nosotros), true para Enterprise
+  )
+end
+
+desc "Sube la aplicación a TestFlight (requiere IPA)"
+lane :ios_upload do |options|
+  # Obtener path del IPA: lane_context si existe, sino argumento custom
+  ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || options[:ipa_path]
+
+  # Validar que existe
+  UI.user_error!("❌ No se encontró IPA. Proporciona --ipa_path o ejecuta ios_build primero") unless ipa_path
+  UI.user_error!("❌ El archivo IPA no existe en: #{ipa_path}") unless File.exist?(ipa_path)
+  
+  UI.success("✅ Usando IPA: #{ipa_path}")
+
+  # Cargar API key
+  ios_load_api_key()
+
+  # Upload a TestFlight
+  upload_to_testflight(
+    ipa: ipa_path,
+    skip_submission: true,
+    skip_waiting_for_build_processing: true,
+  )
+  
+  UI.success("✅ IPA subido a TestFlight exitosamente")
+end
+
+desc "Build completo y upload a TestFlight"
+lane :ios_build_and_upload do
+  ios_build()
+  ios_upload()
+end

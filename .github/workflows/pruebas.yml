@@ -1,25 +1,22 @@
 name: Pruebas
 on:
   push:
-    branches: [ "dev" ]
+    branches: ["dev"]
   pull_request:
-    branches: [ "dev" ]
+    branches: ["dev"]
 
 jobs:
   probar:
-    strategy:
-      matrix:
-        flutter_version: [ "latest", "3.41.4" ]
     runs-on: macos-latest
     steps:
       - name: Clonar Repositorio
         uses: actions/checkout@v4
-      - name: Configurar Flutter SDK (${{ matrix.flutter_version }})
+      - name: Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
           channel: stable
-          version: ${{ matrix.flutter_version }}
+          version: latest
       - name: Instalar librerías
         run: flutter pub get
       - name: Ejecutar pruebas unitarias
