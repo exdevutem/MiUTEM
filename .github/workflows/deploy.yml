@@ -4,7 +4,7 @@ on:
     branches: [ dev ]
 
 jobs:
-  deploy-ios:
+  deploy-ios-prd:
     runs-on: macos-latest
     environment: production
     steps:
@@ -18,10 +18,20 @@ jobs:
           version: latest
       - name: Instalar librerías
         run: flutter pub get
-      - name: Instalar Bundler
-        run: gem install bundler
-      - name: Instalar Fastlane y dependencias
-        run: bundle install
+      - name: Configurar Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "4.0.1"
+          bundler-cache: true
+      - name: Generar Google Services
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+        run: |
+          mkdir -p android/app/src/production
+          mkdir -p ios/Firebase/production
+          echo "$GOOGLE_SERVICES_JSON" > android/app/src/production/google-services.json
+          echo "$GOOGLE_SERVICE_INFO_PLIST" > ios/Firebase/production/GoogleService-Info.plist
       - name: Desplegar a TestFlight
         run: bundle exec fastlane ios build_and_upload
         env:
