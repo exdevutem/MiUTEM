@@ -27,6 +27,8 @@ lane :ios_flutter_build do
   target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
   skip_clean = ENV["SKIP_CLEAN"] == "true"
   skip_pods = ENV["SKIP_PODS"] == "true"
+  version = ENV["APP_VERSION"]
+  build_number = ENV["APP_BUILD_NUMBER"]
 
   unless skip_clean
     sh("flutter", "clean")
