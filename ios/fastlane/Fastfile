@@ -37,7 +37,12 @@ lane :ios_flutter_build do
     cocoapods(use_bundle_exec: false, podfile: "ios")
   end
 
-  sh("flutter", "build", "ios", "--release", "--no-codesign", "--flavor=#{scheme}", "--target=#{target}")
+
+  command = ["flutter", "build", "ios", "--release", "--no-codesign", "--flavor=#{scheme}", "--target=#{target}"]
+  command << "--build-name=#{version}" if version && !version.empty?
+  command << "--build-number=#{build_number}" if build_number && !build_number.empty?
+
+  sh(*command)
 end
 
 desc "Compila la aplicación"

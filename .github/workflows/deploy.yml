@@ -1,0 +1,46 @@
+name: Despliegue de la aplicación
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  deploy-ios:
+    runs-on: macos-latest
+    environment: production
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+      - name: Configurar Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          cache: true
+          channel: stable
+          version: latest
+      - name: Instalar librerías
+        run: flutter pub get
+      - name: Instalar Bundler
+        run: gem install bundler
+      - name: Instalar Fastlane y dependencias
+        run: bundle install
+      - name: Desplegar a TestFlight
+        run: bundle exec fastlane ios build_and_upload
+        env:
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+          APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_TOKEN: ${{ github.token }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          KEYCHAIN_NAME: ${{ secrets.KEYCHAIN_NAME }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          MATCH_REPO: ${{ secrets.MATCH_REPO }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_TYPE: ${{ secrets.MATCH_TYPE }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
