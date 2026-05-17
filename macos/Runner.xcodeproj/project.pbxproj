@@ -268,9 +268,9 @@
 				33CC10EB2044A3C60003C045 /* Resources */,
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* Run Script */,
-				B6320B403FFBBCDF40C2ABEC /* FlutterFire: "flutterfire bundle-service-file" */,
-				9386F2DC54D032B1619C6E45 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 				66347C3AB20C597EF927CF2E /* [CP] Embed Pods Frameworks */,
+				3CA84AE738AD353DF1FD614C /* FlutterFire: "flutterfire bundle-service-file" */,
+				9386F2DC54D032B1619C6E45 /* FlutterFire: "flutterfire upload-crashlytics-symbols" */,
 			);
 			buildRules = (
 			);
@@ -393,6 +393,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$FLUTTER_ROOT\"/packages/flutter_tools/bin/macos_assemble.sh && touch Flutter/ephemeral/tripwire";
 		};
+		3CA84AE738AD353DF1FD614C /* FlutterFire: "flutterfire bundle-service-file" */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "FlutterFire: \"flutterfire bundle-service-file\"";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:${PUB_CACHE}/bin:$HOME/.pub-cache/bin\"\n# Define the Resources directory path\nRESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources\"\n\n# Create the Resources directory if it does not exist\n mkdir -p \"$RESOURCES_DIR\"\n\n flutterfire bundle-service-file --plist-destination=\"$RESOURCES_DIR\" --build-configuration=${CONFIGURATION} --platform=macos --apple-project-path=\"${SRCROOT}\"\n";
+		};
 		5938360182F56825A17B7D38 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -467,24 +485,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -euo pipefail\n\n# Detectar flavor según configuración\nif [[ \"$CONFIGURATION\" == *\"Dev\"* ]]; then\n  FLAVOR=\"development\"\nelse\n  FLAVOR=\"production\"\nfi\n\nSOURCE_PLIST=\"${PROJECT_DIR}/Firebase/${FLAVOR}/GoogleService-Info.plist\"\nDEST_PLIST=\"${PROJECT_DIR}/Runner/GoogleService-Info.plist\"\n\nif [ ! -f \"${SOURCE_PLIST}\" ]; then\n  echo \"❌ No existe: ${SOURCE_PLIST}\"\n  exit 1\nfi\n\ncp \"${SOURCE_PLIST}\" \"${DEST_PLIST}\"\necho \"✅ Copiado ${SOURCE_PLIST} -> ${DEST_PLIST}\"\n";
-		};
-		B6320B403FFBBCDF40C2ABEC /* FlutterFire: "flutterfire bundle-service-file" */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "FlutterFire: \"flutterfire bundle-service-file\"";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:${PUB_CACHE}/bin:$HOME/.pub-cache/bin\"\n# Define the Resources directory path\nRESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/Contents/Resources\"\n\n# Create the Resources directory if it does not exist\n mkdir -p \"$RESOURCES_DIR\"\n\n flutterfire bundle-service-file --plist-destination=\"$RESOURCES_DIR\" --build-configuration=${CONFIGURATION} --platform=macos --apple-project-path=\"${SRCROOT}\"\n";
 		};
 		CF6AF7DCDC9E13F4E49850B5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
