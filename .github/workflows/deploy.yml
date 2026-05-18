@@ -7,11 +7,11 @@ on:
       track:
         description: "Selecciona el track de despliegue"
         required: true
-        default: "production"
+        default: "development"
         type: choice
         options:
           - production
-          - beta
+          - development
 env:
   FLUTTER_VERSION: "3.41.6"
   FLUTTER_CHANNEL: "stable"
@@ -19,9 +19,9 @@ env:
   RUBY_VERSION: "4.0.1"
 
 jobs:
-  deploy-ios-prd:
+  deploy-ios-dev:
     runs-on: macos-latest
-    environment: production
+    environment: development
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
@@ -72,6 +72,7 @@ jobs:
         env:
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+          APP_ENV: ${{ env.APP_ENV }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
@@ -85,7 +86,6 @@ jobs:
           MATCH_REPO: ${{ secrets.MATCH_REPO }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_TYPE: ${{ secrets.MATCH_TYPE }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
