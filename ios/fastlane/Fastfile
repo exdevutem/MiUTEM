@@ -1,11 +1,25 @@
 def ensure_keychain()
-  delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}-db")
+  delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
   create_keychain(
     name: ENV["KEYCHAIN_NAME"],
     password: ENV["KEYCHAIN_PASSWORD"],
     unlock: true,
     timeout: 0,
+    default_keychain: true,
+    add_to_search_list: true
   )
+
+  # Importar certificados raíz de Apple al keychain custom
+  ["/tmp/AppleWWDRCA.cer", "/tmp/AppleRootCA.cer"].each do |cert|
+    if File.exist?(cert)
+      UI.message("🔐 Importando certificado raíz: #{cert}")
+      import_certificate(
+        certificate_path: cert,
+        keychain_name: ENV["KEYCHAIN_NAME"],
+        keychain_password: ENV["KEYCHAIN_PASSWORD"],
+      )
+    end
+  end
 end
 
 desc "Sincroniza certificados y perfiles de aprovisionamiento"
@@ -61,12 +75,22 @@ lane :ios_build do
   ios_sync_certificates()
 
   unless skip_build_app
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "./ios/Runner.xcodeproj",
+      team_id: ENV["TEAM_ID"],
+      bundle_identifier: ENV["APP_IDENTIFIER"],
+      profile_name: "match AppStore #{ENV["APP_IDENTIFIER"]}",
+      code_sign_identity: "Apple Distribution"
+    )
+    
     build_app(
       scheme: scheme,
       export_method: "app-store", # Siempre app-store para subir a la appstore.
       workspace: "./ios/Runner.xcworkspace",
       output_directory: "./build/ios/ipa",
-      output_name: "MiUTEM.ipa"
+      output_name: "MiUTEM.ipa",
+      xcargs: "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{ENV["APP_IDENTIFIER"]}'"
     )
   end
 end

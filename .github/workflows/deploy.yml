@@ -32,6 +32,13 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      - name: 🔏 Descargar certificados raíz de Apple
+        run: |
+          curl -sS -o /tmp/AppleWWDRCA.cer \
+            https://developer.apple.com/certificationauthority/AppleWWDRCA.cer
+          curl -sS -o /tmp/AppleRootCA.cer \
+            https://www.apple.com/appleca/AppleIncRootCertificate.cer
+
       - name: ⚡ Configurar Cache para DerivedData
         uses: actions/cache/restore@v5
         id: cache-derived-data
