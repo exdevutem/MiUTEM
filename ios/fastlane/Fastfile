@@ -75,6 +75,15 @@ lane :ios_build do
   ios_sync_certificates()
 
   unless skip_build_app
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "./ios/Runner.xcodeproj",
+      team_id: ENV["TEAM_ID"],
+      bundle_identifier: ENV["APP_IDENTIFIER"],
+      profile_name: "match AppStore #{ENV["APP_IDENTIFIER"]}",
+      code_sign_identity: "Apple Distribution"
+    )
+    
     build_app(
       scheme: scheme,
       export_method: "app-store", # Siempre app-store para subir a la appstore.
