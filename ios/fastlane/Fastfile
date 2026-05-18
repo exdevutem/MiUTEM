@@ -1,11 +1,22 @@
 def ensure_keychain()
-  delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}-db")
+  delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
   create_keychain(
     name: ENV["KEYCHAIN_NAME"],
     password: ENV["KEYCHAIN_PASSWORD"],
     unlock: true,
     timeout: 0,
+    default_keychain: true,
+    add_to_search_list: true
   )
+
+  # Importar certificados raíz de Apple al keychain custom
+  ["/tmp/AppleWWDRCAG3.cer", "/tmp/AppleRootCA.cer"].each do |cert|
+    import_certificate(
+      certificate_path: cert,
+      keychain_name: ENV["KEYCHAIN_NAME"],
+      keychain_password: ENV["KEYCHAIN_PASSWORD"]
+    )
+  end
 end
 
 desc "Sincroniza certificados y perfiles de aprovisionamiento"
