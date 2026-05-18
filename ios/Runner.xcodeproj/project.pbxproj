@@ -261,7 +261,6 @@
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
-				A1D05B1B2F5A673500978293 /* Copy GoogleService-Info.plist */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
@@ -454,24 +453,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
-		};
-		A1D05B1B2F5A673500978293 /* Copy GoogleService-Info.plist */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Copy GoogleService-Info.plist";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -euo pipefail\n\n# Detectar flavor según configuración\nif [[ \"$CONFIGURATION\" == *\"Dev\"* ]]; then\n  FLAVOR=\"development\"\nelse\n  FLAVOR=\"production\"\nfi\n\nSOURCE_PLIST=\"${PROJECT_DIR}/Firebase/${FLAVOR}/GoogleService-Info.plist\"\nDEST_PLIST=\"${PROJECT_DIR}/Runner/GoogleService-Info.plist\"\n\nif [ ! -f \"${SOURCE_PLIST}\" ]; then\n  echo \"❌ No existe: ${SOURCE_PLIST}\"\n  exit 1\nfi\n\ncp \"${SOURCE_PLIST}\" \"${DEST_PLIST}\"\necho \"✅ Copiado ${SOURCE_PLIST} -> ${DEST_PLIST}\"\n";
 		};
 		D25030D619DAAB049C253064 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

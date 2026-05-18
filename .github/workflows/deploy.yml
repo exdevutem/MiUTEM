@@ -22,6 +22,7 @@ jobs:
   deploy-ios-dev:
     runs-on: macos-latest
     environment: development
+    timeout-minutes: 60
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
@@ -78,7 +79,7 @@ jobs:
         env:
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
-          APP_ENV: ${{ env.APP_ENV }}
+          APP_ENV: ${{ vars.APP_ENV }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
