@@ -34,8 +34,8 @@ jobs:
 
       - name: 🔏 Descargar certificados raíz de Apple
         run: |
-          curl -sS -o /tmp/AppleWWDRCAG3.cer \
-            https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+          curl -sS -o /tmp/AppleWWDRCA.cer \
+            https://developer.apple.com/certificationauthority/AppleWWDRCA.cer
           curl -sS -o /tmp/AppleRootCA.cer \
             https://www.apple.com/appleca/AppleIncRootCertificate.cer
 
