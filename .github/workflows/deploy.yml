@@ -65,7 +65,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure prod
+        run: ./scripts/flutterfire-configure dev
 
       - name: 🚀 Desplegar a TestFlight
         run: bundle exec fastlane ios build_and_upload
