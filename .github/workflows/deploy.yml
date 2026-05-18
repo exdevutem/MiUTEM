@@ -1,42 +1,78 @@
 name: Despliegue de la aplicación
 on:
   push:
-    branches: [ dev ]
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Selecciona el track de despliegue"
+        required: true
+        default: "development"
+        type: choice
+        options:
+          - production
+          - development
+env:
+  FLUTTER_VERSION: "3.41.6"
+  FLUTTER_CHANNEL: "stable"
+  XCODE_VERSION: "26"
+  RUBY_VERSION: "4.0.1"
 
 jobs:
-  deploy-ios-prd:
+  deploy-ios-dev:
     runs-on: macos-latest
-    environment: production
+    environment: development
     steps:
-      - name: Clonar Repositorio
+      - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
-      - name: Configurar Flutter SDK
+
+      - name: ⚒️ Configurar Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: ⚡ Configurar Cache para DerivedData
+        uses: actions/cache/restore@v5
+        id: cache-derived-data
+        with:
+          path: DerivedData
+          key: derived-data-${{ github.run_id }}
+          restore-keys: |
+            derived-data-
+
+      - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
-          channel: stable
-          version: latest
-      - name: Instalar librerías
-        run: flutter pub get
-      - name: Configurar Ruby
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          version: ${{ env.FLUTTER_VERSION }}
+
+      - name: 💎 Configurar Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "4.0.1"
+          ruby-version: ${{ env.RUBY_VERSION }}
           bundler-cache: true
-      - name: Generar Google Services
+
+      - name: 🗳️ Instalar firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: 📦 Instalar librerías
+        run: flutter pub get
+
+      - name: 🔥 Instalar FlutterFire
+        run: dart pub global activate flutterfire_cli
+
+      - name: 🔐 Configura credenciales de firebase
         env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
-        run: |
-          mkdir -p android/app/src/production
-          mkdir -p ios/Firebase/production
-          echo "$GOOGLE_SERVICES_JSON" > android/app/src/production/google-services.json
-          echo "$GOOGLE_SERVICE_INFO_PLIST" > ios/Firebase/production/GoogleService-Info.plist
-      - name: Desplegar a TestFlight
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: ./scripts/flutterfire-configure prod
+
+      - name: 🚀 Desplegar a TestFlight
         run: bundle exec fastlane ios build_and_upload
         env:
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
           APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+          APP_ENV: ${{ env.APP_ENV }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
           TEAM_ID: ${{ secrets.TEAM_ID }}
@@ -50,7 +86,6 @@ jobs:
           MATCH_REPO: ${{ secrets.MATCH_REPO }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
-          MATCH_TYPE: ${{ secrets.MATCH_TYPE }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
