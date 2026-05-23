@@ -35,12 +35,17 @@ android {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
+    val resolvedStoreFile = System.getenv("MIUTEM_KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String?
+    val resolvedStorePassword = System.getenv("MIUTEM_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String?
+    val resolvedKeyAlias = System.getenv("MIUTEM_KEY_ALIAS") ?: keystoreProperties["keyAlias"] as String?
+    val resolvedKeyPassword = System.getenv("MIUTEM_KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as String?
+
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as String
+            keyAlias = resolvedKeyAlias
+            keyPassword = resolvedKeyPassword
+            storeFile = resolvedStoreFile?.let { file(it) }
+            storePassword = resolvedStorePassword
         }
     }
 
