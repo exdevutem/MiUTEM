@@ -64,6 +64,35 @@ Build completo y upload a TestFlight
 ----
 
 
+## Android
+
+### android android_flutter_build
+
+```sh
+[bundle exec] fastlane android android_flutter_build
+```
+
+Compila la app con flutter
+
+### android android_upload
+
+```sh
+[bundle exec] fastlane android android_upload
+```
+
+Sube el AAB a Google Play
+
+### android android_build_and_upload
+
+```sh
+[bundle exec] fastlane android android_build_and_upload
+```
+
+Build completo y upload a Google Play
+
+----
+
+
 ## iOS
 
 ### ios build

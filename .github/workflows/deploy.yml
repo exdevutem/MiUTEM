@@ -82,7 +82,7 @@ jobs:
         run: ./scripts/flutterfire-configure dev
 
       - name: 🚀 Desplegar a TestFlight
-        run: bundle exec fastlane ios build_and_upload
+        run: bundle exec fastlane ios deploy
         env:
           IS_CI: ${{ vars.IS_CI }}
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
