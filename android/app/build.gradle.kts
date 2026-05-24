@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -15,7 +14,7 @@ plugins {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget("17")
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget("17")
     }
 }
 
@@ -35,10 +34,21 @@ android {
         keystoreProperties.load(FileInputStream(keystorePropertiesFile))
     }
 
-    val resolvedStoreFile = System.getenv("MIUTEM_KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String?
-    val resolvedStorePassword = System.getenv("MIUTEM_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String?
-    val resolvedKeyAlias = System.getenv("MIUTEM_KEY_ALIAS") ?: keystoreProperties["keyAlias"] as String?
-    val resolvedKeyPassword = System.getenv("MIUTEM_KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as String?
+    val resolvedStoreFile = System.getenv("MIUTEM_KEYSTORE_PATH")
+        ?: (project.findProperty("MIUTEM_KEYSTORE_PATH") as String?)
+        ?: (keystoreProperties["storeFile"] as String?)
+    val resolvedStorePassword = System.getenv("MIUTEM_KEYSTORE_PASSWORD")
+        ?: (project.findProperty("MIUTEM_KEYSTORE_PASSWORD") as String?)
+        ?: (keystoreProperties["storePassword"] as String?)
+    val resolvedKeyAlias = System.getenv("MIUTEM_KEY_ALIAS")
+        ?: (project.findProperty("MIUTEM_KEY_ALIAS") as String?)
+        ?: (keystoreProperties["keyAlias"] as String?)
+    val resolvedKeyPassword = System.getenv("MIUTEM_KEY_PASSWORD")
+        ?: (project.findProperty("MIUTEM_KEY_PASSWORD") as String?)
+        ?: (keystoreProperties["keyPassword"] as String?)
+    val useDebugSigning = System.getenv("MIUTEM_USE_DEBUG_SIGNING")?.toBoolean() ?: false
+
+    val debugKeystore = file("${System.getProperty("user.home")}/.android/debug.keystore")
 
     signingConfigs {
         create("release") {
@@ -46,6 +56,12 @@ android {
             keyPassword = resolvedKeyPassword
             storeFile = resolvedStoreFile?.let { file(it) }
             storePassword = resolvedStorePassword
+        }
+        getByName("debug") {
+            keyAlias = if (useDebugSigning) "androiddebugkey" else (resolvedKeyAlias ?: "androiddebugkey")
+            keyPassword = if (useDebugSigning) "android" else (resolvedKeyPassword ?: "android")
+            storeFile = if (useDebugSigning) debugKeystore else (resolvedStoreFile?.let { file(it) } ?: debugKeystore)
+            storePassword = if (useDebugSigning) "android" else (resolvedStorePassword ?: "android")
         }
     }
 
@@ -58,9 +74,17 @@ android {
         versionName = flutter.versionName
     }
 
+    buildFeatures {
+        resValues = true
+    }
+
     buildTypes {
         named("release") {
             signingConfig = signingConfigs.getByName("release")
+        }
+
+        named("debug") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

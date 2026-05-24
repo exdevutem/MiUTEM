@@ -1,23 +1,56 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
+  desc "Compila la app con flutter"
+  lane :build do
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
+    skip_clean = ENV["SKIP_CLEAN"] == "true"
+    version = ENV["APP_VERSION"]
+    build_number = ENV["APP_BUILD_NUMBER"]
+
+    unless skip_clean
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+    end
+
+    command = [
+      "flutter", "build", "appbundle",
+      "--release",
+      "--flavor=#{scheme}",
+      "--target=#{target}"
+    ]
+    command << "--build-name=#{version}" if version && !version.empty?
+    command << "--build-number=#{build_number}" if build_number && !build_number.empty?
+
+    sh(*command)
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+  desc "Sube el AAB a Google Play"
+  lane :upload do |options|
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    aab_path = options[:aab_path] || "../build/app/outputs/bundle/#{scheme}Release/app-#{scheme}-release.aab"
+
+    UI.user_error!("❌ El archivo AAB no existe en: #{aab_path}") unless File.exist?(File.expand_path(aab_path, __dir__))
+    UI.success("✅ Usando AAB: #{aab_path}")
+
+    upload_to_play_store(
+      track: ENV["ANDROID_TRACK"] || "internal",
+      aab: aab_path,
+      release_status: "draft",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+
+    UI.success("✅ AAB subido a Google Play (#{ENV["ANDROID_TRACK"] || "internal"}) exitosamente")
   end
 
-  desc "Deploy a new version to the Google Play"
+  desc "Build completo y upload a Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    build()
+    upload()
   end
 end
