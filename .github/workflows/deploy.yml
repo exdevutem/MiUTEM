@@ -39,12 +39,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: ⚡ Configurar Cache para Gradle
-        uses: actions/cache/restore@v5
+        uses: actions/cache@v5
         with:
-          path: ~/.gradle/caches
-          key: gradle-caches-${{ needs.determine-environment.outputs.environment }}-${{ github.run_id }}
-          restore-keys: |
-            gradle-caches-${{ needs.determine-environment.outputs.environment }}-
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Dart global packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.pub-cache/global_packages
+          key: dart-global-${{ runner.os }}-flutterfire
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -110,13 +125,36 @@ jobs:
           curl -sS -o /tmp/AppleRootCA.cer \
             https://www.apple.com/appleca/AppleIncRootCertificate.cer
 
-      - name: ⚡ Configurar Cache para DerivedData
-        uses: actions/cache/restore@v5
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
         with:
-          path: DerivedData
-          key: derived-data-${{ needs.determine-environment.outputs.environment }}-${{ github.run_id }}
+          path: |
+            ~/.pub-cache
+          key: pub-cache-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Dart global packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.pub-cache/global_packages
+          key: dart-global-${{ runner.os }}-flutterfire
+
+      - name: ⚡ Configurar Cache para CocoaPods
+        uses: actions/cache@v5
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para DerivedData
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: derived-data-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
           restore-keys: |
-            derived-data-${{ needs.determine-environment.outputs.environment }}-
+            derived-data-${{ runner.os }}-
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
