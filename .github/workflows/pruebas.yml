@@ -1,9 +1,9 @@
 name: Pruebas
 on:
   push:
-    branches: ["dev"]
+    branches: [dev, prod]
   pull_request:
-    branches: ["dev"]
+    branches: [dev, prod]
 
 jobs:
   probar:
@@ -12,13 +12,47 @@ jobs:
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
+
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
           channel: ${{ vars.FLUTTER_CHANNEL }}
           version: ${{ vars.FLUTTER_VERSION }}
+
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Dart global packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.pub-cache/global_packages
+          key: dart-global-${{ runner.os }}-flutterfire
+
+      - name: ⚡ Configurar Cache para CocoaPods
+        uses: actions/cache@v5
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para DerivedData
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: derived-data-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
+          restore-keys: |
+            derived-data-${{ runner.os }}-
+
       - name: 📦 Instalar librerías
         run: flutter pub get
+
       - name: 🧪 Ejecutar pruebas unitarias
         run: flutter test --coverage --test-randomize-ordering-seed=${{ github.run_id }}
