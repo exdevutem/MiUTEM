@@ -1,7 +1,7 @@
 name: Despliegue de la aplicación
 on:
   push:
-    branches: [dev]
+    branches: [dev, prod]
   workflow_dispatch:
     inputs:
       track:
@@ -12,16 +12,78 @@ on:
         options:
           - production
           - development
-env:
-  FLUTTER_VERSION: "3.41.6"
-  FLUTTER_CHANNEL: "stable"
-  XCODE_VERSION: "26"
-  RUBY_VERSION: "4.0.1"
-
 jobs:
-  deploy-ios-dev:
+  determine-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-environment.outputs.environment }}
+    steps:
+      - name: Determinar entorno de despliegue
+        id: set-environment
+        run: |
+          if [[ "${{ inputs.track }}" == "production" || "${{ github.ref }}" == "refs/heads/prod" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+          fi
+
+  deploy-android:
+    needs: determine-environment
+    # Por ahora vamos a limitar el despliegue de android a producción, ya que aún debemos crear la app de desarrollo para el track de desarrollo.
+    if: ${{ needs.determine-environment.outputs.environment == 'production' }}
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    timeout-minutes: 60
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚡ Configurar Cache para Gradle
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.gradle/caches
+          key: gradle-caches-${{ needs.determine-environment.outputs.environment }}-${{ github.run_id }}
+          restore-keys: |
+            gradle-caches-${{ needs.determine-environment.outputs.environment }}-
+
+      - name: 🐦 Configurar Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          cache: true
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
+
+      - name: 🗳️ Instalar firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: 📦 Instalar librerías
+        run: flutter pub get
+
+      - name: 🔥 Instalar FlutterFire
+        run: dart pub global activate flutterfire_cli
+
+      - name: 🔐 Configura credenciales de firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: ./scripts/flutterfire-configure prod
+
+      - name: 🚀 Desplegar a Play Store
+        run: bundle exec fastlane android deploy
+        env:
+          IS_CI: ${{ vars.IS_CI }}
+          APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+          APP_ENV: ${{ vars.APP_ENV }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_TOKEN: ${{ github.token }}
+          MIUTEM_KEYSTORE_BASE64: ${{ secrets.MIUTEM_KEYSTORE_BASE64 }}
+          MIUTEM_KEYSTORE_PASSWORD: ${{ secrets.MIUTEM_KEYSTORE_PASSWORD }}
+          MIUTEM_KEY_ALIAS: ${{ secrets.MIUTEM_KEY_ALIAS }}
+          MIUTEM_KEY_PASSWORD: ${{ secrets.MIUTEM_KEY_PASSWORD }}
+          GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+  deploy-ios:
+    needs: determine-environment
     runs-on: macos-latest
-    environment: development
+    environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
     steps:
       - name: 📚 Clonar Repositorio
@@ -30,7 +92,7 @@ jobs:
       - name: ⚒️ Configurar Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: ${{ env.XCODE_VERSION }}
+          xcode-version: ${{ vars.XCODE_VERSION }}
 
       - name: 🔏 Descargar certificados raíz de Apple
         run: |
@@ -41,24 +103,23 @@ jobs:
 
       - name: ⚡ Configurar Cache para DerivedData
         uses: actions/cache/restore@v5
-        id: cache-derived-data
         with:
           path: DerivedData
-          key: derived-data-${{ github.run_id }}
+          key: derived-data-${{ needs.determine-environment.outputs.environment }}-${{ github.run_id }}
           restore-keys: |
-            derived-data-
+            derived-data-${{ needs.determine-environment.outputs.environment }}-
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
-          channel: ${{ env.FLUTTER_CHANNEL }}
-          version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
 
       - name: 💎 Configurar Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.RUBY_VERSION }}
+          ruby-version: ${{ vars.RUBY_VERSION }}
           bundler-cache: true
 
       - name: 🗳️ Instalar firebase-tools
@@ -76,17 +137,16 @@ jobs:
       - name: 🪎 Configura bundle
         run: bundle install
 
-      - name: 🔐 Configura credenciales de firebase
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure dev
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight
         run: bundle exec fastlane ios deploy
         env:
           IS_CI: ${{ vars.IS_CI }}
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-          APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
           APP_ENV: ${{ vars.APP_ENV }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
