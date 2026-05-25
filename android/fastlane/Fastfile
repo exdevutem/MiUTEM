@@ -57,7 +57,7 @@ platform :android do
     upload_to_play_store(
       track: ENV["ANDROID_TRACK"] || "internal",
       aab: File.expand_path(aab_path),
-      release_status: "draft",
+      release_status: "completed",
       skip_upload_apk: true,
       skip_upload_metadata: true,
       skip_upload_changelogs: true,

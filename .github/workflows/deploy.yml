@@ -53,6 +53,12 @@ jobs:
           channel: ${{ vars.FLUTTER_CHANNEL }}
           version: ${{ vars.FLUTTER_VERSION }}
 
+      - name: 💎 Configurar Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ vars.RUBY_VERSION }}
+          bundler-cache: true
+
       - name: 🗳️ Instalar firebase-tools
         run: npm install -g firebase-tools
 
@@ -61,6 +67,9 @@ jobs:
 
       - name: 🔥 Instalar FlutterFire
         run: dart pub global activate flutterfire_cli
+
+      - name: 🪎 Configura bundle
+        run: bundle install
 
       - name: 🔐 Configura credenciales de firebase
         env:
