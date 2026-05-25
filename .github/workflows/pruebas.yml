@@ -8,16 +8,17 @@ on:
 jobs:
   probar:
     runs-on: macos-latest
+    environment: development
     steps:
-      - name: Clonar Repositorio
+      - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
-      - name: Configurar Flutter SDK
+      - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
           cache: true
-          channel: stable
-          version: latest
-      - name: Instalar librerías
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
+      - name: 📦 Instalar librerías
         run: flutter pub get
-      - name: Ejecutar pruebas unitarias
-        run: flutter test --coverage --test-randomize-ordering-seed=random
+      - name: 🧪 Ejecutar pruebas unitarias
+        run: flutter test --coverage --test-randomize-ordering-seed=${{ github.run_id }}

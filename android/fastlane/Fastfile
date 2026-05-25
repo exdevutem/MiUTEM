@@ -1,23 +1,78 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
+  desc "Decodifica el keystore desde base64 y lo deja en un archivo temporal"
+  lane :setup_keystore do
+    keystore_base64 = ENV["MIUTEM_KEYSTORE_BASE64"]
+    
+    unless keystore_base64 && !keystore_base64.empty?
+      UI.message("⚠️  MIUTEM_KEYSTORE_BASE64 no definido, usando archivo local (si existe)")
+      next
+    end
+
+    keystore_path = "/tmp/miutem.jks"
+    File.write(keystore_path, Base64.decode64(keystore_base64), mode: "wb")
+    ENV["MIUTEM_KEYSTORE_PATH"] = keystore_path
+    
+    UI.success("✅ Keystore decodificado en #{keystore_path}")
   end
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+  desc "Compila la app con flutter"
+  lane :build do
+    # Asegura que el keystore esté configurado antes de compilar
+    setup_keystore()
+    
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
+    skip_clean = ENV["SKIP_CLEAN"] == "true"
+    version = ENV["APP_VERSION"]
+    build_number = ENV["APP_BUILD_NUMBER"]
+
+    unless skip_clean
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+    end
+
+    command = [
+      "flutter", "build", "appbundle",
+      "--release",
+      "--no-tree-shake-icons",
+      "--flavor=#{scheme}",
+      "--target=#{target}"
+    ]
+    command << "--build-name=#{version}" if version && !version.empty?
+    command << "--build-number=#{build_number}" if build_number && !build_number.empty?
+
+    sh(*command)
   end
 
-  desc "Deploy a new version to the Google Play"
+  desc "Sube el AAB a Google Play"
+  lane :upload do |options|
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    aab_path = options[:aab_path] || "../build/app/outputs/bundle/#{scheme}Release/app-#{scheme}-release.aab"
+
+    UI.user_error!("❌ El archivo AAB no existe en: #{aab_path}") unless File.exist?(aab_path)
+    UI.success("✅ Usando AAB: #{aab_path}")
+
+    upload_to_play_store(
+      track: ENV["ANDROID_TRACK"] || "internal",
+      aab: File.expand_path(aab_path),
+      release_status: "draft",
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      json_key_data: ENV["GOOGLE_PLAY_JSON_KEY"],
+      package_name: ENV["APP_PACKAGE_NAME"],
+    )
+
+    UI.success("✅ AAB subido a Google Play (#{ENV["ANDROID_TRACK"] || "internal"}) exitosamente")
+  end
+
+  desc "Build completo y upload a Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    build()
+    upload()
   end
 end
