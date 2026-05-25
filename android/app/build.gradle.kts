@@ -21,7 +21,7 @@ kotlin {
 android {
     namespace = "cl.inndev.miutem"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "29.0.14206865"
+    ndkVersion = project.findProperty("android.ndkVersion") as String? ?: "29.0.14206865"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

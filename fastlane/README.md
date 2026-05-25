@@ -13,87 +13,23 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
-### ios_sync_certificates
+## iOS
+
+### ios sync_certificates
 
 ```sh
-[bundle exec] fastlane ios_sync_certificates
+[bundle exec] fastlane ios sync_certificates
 ```
 
 Sincroniza certificados y perfiles de aprovisionamiento
 
-### ios_flutter_build
+### ios flutter_build
 
 ```sh
-[bundle exec] fastlane ios_flutter_build
+[bundle exec] fastlane ios flutter_build
 ```
 
 Compila la app con flutter
-
-### ios_build
-
-```sh
-[bundle exec] fastlane ios_build
-```
-
-Compila la aplicación
-
-### ios_load_api_key
-
-```sh
-[bundle exec] fastlane ios_load_api_key
-```
-
-Carga la API Key de App Store Connect para autenticación
-
-### ios_upload
-
-```sh
-[bundle exec] fastlane ios_upload
-```
-
-Sube la aplicación a TestFlight (requiere IPA)
-
-### ios_build_and_upload
-
-```sh
-[bundle exec] fastlane ios_build_and_upload
-```
-
-Build completo y upload a TestFlight
-
-----
-
-
-## Android
-
-### android android_flutter_build
-
-```sh
-[bundle exec] fastlane android android_flutter_build
-```
-
-Compila la app con flutter
-
-### android android_upload
-
-```sh
-[bundle exec] fastlane android android_upload
-```
-
-Sube el AAB a Google Play
-
-### android android_build_and_upload
-
-```sh
-[bundle exec] fastlane android android_build_and_upload
-```
-
-Build completo y upload a Google Play
-
-----
-
-
-## iOS
 
 ### ios build
 
@@ -101,7 +37,15 @@ Build completo y upload a Google Play
 [bundle exec] fastlane ios build
 ```
 
-Compila la aplicación para iOS
+Compila la aplicación
+
+### ios load_api_key
+
+```sh
+[bundle exec] fastlane ios load_api_key
+```
+
+Carga la API Key de App Store Connect para autenticación
 
 ### ios upload
 
@@ -111,13 +55,50 @@ Compila la aplicación para iOS
 
 Sube la aplicación a TestFlight (requiere IPA)
 
-### ios build_and_upload
+### ios deploy
 
 ```sh
-[bundle exec] fastlane ios build_and_upload
+[bundle exec] fastlane ios deploy
 ```
 
 Build completo y upload a TestFlight
+
+----
+
+
+## Android
+
+### android setup_keystore
+
+```sh
+[bundle exec] fastlane android setup_keystore
+```
+
+Decodifica el keystore desde base64 y lo deja en un archivo temporal
+
+### android build
+
+```sh
+[bundle exec] fastlane android build
+```
+
+Compila la app con flutter
+
+### android upload
+
+```sh
+[bundle exec] fastlane android upload
+```
+
+Sube el AAB a Google Play
+
+### android deploy
+
+```sh
+[bundle exec] fastlane android deploy
+```
+
+Build completo y upload a Google Play
 
 ----
 

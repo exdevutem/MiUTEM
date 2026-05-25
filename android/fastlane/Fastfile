@@ -1,8 +1,27 @@
 default_platform(:android)
 
 platform :android do
+  desc "Decodifica el keystore desde base64 y lo deja en un archivo temporal"
+  lane :setup_keystore do
+    keystore_base64 = ENV["MIUTEM_KEYSTORE_BASE64"]
+    
+    unless keystore_base64 && !keystore_base64.empty?
+      UI.message("⚠️  MIUTEM_KEYSTORE_BASE64 no definido, usando archivo local (si existe)")
+      next
+    end
+
+    keystore_path = "/tmp/miutem.jks"
+    File.write(keystore_path, Base64.decode64(keystore_base64), mode: "wb")
+    ENV["MIUTEM_KEYSTORE_PATH"] = keystore_path
+    
+    UI.success("✅ Keystore decodificado en #{keystore_path}")
+  end
+
   desc "Compila la app con flutter"
   lane :build do
+    # Asegura que el keystore esté configurado antes de compilar
+    setup_keystore()
+    
     scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
     target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
     skip_clean = ENV["SKIP_CLEAN"] == "true"
@@ -17,6 +36,7 @@ platform :android do
     command = [
       "flutter", "build", "appbundle",
       "--release",
+      "--no-tree-shake-icons",
       "--flavor=#{scheme}",
       "--target=#{target}"
     ]
@@ -31,18 +51,20 @@ platform :android do
     scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
     aab_path = options[:aab_path] || "../build/app/outputs/bundle/#{scheme}Release/app-#{scheme}-release.aab"
 
-    UI.user_error!("❌ El archivo AAB no existe en: #{aab_path}") unless File.exist?(File.expand_path(aab_path, __dir__))
+    UI.user_error!("❌ El archivo AAB no existe en: #{aab_path}") unless File.exist?(aab_path)
     UI.success("✅ Usando AAB: #{aab_path}")
 
     upload_to_play_store(
       track: ENV["ANDROID_TRACK"] || "internal",
-      aab: aab_path,
+      aab: File.expand_path(aab_path),
       release_status: "draft",
       skip_upload_apk: true,
       skip_upload_metadata: true,
       skip_upload_changelogs: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
+      json_key_data: ENV["GOOGLE_PLAY_JSON_KEY"],
+      package_name: ENV["APP_PACKAGE_NAME"],
     )
 
     UI.success("✅ AAB subido a Google Play (#{ENV["ANDROID_TRACK"] || "internal"}) exitosamente")
