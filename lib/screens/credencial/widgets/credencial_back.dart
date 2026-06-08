@@ -102,9 +102,7 @@ class AbstractArtPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant AbstractArtPainter oldDelegate) =>
-      primaryColor != oldDelegate.primaryColor ||
-      secondaryColor != oldDelegate.secondaryColor;
+  bool shouldRepaint(covariant AbstractArtPainter oldDelegate) => primaryColor != oldDelegate.primaryColor || secondaryColor != oldDelegate.secondaryColor;
 }
 
 /// Dorso de la credencial con arte abstracto y logo UTEM.
@@ -144,7 +142,7 @@ class CredencialBack extends StatelessWidget {
                   Image.asset(
                     "assets/images/utem_logo_color_blanco.png",
                     height: 60,
-                    errorBuilder: (_, __, ___) => const Icon(
+                    errorBuilder: (_, _, _) => const Icon(
                       AppIcons.credential,
                       size: 60,
                       color: Colors.white,
@@ -170,4 +168,3 @@ class CredencialBack extends StatelessWidget {
     );
   }
 }
-

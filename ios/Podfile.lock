@@ -1,22 +1,16 @@
 PODS:
-  - awesome_notifications (0.10.0):
+  - awesome_notifications (0.11.0):
     - Flutter
-    - IosAwnCore (~> 0.10.0)
+    - IosAwnCore (~> 0.11.0)
   - awesome_notifications_core (0.0.1):
     - Flutter
-  - file_saver (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
-  - flutter_secure_storage (6.0.0):
-    - Flutter
-  - IosAwnCore (0.10.0)
+  - IosAwnCore (0.11.0)
 
 DEPENDENCIES:
   - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - awesome_notifications_core (from `.symlinks/plugins/awesome_notifications_core/ios`)
-  - file_saver (from `.symlinks/plugins/file_saver/ios`)
   - Flutter (from `Flutter`)
-  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
 
 SPEC REPOS:
   trunk:
@@ -27,20 +21,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/awesome_notifications/ios"
   awesome_notifications_core:
     :path: ".symlinks/plugins/awesome_notifications_core/ios"
-  file_saver:
-    :path: ".symlinks/plugins/file_saver/ios"
   Flutter:
     :path: Flutter
-  flutter_secure_storage:
-    :path: ".symlinks/plugins/flutter_secure_storage/ios"
 
 SPEC CHECKSUMS:
-  awesome_notifications: 0f432b28098d193920b11a44cfa9d2d9313a3888
+  awesome_notifications: 8291dd4082db761556cd8bf7977567f5c960c87e
   awesome_notifications_core: 429c28df8746780a474de177e5acde33af87da63
-  file_saver: 6cdbcddd690cb02b0c1a0c225b37cd805c2bf8b6
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
-  IosAwnCore: 653786a911089012092ce831f2945cd339855a89
+  IosAwnCore: 32019505f4a4909fa9079ee401b2c82aeeab78a8
 
 PODFILE CHECKSUM: 953925a4e3e2a80c3d57c7720becad8592b0f7f4
 

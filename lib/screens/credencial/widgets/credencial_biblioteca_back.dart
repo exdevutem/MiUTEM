@@ -67,10 +67,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
                 _getPerfilLabel(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  fontSize:
-                      (Theme.of(context).textTheme.titleMedium?.fontSize ??
-                          16) *
-                      scale,
+                  fontSize: (Theme.of(context).textTheme.titleMedium?.fontSize ?? 16) * scale,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -80,9 +77,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppTheme.primary,
                   fontWeight: FontWeight.w500,
-                  fontSize:
-                      (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
-                      scale,
+                  fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * scale,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -92,9 +87,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.4,
-                  fontSize:
-                      (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) *
-                      scale,
+                  fontSize: (Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14) * scale,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -131,7 +124,7 @@ class CredencialBibliotecaBack extends StatelessWidget {
           width: qrImageSize,
           height: qrImageSize,
           fit: BoxFit.contain,
-          errorBuilder: (_, __, ___) => Center(
+          errorBuilder: (_, _, _) => Center(
             child: Icon(
               Icons.qr_code,
               size: iconSize,

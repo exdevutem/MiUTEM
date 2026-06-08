@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/"
+    assignees: [Im-Fran]
+    labels: [dependencies]
+    target-branch: "dev"
+    commit-message:
+      prefix: "deps:"
+      include: scope
+    schedule:
+      interval: "daily"

@@ -40,43 +40,27 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(
-              title: const Text("Malla Histórica"),
-            ),
+            appBar: AppBar(title: const Text("Malla Histórica")),
             body: LoadingIndicator.centeredDefault(),
           );
         }
 
-        final esErrorOffline = snapshot.hasError &&
-            snapshot.error is DioException &&
-            (snapshot.error as DioException).type == DioExceptionType.cancel &&
-            (snapshot.error as DioException).response?.extra["offline"] == true;
+        final esErrorOffline = snapshot.hasError && snapshot.error is DioException && (snapshot.error as DioException).type == DioExceptionType.cancel && (snapshot.error as DioException).response?.extra["offline"] == true;
 
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || snapshot.data == null) {
           String errorMessage = "Ocurrió un error al cargar la malla. Por favor intenta más tarde.";
           final error = snapshot.error;
           if (error != null) {
-            errorMessage = error is CustomException
-                ? error.message
-                : "Ocurrió un error al cargar la malla. Por favor intenta más tarde.";
+            errorMessage = error is CustomException ? error.message : "Ocurrió un error al cargar la malla. Por favor intenta más tarde.";
           }
 
           return Scaffold(
             appBar: AppBar(
               title: const Text("Malla Histórica"),
-              actions: [
-                IconButton(
-                  onPressed: _reloadData,
-                  icon: const Icon(Icons.refresh_sharp),
-                  tooltip: "Forzar actualización de la malla",
-                )
-              ],
+              actions: [IconButton(onPressed: _reloadData, icon: const Icon(Icons.refresh_sharp), tooltip: "Forzar actualización de la malla")],
             ),
             body: Center(
-              child: CustomErrorWidget(
-                title: "Error al cargar la malla",
-                error: errorMessage,
-              ),
+              child: CustomErrorWidget(title: "Error al cargar la malla", error: errorMessage),
             ),
           );
         }
@@ -93,17 +77,11 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
                 itemBuilder: (ctx) => [
                   PopupMenuItem(
                     onTap: _reloadData,
-                    child: const ListTile(
-                      leading: Icon(Icons.refresh_sharp),
-                      title: Text("Recargar"),
-                    ),
+                    child: const ListTile(leading: Icon(Icons.refresh_sharp), title: Text("Recargar")),
                   ),
                   PopupMenuItem(
                     onTap: () => _captureAndShareScreenshot(context, asignaturas),
-                    child: const ListTile(
-                      leading: Icon(Icons.share),
-                      title: Text("Compartir"),
-                    ),
+                    child: const ListTile(leading: Icon(Icons.share), title: Text("Compartir")),
                   ),
                 ],
               ),
@@ -112,9 +90,7 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
           body: SafeArea(
             child: Screenshot(
               controller: _screenshotController,
-              child: MallaMainScroller(
-                asignaturas: asignaturas,
-              ),
+              child: MallaMainScroller(asignaturas: asignaturas),
             ),
           ),
         );
@@ -124,10 +100,7 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
 
   void _captureAndShareScreenshot(BuildContext context, List<AsignaturaMalla> asignaturas) async {
     showLoadingDialog(context);
-    final mallaScroller = MallaMainScroller(
-      asignaturas: asignaturas,
-      forScreenshot: true,
-    );
+    final mallaScroller = MallaMainScroller(asignaturas: asignaturas, forScreenshot: true);
 
     // Calcular el tamaño necesario para capturar todo el contenido
     final estimatedHeight = _calculateEstimatedHeight(asignaturas);
@@ -143,11 +116,11 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
       await FileSaver.instance.saveFile(
         name: "malla_historica",
         bytes: image,
-        ext: "png",
+        fileExtension: "png",
         mimeType: MimeType.png,
       );
       // Mostrar toast de éxito
-      if(context.mounted) {
+      if (context.mounted) {
         Navigator.pop(context);
         showTextSnackbar(context, title: "Malla guardada", message: "La malla histórica se ha guardado correctamente en tu carpeta de descargas.");
       }
@@ -156,9 +129,9 @@ class _MallaHistoricaScreenState extends State<MallaHistoricaScreen> {
       final imagePath = await File("${directory.path}/malla_historica.png").create();
       await imagePath.writeAsBytes(image);
 
-      if(context.mounted) Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
 
-      await Share.shareXFiles([XFile(imagePath.path)]);
+      await SharePlus.instance.share(ShareParams(files: [XFile(imagePath.path)]));
     }
   }
 

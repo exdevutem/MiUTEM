@@ -63,7 +63,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
 
         final horario = snapshot.data;
         final esErrorOffline = snapshot.hasError && snapshot.error is DioException && (snapshot.error as DioException).type == DioExceptionType.cancel && (snapshot.error as DioException).response?.extra["offline"] == true;
-        
+
         if ((snapshot.hasError && !esErrorOffline) || !snapshot.hasData || horario == null) {
           String errorMessage = "Ocurrió un error al cargar el horario! Por favor intenta más tarde.";
           final error = snapshot.error;
@@ -79,7 +79,7 @@ class _HorarioScreenState extends State<HorarioScreen> {
                   onPressed: _reloadData,
                   icon: const Icon(Icons.refresh_sharp),
                   tooltip: "Forzar actualización del horario",
-                )
+                ),
               ],
             ),
             body: Center(
@@ -156,7 +156,7 @@ class HorarioScreenContent extends StatelessWidget {
       await FileSaver.instance.saveFile(
         name: "horario",
         bytes: image,
-        ext: "png",
+        fileExtension: "png",
         mimeType: MimeType.png,
       );
       if (context.mounted) {
@@ -170,7 +170,7 @@ class HorarioScreenContent extends StatelessWidget {
 
       if (context.mounted) Navigator.pop(context);
 
-      await Share.shareXFiles([XFile(imagePath.path)]);
+      await SharePlus.instance.share(ShareParams(files: [XFile(imagePath.path)]));
     }
   }
 }
