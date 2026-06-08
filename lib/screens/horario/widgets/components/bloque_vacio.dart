@@ -13,10 +13,12 @@ class BloqueVacio extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: DottedBorder(
-        strokeWidth: 2,
-        color: AppTheme.grey,
-        borderType: BorderType.RRect,
-        radius: const Radius.circular(15),
+        options: const RoundedRectDottedBorderOptions(
+          strokeWidth: 2,
+          color: AppTheme.grey,
+          dashPattern: [10, 5],
+          radius: Radius.circular(15),
+        ),
         child: Container(),
       ),
     );

@@ -1,5 +1,9 @@
 include: package:flutter_lints/flutter.yaml
 
+formatter:
+  page_width: 512
+  trailing_commas: preserve
+
 analyzer:
   exclude:
     - lib/firebase_options_*.dart

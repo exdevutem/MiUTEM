@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Sincroniza certificados y perfiles de aprovisionamiento
 
+### ios configure_signing
+
+```sh
+[bundle exec] fastlane ios configure_signing
+```
+
+Configura Signing Settings para Xcode
+
 ### ios flutter_build
 
 ```sh

@@ -10,29 +10,59 @@ platform :ios do
       add_to_search_list: true
     )
 
-    # Importar certificados raíz de Apple al keychain custom
-    ["/tmp/AppleWWDRCA.cer", "/tmp/AppleRootCA.cer"].each do |cert|
-      if File.exist?(cert)
-        UI.message("🔐 Importando certificado raíz: #{cert}")
-        import_certificate(
-          certificate_path: cert,
-          keychain_name: ENV["KEYCHAIN_NAME"],
-          keychain_password: ENV["KEYCHAIN_PASSWORD"],
-        )
-      end
+  end
+
+  def ensure_wwdr()
+    keychain_path = File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
+    wwdr_certs = {
+      "AppleWWDRCAG3.cer" => "https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer",
+      "AppleWWDRCAG6.cer" => "https://www.apple.com/certificateauthority/AppleWWDRCAG6.cer",
+      "AppleRootCA.cer"   => "https://www.apple.com/appleca/AppleIncRootCertificate.cer",
+    }
+
+    wwdr_certs.each do |filename, url|
+      path = "/tmp/#{filename}"
+      sh("curl", "-fsSL", "-o", path, url) unless File.exist?(path)
+      sh("security", "import", path, "-k", keychain_path, "-T", "/usr/bin/codesign")
     end
   end
 
   desc "Sincroniza certificados y perfiles de aprovisionamiento"
-  lane :sync_certificates do
+  lane :sync_certificates do |options|
+    readonly = options[:readonly] || ENV["IS_CI"] == "true"
+    type = options[:type] || ENV["MATCH_TYPE"] || "appstore" # Por defecto appstore, aunque el Matchfile tenga otro tipo.
+
     ensure_keychain()
+    ensure_wwdr()
     match(
       app_identifier: [ENV["APP_IDENTIFIER"]],
-      type: "appstore", # Siempre appstore para subir a la appstore, aunque el Matchfile tenga otro tipo.
+      type: type,
       git_url: ENV["MATCH_REPO"],
-      readonly: ENV["IS_CI"] == "true",
+      readonly: readonly,
       keychain_name: ENV["KEYCHAIN_NAME"],
       keychain_password: ENV["KEYCHAIN_PASSWORD"]
+    )
+  end
+
+  desc "Configura Signing Settings para Xcode"
+  lane :configure_signing do
+    profile_type = case ENV["MATCH_TYPE"]
+                    when "development" then "Development"
+                    when "appstore" then "AppStore"
+                    when "ad-hoc" then "AdHoc"
+                    when "enterprise" then "Enterprise"
+                    else "Unknown"
+                   end
+    profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]}"
+    code_sign_identity = ENV["MATCH_TYPE"] == "development" ? "Apple Development" : "Apple Distribution"
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "./ios/Runner.xcodeproj",
+      team_id: ENV["TEAM_ID"],
+      bundle_identifier: ENV["APP_IDENTIFIER"],
+      profile_name: profile_name,
+      code_sign_identity: code_sign_identity
     )
   end
 
@@ -66,7 +96,7 @@ platform :ios do
   lane :build do
     skip_flutter_build = ENV["SKIP_FLUTTER_BUILD"] == "true"
     skip_build_app = ENV["SKIP_BUILD_APP"] == "true"
-    
+
     unless skip_flutter_build
       flutter_build()
     end
@@ -76,22 +106,15 @@ platform :ios do
     sync_certificates()
 
     unless skip_build_app
-      update_code_signing_settings(
-        use_automatic_signing: false,
-        path: "./ios/Runner.xcodeproj",
-        team_id: ENV["TEAM_ID"],
-        bundle_identifier: ENV["APP_IDENTIFIER"],
-        profile_name: "match AppStore #{ENV["APP_IDENTIFIER"]}",
-        code_sign_identity: "Apple Distribution"
-      )
-      
+      configure_signing()
+
       build_app(
         scheme: scheme,
         export_method: "app-store", # Siempre app-store para subir a la appstore.
         workspace: "./ios/Runner.xcworkspace",
         output_directory: "./build/ios/ipa",
         output_name: "MiUTEM.ipa",
-        xcargs: "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='match AppStore #{ENV["APP_IDENTIFIER"]}'"
+        xcargs: "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='#{profile_name}' CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM='#{ENV["TEAM_ID"]}'"
       )
     end
   end
@@ -115,7 +138,7 @@ platform :ios do
     # Validar que existe
     UI.user_error!("❌ No se encontró IPA. Proporciona --ipa_path o ejecuta build primero") unless ipa_path
     UI.user_error!("❌ El archivo IPA no existe en: #{ipa_path}") unless File.exist?(ipa_path)
-    
+
     UI.success("✅ Usando IPA: #{ipa_path}")
 
     # Cargar API key
@@ -127,7 +150,7 @@ platform :ios do
       skip_submission: true,
       skip_waiting_for_build_processing: true,
     )
-    
+
     UI.success("✅ IPA subido a TestFlight exitosamente")
   end
 
