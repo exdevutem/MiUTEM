@@ -15,6 +15,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios ensure_keychain
+
+```sh
+[bundle exec] fastlane ios ensure_keychain
+```
+
+Asegura que exista un keychain limpio para importar los certificados de Apple
+
+### ios ensure_wwdr
+
+```sh
+[bundle exec] fastlane ios ensure_wwdr
+```
+
+Asegura que exista los certificados de Apple en el keychain para que match funcione correctamente
+
 ### ios sync_certificates
 
 ```sh
@@ -107,6 +123,43 @@ Sube el AAB a Google Play
 ```
 
 Build completo y upload a Google Play
+
+----
+
+
+## Mac
+
+### mac ensure_keychain
+
+```sh
+[bundle exec] fastlane mac ensure_keychain
+```
+
+Asegura que exista un keychain limpio para importar los certificados de Apple
+
+### mac ensure_wwdr
+
+```sh
+[bundle exec] fastlane mac ensure_wwdr
+```
+
+Asegura que existan los certificados WWDR de Apple en el keychain
+
+### mac sync_certificates
+
+```sh
+[bundle exec] fastlane mac sync_certificates
+```
+
+Sincroniza certificados y perfiles de aprovisionamiento para macOS
+
+### mac configure_signing
+
+```sh
+[bundle exec] fastlane mac configure_signing
+```
+
+Configura Signing Settings para Xcode macOS
 
 ----
 

@@ -1,0 +1,4 @@
+storage_mode("git")
+git_url(ENV["MATCH_REPO"])
+type(ENV["MATCH_TYPE"] || "development")
+platform("macos")

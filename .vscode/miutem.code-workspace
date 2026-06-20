@@ -1,8 +1,9 @@
 {
-	"folders": [
-		{
-			"path": ".."
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "..",
+      "name": "Mi UTEM"
+    }
+  ],
+  "settings": {},
 }

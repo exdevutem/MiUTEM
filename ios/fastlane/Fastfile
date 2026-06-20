@@ -1,5 +1,8 @@
+import "../fastlane/src/helpers.rb"
+
 platform :ios do
-  def ensure_keychain()
+  desc "Asegura que exista un keychain limpio para importar los certificados de Apple"
+  lane :ensure_keychain do
     delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
     create_keychain(
       name: ENV["KEYCHAIN_NAME"],
@@ -12,7 +15,8 @@ platform :ios do
 
   end
 
-  def ensure_wwdr()
+  desc "Asegura que exista los certificados de Apple en el keychain para que match funcione correctamente"
+  lane :ensure_wwdr do
     keychain_path = File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
     wwdr_certs = {
       "AppleWWDRCAG3.cer" => "https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer",
@@ -29,11 +33,19 @@ platform :ios do
 
   desc "Sincroniza certificados y perfiles de aprovisionamiento"
   lane :sync_certificates do |options|
-    readonly = options[:readonly] || ENV["IS_CI"] == "true"
-    type = options[:type] || ENV["MATCH_TYPE"] || "appstore" # Por defecto appstore, aunque el Matchfile tenga otro tipo.
+    readonly = bool_option(options, :readonly, env_var: "IS_CI", default: false)
+    type = string_option(options, :type, env_var: "MATCH_TYPE", default: "appstore")
+    skip_keychain_setup = bool_option(options, :skip_keychain_setup, default: false)
+    skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, default: false)
 
-    ensure_keychain()
-    ensure_wwdr()
+    unless skip_keychain_setup
+      ensure_keychain()
+    end
+
+    unless skip_wwdr_setup
+      ensure_wwdr()
+    end
+
     match(
       app_identifier: [ENV["APP_IDENTIFIER"]],
       type: type,
