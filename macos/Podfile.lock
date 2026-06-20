@@ -1,5 +1,5 @@
 PODS:
-  - awesome_notifications (0.0.1):
+  - awesome_notifications (0.12.0):
     - FlutterMacOS
   - awesome_notifications_core (0.0.1):
     - FlutterMacOS
@@ -19,7 +19,7 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
 
 SPEC CHECKSUMS:
-  awesome_notifications: 7818a3dbad4836238a68df439c06981d9f0b276c
+  awesome_notifications: 4e05708c3d44949fca858ace458b3c2ee823da8f
   awesome_notifications_core: 1c16f7521b1757f6d39121289573aa3801ba0299
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
 
