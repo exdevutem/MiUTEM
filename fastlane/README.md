@@ -177,6 +177,30 @@ Compila la app con flutter para macOS
 
 Construye y firma la app para distribución en macOS
 
+### mac load_api_key
+
+```sh
+[bundle exec] fastlane mac load_api_key
+```
+
+Carga la API Key de App Store Connect para autenticación
+
+### mac upload
+
+```sh
+[bundle exec] fastlane mac upload
+```
+
+Sube la aplicación a TestFlight
+
+### mac deploy
+
+```sh
+[bundle exec] fastlane mac deploy
+```
+
+Build completo y upload a TestFlight
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

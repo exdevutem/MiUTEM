@@ -128,7 +128,7 @@ platform :ios do
       profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]}"
       configure_signing()
 
-      build_app(
+      build_ios_app(
         scheme: scheme,
         export_method: "app-store", # Siempre app-store para subir a la appstore.
         workspace: "./ios/Runner.xcworkspace",
@@ -153,10 +153,10 @@ platform :ios do
   desc "Sube la aplicación a TestFlight (requiere IPA)"
   lane :upload do |options|
     # Obtener path del IPA: lane_context si existe, sino argumento custom
-    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || options[:ipa_path]
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH] || string_option(options, :ipa_path, env_var: "IPA_PATH", default: nil)
 
     # Validar que existe
-    UI.user_error!("❌ No se encontró IPA. Proporciona --ipa_path o ejecuta build primero") unless ipa_path
+    UI.user_error!("❌ No se encontró IPA. Proporciona ipa_path:<path> o ejecuta build primero") unless ipa_path
     UI.user_error!("❌ El archivo IPA no existe en: #{ipa_path}") unless File.exist?(ipa_path)
 
     UI.success("✅ Usando IPA: #{ipa_path}")

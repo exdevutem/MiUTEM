@@ -48,6 +48,7 @@ platform :mac do
     match(
       app_identifier: [ENV["APP_IDENTIFIER"]],
       type: type,
+      additional_cert_types: ["mac_installer_distribution"],
       platform: "macos",
       git_url: ENV["MATCH_REPO"],
       readonly: readonly,
@@ -104,9 +105,10 @@ platform :mac do
   end
 
   desc "Construye y firma la app para distribución en macOS"
-  lane :build do
-    skip_flutter_build = ENV["SKIP_FLUTTER_BUILD"] == "true"
-    skip_build_app = ENV["SKIP_BUILD_APP"] == "true"
+  lane :build do |options|
+    skip_flutter_build = bool_option(options, :skip_flutter_build, env_var: "SKIP_FLUTTER_BUILD", default: false)
+    skip_build_app = bool_option(options, :skip_build_app, env_var: "SKIP_BUILD_APP", default: false)
+    skip_configure_signing = bool_option(options, :skip_configure_signing, env_var: "SKIP_CONFIGURE_SIGNING", default: false)
 
     unless skip_flutter_build
       flutter_build()
@@ -125,16 +127,58 @@ platform :mac do
                     else "Development"
                    end
       profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]} macos"
-      configure_signing()
 
-      build_app(
+      unless skip_configure_signing
+        configure_signing()
+      end
+
+      build_mac_app(
         scheme: scheme,
         export_method: "app-store", # Siempre app-store para subir a la appstore.
         workspace: "./macos/Runner.xcworkspace",
         output_directory: "./build/macos",
-        output_name: "MiUTEM.pkg",
-        xcargs: "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='#{profile_name}' CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM='#{ENV["TEAM_ID"]}'"
+        output_name: "MiUTEM.app",
+        skip_package_pkg: false,
       )
     end
+  end
+
+  desc "Carga la API Key de App Store Connect para autenticación"
+  lane :load_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true,
+      in_house: false, # Se especifica false para App Store (nosotros), true para Enterprise
+    )
+  end
+
+  desc "Sube la aplicación a TestFlight"
+  lane :upload do |options|
+    # Obtiene la ruta del archivo .pkg generado por la compilación de macOS
+    pkg_path = lane_context[SharedValues::PKG_OUTPUT_PATH] || string_option(options, :pkg_path, env_var: "PKG_PATH", default: nil)
+
+    # Validar que existe
+    UI.user_error!("❌ No se encontró PKG. Proporciona pkg_path:<path> o ejecuta build primero") unless pkg_path
+    UI.user_error!("❌ El archivo PKG no existe en: #{pkg_path}") unless File.exist?(pkg_path)
+
+    UI.success("✅ Usando PKG: #{pkg_path}")
+
+    # Cargar API key
+    load_api_key()
+
+    # Subir a App Store Connect
+    upload_to_testflight(
+      pkg: pkg_path,
+      skip_submission: true,
+      skip_waiting_for_build_processing: true,
+    )
+  end
+
+  desc "Build completo y upload a TestFlight"
+  lane :deploy do
+    build()
+    upload()
   end
 end
