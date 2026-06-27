@@ -2,11 +2,14 @@ import "../fastlane/src/helpers.rb"
 
 platform :mac do
   desc "Asegura que exista un keychain limpio para importar los certificados de Apple"
-  lane :ensure_keychain do
-    delete_keychain(name: ENV["KEYCHAIN_NAME"]) if File.exist? File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
+  lane :ensure_keychain do |options|
+    keychain_name = string_option(options, :keychain_name, env_var: "KEYCHAIN_NAME", required: true)
+    keychain_password = string_option(options, :keychain_password, env_var: "KEYCHAIN_PASSWORD", required: true)
+
+    delete_keychain(name: keychain_name) if File.exist? File.expand_path("~/Library/Keychains/#{keychain_name}")
     create_keychain(
-      name: ENV["KEYCHAIN_NAME"],
-      password: ENV["KEYCHAIN_PASSWORD"],
+      name: keychain_name,
+      password: keychain_password,
       unlock: true,
       timeout: 0,
       default_keychain: true,
@@ -15,8 +18,10 @@ platform :mac do
   end
 
   desc "Asegura que existan los certificados WWDR de Apple en el keychain"
-  lane :ensure_wwdr do
-    keychain_path = File.expand_path("~/Library/Keychains/#{ENV["KEYCHAIN_NAME"]}")
+  lane :ensure_wwdr do |options|
+    keychain_name = string_option(options, :keychain_name, env_var: "KEYCHAIN_NAME", required: true)
+
+    keychain_path = File.expand_path("~/Library/Keychains/#{keychain_name}")
     wwdr_certs = {
       "AppleWWDRCAG3.cer" => "https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer",
       "AppleWWDRCAG6.cer" => "https://www.apple.com/certificateauthority/AppleWWDRCAG6.cer",
@@ -33,60 +38,76 @@ platform :mac do
   desc "Sincroniza certificados y perfiles de aprovisionamiento para macOS"
   lane :sync_certificates do |options|
     readonly = bool_option(options, :readonly, env_var: "IS_CI", default: false)
-    type = string_option(options, :type, env_var: "MATCH_TYPE", default: "development")
+    type = string_option(options, :type, env_var: "MATCH_TYPE", required: true)
+    app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
+    keychain_name = string_option(options, :keychain_name, env_var: "KEYCHAIN_NAME", required: true)
+    keychain_password = string_option(options, :keychain_password, env_var: "KEYCHAIN_PASSWORD", required: true)
+    match_repo = string_option(options, :match_repo, env_var: "MATCH_REPO", required: true)
+
     skip_keychain_setup = bool_option(options, :skip_keychain_setup, env_var: "SKIP_KEYCHAIN_SETUP", default: false)
     skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, env_var: "SKIP_WWDR_SETUP", default: false)
 
     unless skip_keychain_setup
-      ensure_keychain()
+      ensure_keychain(
+        keychain_name: keychain_name,
+        keychain_password: keychain_password
+      )
     end
 
     unless skip_wwdr_setup
-      ensure_wwdr()
+      ensure_wwdr(
+        keychain_name: keychain_name
+      )
     end
 
     match(
-      app_identifier: [ENV["APP_IDENTIFIER"]],
+      app_identifier: [app_identifier],
       type: type,
       additional_cert_types: ["mac_installer_distribution"],
       platform: "macos",
-      git_url: ENV["MATCH_REPO"],
+      git_url: match_repo,
       readonly: readonly,
-      keychain_name: ENV["KEYCHAIN_NAME"],
-      keychain_password: ENV["KEYCHAIN_PASSWORD"]
+      keychain_name: keychain_name,
+      keychain_password: keychain_password
     )
   end
 
   desc "Configura Signing Settings para Xcode macOS"
-  lane :configure_signing do
-    profile_type = case ENV["MATCH_TYPE"]
+  lane :configure_signing do |options|
+    match_type = string_option(options, :match_type, env_var: "MATCH_TYPE", required: true)
+    app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
+    team_id = string_option(options, :team_id, env_var: "TEAM_ID", required: true)
+
+    profile_type = case match_type
                     when "development" then "Development"
                     when "appstore" then "AppStore"
                     when "ad-hoc" then "AdHoc"
                     when "enterprise" then "Enterprise"
                     else "Development"
                    end
-    profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]} macos"
-    code_sign_identity = ENV["MATCH_TYPE"] == "development" ? "Apple Development" : "Apple Distribution"
+    profile_name = "match #{profile_type} #{app_identifier} macos"
+    code_sign_identity = match_type == "development" ? "Apple Development" : "Apple Distribution"
 
     update_code_signing_settings(
       use_automatic_signing: false,
       path: "./macos/Runner.xcodeproj",
-      team_id: ENV["TEAM_ID"],
-      bundle_identifier: ENV["APP_IDENTIFIER"],
+      team_id: team_id,
+      bundle_identifier: app_identifier,
       profile_name: profile_name,
       code_sign_identity: code_sign_identity
     )
   end
 
   desc "Compila la app con flutter para macOS"
-  lane :flutter_build do
-    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
-    target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
-    skip_clean = ENV["SKIP_CLEAN"] == "true"
-    skip_pods = ENV["SKIP_PODS"] == "true"
-    version = ENV["APP_VERSION"]
-    build_number = ENV["APP_BUILD_NUMBER"]
+  lane :flutter_build do |options|
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "dev")
+    skip_clean = bool_option(options, :skip_clean, env_var: "SKIP_CLEAN", default: false)
+    skip_pods = bool_option(options, :skip_pods, env_var: "SKIP_PODS", default: false)
+    version = string_option(options, :version, env_var: "APP_VERSION")
+    build_number = string_option(options, :build_number, env_var: "APP_BUILD_NUMBER")
+
+    scheme = app_env == "prod" ? "production" : "development"
+    target = app_env == "prod" ? "lib/main_production.dart" : "lib/main_development.dart"
 
     unless skip_clean
       sh("flutter", "clean")
@@ -106,6 +127,11 @@ platform :mac do
 
   desc "Construye y firma la app para distribución en macOS"
   lane :build do |options|
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "dev")
+    match_type = string_option(options, :match_type, env_var: "MATCH_TYPE", required: true)
+    app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
+    team_id = string_option(options, :team_id, env_var: "TEAM_ID", required: true)
+
     skip_flutter_build = bool_option(options, :skip_flutter_build, env_var: "SKIP_FLUTTER_BUILD", default: false)
     skip_build_app = bool_option(options, :skip_build_app, env_var: "SKIP_BUILD_APP", default: false)
     skip_configure_signing = bool_option(options, :skip_configure_signing, env_var: "SKIP_CONFIGURE_SIGNING", default: false)
@@ -114,23 +140,21 @@ platform :mac do
       flutter_build()
     end
 
-    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    scheme = app_env == "prod" ? "production" : "development"
 
     sync_certificates()
 
     unless skip_build_app
-      profile_type = case ENV["MATCH_TYPE"]
+      profile_type = case match_type
                     when "development" then "Development"
                     when "appstore" then "AppStore"
                     when "ad-hoc" then "AdHoc"
                     when "enterprise" then "Enterprise"
                     else "Development"
                    end
-      profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]} macos"
+      profile_name = "match #{profile_type} #{app_identifier} macos"
 
-      unless skip_configure_signing
-        configure_signing()
-      end
+      configure_signing() unless skip_configure_signing
 
       build_mac_app(
         scheme: scheme,
@@ -144,11 +168,15 @@ platform :mac do
   end
 
   desc "Carga la API Key de App Store Connect para autenticación"
-  lane :load_api_key do
+  lane :load_api_key do |options|
+    key_id = string_option(options, :key_id, env_var: "APP_STORE_CONNECT_API_KEY_ID", required: true)
+    issuer_id = string_option(options, :issuer_id, env_var: "APP_STORE_CONNECT_ISSUER_ID", required: true)
+    key_content = string_option(options, :key_content, env_var: "APP_STORE_CONNECT_API_KEY_CONTENT", required: true)
+
     app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      key_id: key_id,
+      issuer_id: issuer_id,
+      key_content: key_content,
       is_key_content_base64: true,
       in_house: false, # Se especifica false para App Store (nosotros), true para Enterprise
     )
