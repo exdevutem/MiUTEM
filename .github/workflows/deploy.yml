@@ -104,7 +104,7 @@ jobs:
           MIUTEM_KEY_ALIAS: ${{ secrets.MIUTEM_KEY_ALIAS }}
           MIUTEM_KEY_PASSWORD: ${{ secrets.MIUTEM_KEY_PASSWORD }}
           GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
-  deploy-ios:
+  deploy-apple:
     needs: determine-environment
     runs-on: macos-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
@@ -117,13 +117,6 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: ${{ vars.XCODE_VERSION }}
-
-      - name: 🔏 Descargar certificados raíz de Apple
-        run: |
-          curl -sS -o /tmp/AppleWWDRCA.cer \
-            https://developer.apple.com/certificationauthority/AppleWWDRCA.cer
-          curl -sS -o /tmp/AppleRootCA.cer \
-            https://www.apple.com/appleca/AppleIncRootCertificate.cer
 
       - name: ⚡ Configurar Cache para Flutter pub
         uses: actions/cache@v5
@@ -189,8 +182,31 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
 
-      - name: 🚀 Desplegar a TestFlight
+      - name: 🚀 Desplegar a TestFlight (iOS)
         run: bundle exec fastlane ios deploy
+        env:
+          IS_CI: ${{ vars.IS_CI }}
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+          APP_ENV: ${{ vars.APP_ENV }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+          TEAM_ID: ${{ secrets.TEAM_ID }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          GITHUB_TOKEN: ${{ github.token }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          KEYCHAIN_NAME: ${{ secrets.KEYCHAIN_NAME }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          MATCH_REPO: ${{ secrets.MATCH_REPO }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+
+      - name: 🚀 Desplegar a App Store (macOS)
+        run: bundle exec fastlane mac deploy
         env:
           IS_CI: ${{ vars.IS_CI }}
           APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}

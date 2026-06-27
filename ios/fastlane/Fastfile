@@ -12,7 +12,6 @@ platform :ios do
       default_keychain: true,
       add_to_search_list: true
     )
-
   end
 
   desc "Asegura que exista los certificados de Apple en el keychain para que match funcione correctamente"
@@ -35,8 +34,8 @@ platform :ios do
   lane :sync_certificates do |options|
     readonly = bool_option(options, :readonly, env_var: "IS_CI", default: false)
     type = string_option(options, :type, env_var: "MATCH_TYPE", default: "appstore")
-    skip_keychain_setup = bool_option(options, :skip_keychain_setup, default: false)
-    skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, default: false)
+    skip_keychain_setup = bool_option(options, :skip_keychain_setup, env_var: "SKIP_KEYCHAIN_SETUP", default: false)
+    skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, env_var: "SKIP_WWDR_SETUP", default: false)
 
     unless skip_keychain_setup
       ensure_keychain()
@@ -49,6 +48,7 @@ platform :ios do
     match(
       app_identifier: [ENV["APP_IDENTIFIER"]],
       type: type,
+      platform: "ios",
       git_url: ENV["MATCH_REPO"],
       readonly: readonly,
       keychain_name: ENV["KEYCHAIN_NAME"],
@@ -78,7 +78,7 @@ platform :ios do
     )
   end
 
-  desc "Compila la app con flutter"
+  desc "Compila la app con flutter para iOS"
   lane :flutter_build do
     scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
     target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
@@ -104,7 +104,7 @@ platform :ios do
     sh(*command)
   end
 
-  desc "Compila la aplicación"
+  desc "Construye y firma la app para distribución en iOS"
   lane :build do
     skip_flutter_build = ENV["SKIP_FLUTTER_BUILD"] == "true"
     skip_build_app = ENV["SKIP_BUILD_APP"] == "true"
@@ -118,6 +118,14 @@ platform :ios do
     sync_certificates()
 
     unless skip_build_app
+      profile_type = case ENV["MATCH_TYPE"]
+                    when "development" then "Development"
+                    when "appstore" then "AppStore"
+                    when "ad-hoc" then "AdHoc"
+                    when "enterprise" then "Enterprise"
+                    else "Development"
+                   end
+      profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]}"
       configure_signing()
 
       build_app(

@@ -53,7 +53,7 @@ Configura Signing Settings para Xcode
 [bundle exec] fastlane ios flutter_build
 ```
 
-Compila la app con flutter
+Compila la app con flutter para iOS
 
 ### ios build
 
@@ -61,7 +61,7 @@ Compila la app con flutter
 [bundle exec] fastlane ios build
 ```
 
-Compila la aplicación
+Construye y firma la app para distribución en iOS
 
 ### ios load_api_key
 
@@ -160,6 +160,22 @@ Sincroniza certificados y perfiles de aprovisionamiento para macOS
 ```
 
 Configura Signing Settings para Xcode macOS
+
+### mac flutter_build
+
+```sh
+[bundle exec] fastlane mac flutter_build
+```
+
+Compila la app con flutter para macOS
+
+### mac build
+
+```sh
+[bundle exec] fastlane mac build
+```
+
+Construye y firma la app para distribución en macOS
 
 ----
 

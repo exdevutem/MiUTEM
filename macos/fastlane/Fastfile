@@ -34,8 +34,8 @@ platform :mac do
   lane :sync_certificates do |options|
     readonly = bool_option(options, :readonly, env_var: "IS_CI", default: false)
     type = string_option(options, :type, env_var: "MATCH_TYPE", default: "development")
-    skip_keychain_setup = bool_option(options, :skip_keychain_setup, default: false)
-    skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, default: false)
+    skip_keychain_setup = bool_option(options, :skip_keychain_setup, env_var: "SKIP_KEYCHAIN_SETUP", default: false)
+    skip_wwdr_setup = bool_option(options, :skip_wwdr_setup, env_var: "SKIP_WWDR_SETUP", default: false)
 
     unless skip_keychain_setup
       ensure_keychain()
@@ -65,7 +65,7 @@ platform :mac do
                     when "enterprise" then "Enterprise"
                     else "Development"
                    end
-    profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]}"
+    profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]} macos"
     code_sign_identity = ENV["MATCH_TYPE"] == "development" ? "Apple Development" : "Apple Distribution"
 
     update_code_signing_settings(
@@ -76,5 +76,65 @@ platform :mac do
       profile_name: profile_name,
       code_sign_identity: code_sign_identity
     )
+  end
+
+  desc "Compila la app con flutter para macOS"
+  lane :flutter_build do
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
+    skip_clean = ENV["SKIP_CLEAN"] == "true"
+    skip_pods = ENV["SKIP_PODS"] == "true"
+    version = ENV["APP_VERSION"]
+    build_number = ENV["APP_BUILD_NUMBER"]
+
+    unless skip_clean
+      sh("flutter", "clean")
+      sh("flutter", "pub", "get")
+    end
+
+    unless skip_pods
+      cocoapods(use_bundle_exec: false, podfile: "macos")
+    end
+
+    command = ["flutter", "build", "macos", "--release", "--flavor=#{scheme}", "--target=#{target}", "--no-tree-shake-icons"]
+    command << "--build-name=#{version}" if version && !version.empty?
+    command << "--build-number=#{build_number}" if build_number && !build_number.empty?
+
+    sh(*command)
+  end
+
+  desc "Construye y firma la app para distribución en macOS"
+  lane :build do
+    skip_flutter_build = ENV["SKIP_FLUTTER_BUILD"] == "true"
+    skip_build_app = ENV["SKIP_BUILD_APP"] == "true"
+
+    unless skip_flutter_build
+      flutter_build()
+    end
+
+    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+
+    sync_certificates()
+
+    unless skip_build_app
+      profile_type = case ENV["MATCH_TYPE"]
+                    when "development" then "Development"
+                    when "appstore" then "AppStore"
+                    when "ad-hoc" then "AdHoc"
+                    when "enterprise" then "Enterprise"
+                    else "Development"
+                   end
+      profile_name = "match #{profile_type} #{ENV["APP_IDENTIFIER"]} macos"
+      configure_signing()
+
+      build_app(
+        scheme: scheme,
+        export_method: "app-store", # Siempre app-store para subir a la appstore.
+        workspace: "./macos/Runner.xcworkspace",
+        output_directory: "./build/macos",
+        output_name: "MiUTEM.pkg",
+        xcargs: "CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER='#{profile_name}' CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM='#{ENV["TEAM_ID"]}'"
+      )
+    end
   end
 end
