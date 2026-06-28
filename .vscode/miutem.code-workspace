@@ -5,5 +5,18 @@
       "name": "Mi UTEM"
     }
   ],
-  "settings": {},
+  "settings": {
+    "java.compile.nullAnalysis.mode": "automatic",
+    "git.ignoredRepositories": [
+      "/opt/homebrew/share/flutter"
+    ],
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+      "PowerShell": {
+        "source": "PowerShell",
+        "icon": "terminal-powershell",
+        "color": "terminal.ansiMagenta"
+      }
+    }
+  },
 }
