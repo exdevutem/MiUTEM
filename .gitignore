@@ -2,6 +2,7 @@
 **/*/google-services.json
 **/*/GoogleService-Info.plist
 **/*/firebase_options_*.dart
+firebase.json
 .env*
 !.env.example
 
