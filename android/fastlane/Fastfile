@@ -1,10 +1,10 @@
-default_platform(:android)
+import "../fastlane/src/helpers.rb"
 
 platform :android do
   desc "Decodifica el keystore desde base64 y lo deja en un archivo temporal"
-  lane :setup_keystore do
-    keystore_base64 = ENV["MIUTEM_KEYSTORE_BASE64"]
-    
+  lane :setup_keystore do |options|
+    keystore_base64 = string_option(options, :keystore_base64, env_var: "MIUTEM_KEYSTORE_BASE64", required: true)
+
     unless keystore_base64 && !keystore_base64.empty?
       UI.message("⚠️  MIUTEM_KEYSTORE_BASE64 no definido, usando archivo local (si existe)")
       next
@@ -13,20 +13,22 @@ platform :android do
     keystore_path = "/tmp/miutem.jks"
     File.write(keystore_path, Base64.decode64(keystore_base64), mode: "wb")
     ENV["MIUTEM_KEYSTORE_PATH"] = keystore_path
-    
+
     UI.success("✅ Keystore decodificado en #{keystore_path}")
   end
 
   desc "Compila la app con flutter"
-  lane :build do
+  lane :build do |options|
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "dev")
+    skip_clean = bool_option(options, :skip_clean, env_var: "SKIP_CLEAN", default: false)
+    version = string_option(options, :version, env_var: "APP_VERSION")
+    build_number = string_option(options, :build_number, env_var: "APP_BUILD_NUMBER")
+
     # Asegura que el keystore esté configurado antes de compilar
     setup_keystore()
-    
-    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+
+    scheme = app_env == "prod" ? "production" : "development"
     target = scheme == "production" ? "lib/main_prod.dart" : "lib/main_dev.dart"
-    skip_clean = ENV["SKIP_CLEAN"] == "true"
-    version = ENV["APP_VERSION"]
-    build_number = ENV["APP_BUILD_NUMBER"]
 
     unless skip_clean
       sh("flutter", "clean")
@@ -48,14 +50,19 @@ platform :android do
 
   desc "Sube el AAB a Google Play"
   lane :upload do |options|
-    scheme = ENV["APP_ENV"] == "prod" ? "production" : "development"
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "dev")
+    android_track = string_option(options, :android_track, env_var: "ANDROID_TRACK", default: "internal")
+    json_key_data = string_option(options, :json_key_data, env_var: "GOOGLE_PLAY_JSON_KEY", required: true)
+    package_name = string_option(options, :package_name, env_var: "APP_PACKAGE_NAME", required: true)
+
+    scheme = app_env == "prod" ? "production" : "development"
     aab_path = options[:aab_path] || "../build/app/outputs/bundle/#{scheme}Release/app-#{scheme}-release.aab"
 
     UI.user_error!("❌ El archivo AAB no existe en: #{aab_path}") unless File.exist?(aab_path)
     UI.success("✅ Usando AAB: #{aab_path}")
 
     upload_to_play_store(
-      track: ENV["ANDROID_TRACK"] || "internal",
+      track: android_track,
       aab: File.expand_path(aab_path),
       release_status: "completed",
       skip_upload_apk: true,
@@ -63,11 +70,11 @@ platform :android do
       skip_upload_changelogs: true,
       skip_upload_images: true,
       skip_upload_screenshots: true,
-      json_key_data: ENV["GOOGLE_PLAY_JSON_KEY"],
-      package_name: ENV["APP_PACKAGE_NAME"],
+      json_key_data: json_key_data,
+      package_name: package_name,
     )
 
-    UI.success("✅ AAB subido a Google Play (#{ENV["ANDROID_TRACK"] || "internal"}) exitosamente")
+    UI.success("✅ AAB subido a Google Play (#{android_track}) exitosamente")
   end
 
   desc "Build completo y upload a Google Play"
