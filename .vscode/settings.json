@@ -1,6 +1,0 @@
-{
-    "java.compile.nullAnalysis.mode": "automatic",
-    "git.ignoredRepositories": [
-        "/opt/homebrew/share/flutter"
-    ]
-}
