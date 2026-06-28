@@ -205,7 +205,7 @@ jobs:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
 
-      - name: 🚀 Desplegar a App Store (macOS)
+      - name: 🚀 Desplegar a TestFlight (macOS)
         run: bundle exec fastlane mac deploy
         env:
           IS_CI: ${{ vars.IS_CI }}
