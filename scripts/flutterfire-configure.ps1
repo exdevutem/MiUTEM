@@ -107,7 +107,7 @@ function Configure-Environment {
 
     $cmd = @(
         "flutterfire", "config",
-        "--platforms=ios,macos,android",
+        "--platforms=ios,macos,android,windows",
         "--project=$PROJECT",
         "--out=$OUT",
         "--ios-bundle-id=$IOS_BUNDLE_ID",

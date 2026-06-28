@@ -140,7 +140,7 @@ if not "%FIREBASE_TOKEN%"=="" (
 )
 
 set "CMD=flutterfire config ^
-  --platforms=ios,macos,android ^
+  --platforms=ios,macos,android,windows ^
   --project=!PROJECT! ^
   --out=!OUT! ^
   --ios-bundle-id=!IOS_BUNDLE_ID! ^
@@ -158,7 +158,7 @@ if "%VERBOSE%"=="true" echo [cmd] !CMD!
 if "%DRY_RUN%"=="true" exit /b 0
 
 flutterfire config ^
-  --platforms=ios,macos,android ^
+  --platforms=ios,macos,android,windows ^
   --project=!PROJECT! ^
   --out=!OUT! ^
   --ios-bundle-id=!IOS_BUNDLE_ID! ^

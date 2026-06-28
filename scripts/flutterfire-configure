@@ -101,14 +101,14 @@ configure_environment() {
   log_verbose "Android package: $ANDROID_PACKAGE_NAME"
   log_verbose "Android json: $ANDROID_OUT"
 
-  
+
   # Solo si el env "FIREBASE_TOKEN" está definido, se asume que el usuario quiere usarlo en el flutterfire con el flag --token, de lo contrario se omite el flag y se asume que el usuario ya ha iniciado sesión con firebase login
   if [ -n "$FIREBASE_TOKEN" ]; then
     log_verbose "Usando token de Firebase desde la variable de entorno FIREBASE_TOKEN"
   fi
 
   run_cmd flutterfire config \
-    --platforms=ios,macos,android \
+    --platforms=ios,macos,android,windows \
     --project="$PROJECT" \
     --out="$OUT" \
     --ios-bundle-id="$IOS_BUNDLE_ID" \
