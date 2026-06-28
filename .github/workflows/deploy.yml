@@ -30,7 +30,8 @@ jobs:
   deploy-android:
     needs: determine-environment
     # Por ahora vamos a limitar el despliegue de android a producción, ya que aún debemos crear la app de desarrollo para el track de desarrollo.
-    if: ${{ needs.determine-environment.outputs.environment == 'production' }}
+    # Si el commit inclue [skip deploy] o [skip android-deploy] en el mensaje, se saltará el despliegue.
+    if: ${{ needs.determine-environment.outputs.environment == 'production' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip android-deploy]')) }}
     runs-on: ubuntu-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
@@ -104,11 +105,13 @@ jobs:
           MIUTEM_KEY_ALIAS: ${{ secrets.MIUTEM_KEY_ALIAS }}
           MIUTEM_KEY_PASSWORD: ${{ secrets.MIUTEM_KEY_PASSWORD }}
           GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
-  deploy-apple:
+  deploy-ios:
     needs: determine-environment
     runs-on: macos-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
+    # Si contiene [skip deploy] o [skip ios-deploy] en el mensaje del commit, se saltará el despliegue.
+    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip ios-deploy]') }}
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
@@ -123,14 +126,14 @@ jobs:
         with:
           path: |
             ~/.pub-cache
-          key: pub-cache-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
-          restore-keys: pub-cache-${{ runner.os }}-
+          key: pub-cache-ios-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-ios-${{ runner.os }}-
 
       - name: ⚡ Configurar Cache para Dart global packages
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-${{ runner.os }}-flutterfire
+          key: dart-global-ios-${{ runner.os }}-flutterfire
 
       - name: ⚡ Configurar Cache para CocoaPods
         uses: actions/cache@v5
@@ -138,16 +141,16 @@ jobs:
           path: |
             ios/Pods
             ~/.cocoapods
-          key: pods-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: pods-${{ runner.os }}-
+          key: pods-ios-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-ios-${{ runner.os }}-
 
       - name: ⚡ Configurar Cache para DerivedData
         uses: actions/cache@v5
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          key: derived-data-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
+          key: derived-data-ios-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
           restore-keys: |
-            derived-data-${{ runner.os }}-
+            derived-data-ios-${{ runner.os }}-
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -204,6 +207,86 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+
+  deploy-macos:
+    needs: determine-environment
+    runs-on: macos-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    timeout-minutes: 60
+    # Si contiene [skip deploy] o [skip macos-deploy] en el mensaje del commit, se saltará el despliegue.
+    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip macos-deploy]') }}
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚒️ Configurar Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ vars.XCODE_VERSION }}
+
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-macos-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-macos-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Dart global packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.pub-cache/global_packages
+          key: dart-global-macos-${{ runner.os }}-flutterfire
+
+      - name: ⚡ Configurar Cache para CocoaPods
+        uses: actions/cache@v5
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+          key: pods-macos-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-macos-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para DerivedData
+        uses: actions/cache@v5
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: derived-data-macos-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
+          restore-keys: |
+            derived-data-macos-${{ runner.os }}-
+
+      - name: 🐦 Configurar Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          cache: true
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
+
+      - name: 💎 Configurar Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ vars.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 🗳️ Instalar firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: 📦 Instalar librerías
+        run: flutter pub get
+
+      - name: 🔥 Instalar FlutterFire
+        run: dart pub global activate flutterfire_cli
+
+      - name: 💍 Instala gem xcodeproj
+        run: sudo gem install xcodeproj
+
+      - name: 🪎 Configura bundle
+        run: bundle install
+
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight (macOS)
         run: bundle exec fastlane mac deploy
