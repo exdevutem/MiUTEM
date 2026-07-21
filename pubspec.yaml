@@ -53,7 +53,7 @@ dependencies:
   uuid: ^4.5.3
   sensors_plus: ^7.1.0
   dio_cache_interceptor: ^4.0.7
-  http_cache_file_store: ^2.0.1
+  http_cache_file_store: ^2.0.2
   qr_flutter: ^4.1.0
   barcode_widget: ^2.0.4
   flutter_svg: ^2.2.4
