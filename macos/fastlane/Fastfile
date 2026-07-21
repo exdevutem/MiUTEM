@@ -107,7 +107,7 @@ platform :mac do
     build_number = string_option(options, :build_number, env_var: "APP_BUILD_NUMBER")
 
     scheme = app_env == "prod" ? "production" : "development"
-    target = app_env == "prod" ? "lib/main_production.dart" : "lib/main_development.dart"
+    target = app_env == "prod" ? "lib/main_prod.dart" : "lib/main_dev.dart"
 
     unless skip_clean
       sh("flutter", "clean")
