@@ -22,16 +22,16 @@ jobs:
         id: set-environment
         run: |
           if [[ "${{ inputs.track }}" == "production" || "${{ github.ref }}" == "refs/heads/prod" ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "environment=prod" >> $GITHUB_OUTPUT
           else
-            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "environment=dev" >> $GITHUB_OUTPUT
           fi
 
   deploy-android:
     needs: determine-environment
     # Por ahora vamos a limitar el despliegue de android a producción, ya que aún debemos crear la app de desarrollo para el track de desarrollo.
     # Si el commit inclue [skip deploy] o [skip android-deploy] en el mensaje, se saltará el despliegue.
-    if: ${{ needs.determine-environment.outputs.environment == 'production' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip android-deploy]')) }}
+    if: ${{ needs.determine-environment.outputs.environment == 'prod' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip android-deploy]')) }}
     runs-on: ubuntu-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
@@ -82,7 +82,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate flutterfire_cli
+        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
 
       - name: 🪎 Configura bundle
         run: bundle install
@@ -90,7 +90,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure prod
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a Play Store
         run: bundle exec fastlane android deploy
@@ -172,7 +172,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate flutterfire_cli
+        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
 
       - name: 💍 Instala gem xcodeproj
         run: sudo gem install xcodeproj
@@ -180,10 +180,10 @@ jobs:
       - name: 🪎 Configura bundle
         run: bundle install
 
-      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight (iOS)
         run: bundle exec fastlane ios deploy
@@ -276,7 +276,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate flutterfire_cli
+        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
 
       - name: 💍 Instala gem xcodeproj
         run: sudo gem install xcodeproj
@@ -284,10 +284,10 @@ jobs:
       - name: 🪎 Configura bundle
         run: bundle install
 
-      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight (macOS)
         run: bundle exec fastlane mac deploy
