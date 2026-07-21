@@ -60,7 +60,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-${{ runner.os }}-flutterfire
+          key: dart-global-${{ runner.os }}
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -133,7 +133,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-ios-${{ runner.os }}-flutterfire
+          key: dart-global-ios-${{ runner.os }}
 
       - name: ⚡ Configurar Cache para CocoaPods
         uses: actions/cache@v5
@@ -237,7 +237,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-macos-${{ runner.os }}-flutterfire
+          key: dart-global-macos-${{ runner.os }}
 
       - name: ⚡ Configurar Cache para CocoaPods
         uses: actions/cache@v5
