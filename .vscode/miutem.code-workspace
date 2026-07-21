@@ -17,6 +17,9 @@
         "icon": "terminal-powershell",
         "color": "terminal.ansiMagenta"
       }
-    }
+    },
+    "githubPullRequests.ignoredPullRequestBranches": [
+      "dev"
+    ]
   },
 }
