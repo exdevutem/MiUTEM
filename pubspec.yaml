@@ -31,7 +31,7 @@ dependencies:
   vector_math: ^2.2.0
   dotted_border: ^3.1.0
   screenshot: ^3.0.0
-  share_plus: ^13.2.0
+  share_plus: ^13.3.0
   # Firebase
   firebase_core: ^4.13.0
   firebase_remote_config: ^6.1.3
