@@ -13,7 +13,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   logger: ^2.4.0
   flutter_dotenv: ^6.0.1
-  dio: ^5.10.0
+  dio: ^5.11.0
   get: ^4.6.6
   package_info_plus: ^10.2.0
   shared_preferences: ^2.3.2
