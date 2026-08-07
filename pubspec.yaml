@@ -18,7 +18,7 @@ dependencies:
   package_info_plus: ^10.2.0
   shared_preferences: ^2.3.2
   dart_jsonwebtoken: ^3.4.1
-  google_fonts: ^8.1.0
+  google_fonts: ^8.2.1
   flutter_native_splash: ^2.4.1
   video_player: ^2.9.2
   url_launcher: ^6.3.0
