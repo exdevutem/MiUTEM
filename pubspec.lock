@@ -285,26 +285,26 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_analytics
-      sha256: "47b68927bc4abd6d7b4e2ddfe7c64fe087cca5f96d0c2b8d9d6deb6120c10ad6"
+      sha256: a139dd0ada1c6e0ffd77bfdb877ac9061ffdec7c415e3e06113bdf8844db771f
       url: "https://pub.dev"
     source: hosted
-    version: "12.4.5"
+    version: "12.4.6"
   firebase_analytics_platform_interface:
     dependency: transitive
     description:
       name: firebase_analytics_platform_interface
-      sha256: "36ce5feb5a996381e6411792eaa00e89178e75943e54ac8f14a8296b6e9a3e88"
+      sha256: "448c319ea895da002e43892c7d3f15dccbc3c4c3b81d3e307e37da885ea52bdf"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.5"
+    version: "6.0.6"
   firebase_analytics_web:
     dependency: transitive
     description:
       name: firebase_analytics_web
-      sha256: c12358983c927093cd40d42feb0cb05c8594d3a9b56ab5ad303bec2b8838d252
+      sha256: "67f287a0df75f27eafdd4a66a41e44f232c3aba713ea4794a1159893665a8bf5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1+11"
+    version: "0.6.1+12"
   firebase_core:
     dependency: "direct main"
     description:
