@@ -118,7 +118,7 @@ platform :mac do
       cocoapods(use_bundle_exec: false, podfile: "macos")
     end
 
-    command = ["flutter", "build", "macos", "--release", "--flavor=#{scheme}", "--target=#{target}", "--no-tree-shake-icons"]
+    command = ["flutter", "build", "macos", "--release", "--flavor=#{scheme}", "--target=#{target}", "--no-tree-shake-icons", "--config-only"]
     command << "--build-name=#{version}" if version && !version.empty?
     command << "--build-number=#{build_number}" if build_number && !build_number.empty?
 
