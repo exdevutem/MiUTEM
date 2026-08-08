@@ -84,7 +84,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
+        run: dart pub global activate flutterfire_cli
 
       - name: 🪎 Configura bundle
         run: bundle install
@@ -154,6 +154,18 @@ jobs:
           restore-keys: |
             derived-data-ios-${{ runner.os }}-
 
+      - name: ⚡ Configurar Cache para Homebrew
+        uses: actions/cache@v5
+        with:
+          path: |
+            /opt/homebrew/Cellar/xcbeautify
+          key: homebrew-macos-${{ runner.os }}-${{ hashFiles('.github/workflows/deploy.yml') }}
+          restore-keys: homebrew-macos-${{ runner.os }}-
+
+      - name: ⚡ Instalar Herramientas con Homebrew
+        run: |
+          brew install xcbeautify
+
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
@@ -174,7 +186,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
+        run: dart pub global activate flutterfire_cli
 
       - name: 💍 Instala gem xcodeproj
         run: sudo gem install xcodeproj
@@ -258,6 +270,18 @@ jobs:
           restore-keys: |
             derived-data-macos-${{ runner.os }}-
 
+      - name: ⚡ Configurar Cache para Homebrew
+        uses: actions/cache@v5
+        with:
+          path: |
+            /opt/homebrew/Cellar/xcbeautify
+          key: homebrew-macos-${{ runner.os }}-${{ hashFiles('.github/workflows/deploy.yml') }}
+          restore-keys: homebrew-macos-${{ runner.os }}-
+
+      - name: ⚡ Instalar Herramientas con Homebrew
+        run: |
+          brew install xcbeautify
+
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
         with:
@@ -278,7 +302,7 @@ jobs:
         run: flutter pub get
 
       - name: 🔥 Instalar FlutterFire
-        run: dart pub global activate --source git https://github.com/phuongta-pi/flutterfire_cli.git --git-path packages/flutterfire_cli --git-ref fix/spm-crashlytics-derived-data-path --overwrite
+        run: dart pub global activate flutterfire_cli
 
       - name: 💍 Instala gem xcodeproj
         run: sudo gem install xcodeproj

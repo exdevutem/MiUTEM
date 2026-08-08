@@ -131,6 +131,7 @@ platform :mac do
     match_type = string_option(options, :match_type, env_var: "MATCH_TYPE", required: true)
     app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
     team_id = string_option(options, :team_id, env_var: "TEAM_ID", required: true)
+    is_ci = bool_option(options, :is_ci, env_var: "IS_CI", default: false)
 
     skip_flutter_build = bool_option(options, :skip_flutter_build, env_var: "SKIP_FLUTTER_BUILD", default: false)
     skip_build_app = bool_option(options, :skip_build_app, env_var: "SKIP_BUILD_APP", default: false)
@@ -163,6 +164,7 @@ platform :mac do
         output_directory: "./build/macos",
         output_name: "MiUTEM.app",
         skip_package_pkg: false,
+        xcodebuild_formatter: is_ci ? "xcbeautify --renderer github-actions" : "xcbeautify",
       )
     end
   end

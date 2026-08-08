@@ -132,6 +132,7 @@ platform :ios do
     match_type = string_option(options, :match_type, env_var: "MATCH_TYPE", required: true)
     app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
     team_id = string_option(options, :team_id, env_var: "TEAM_ID", required: true)
+    is_ci = bool_option(options, :is_ci, env_var: "IS_CI", default: false)
 
     # Skip options
     skip_flutter_build = bool_option(options, :skip_flutter_build, env_var: "SKIP_FLUTTER_BUILD", default: false)
@@ -164,6 +165,7 @@ platform :ios do
         workspace: "./ios/Runner.xcworkspace",
         output_directory: "./build/ios/ipa",
         output_name: "MiUTEM.ipa",
+        xcodebuild_formatter: is_ci ? "xcbeautify --renderer github-actions" : "xcbeautify",
       )
     end
   end
