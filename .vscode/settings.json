@@ -1,0 +1,20 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "git.ignoredRepositories": [
+    "/opt/homebrew/share/flutter"
+  ],
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell",
+      "color": "terminal.ansiMagenta"
+    }
+  },
+  "githubPullRequests.ignoredPullRequestBranches": [
+    "dev"
+  ],
+  "cSpell.words": [
+    "miutem"
+  ]
+}
