@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:adaptive_theme/adaptive_theme.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
@@ -10,6 +12,17 @@ import "package:miutem/styles/styles.dart";
 
 void runMainApp(FirebaseOptions firebaseOptions) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+    // Set window title to "Mi UTEM"
+    SystemChrome.setApplicationSwitcherDescription(
+      const ApplicationSwitcherDescription(
+        label: "Mi UTEM",
+        primaryColor: 0xFF000000, // Set the primary color to black
+      ),
+    );
+  }
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -30,7 +43,6 @@ class MiUTEMApp extends StatefulWidget {
 }
 
 class _MiUTEMAppState extends State<MiUTEMApp> {
-
   @override
   void initState() {
     isOffline().then((isOffline) => Preferencia.isOffline.set(isOffline ? "true" : "false"), onError: (err) => Preferencia.isOffline.set("true"));

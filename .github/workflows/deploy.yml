@@ -14,6 +14,8 @@ on:
           - development
 jobs:
   determine-environment:
+    # Los bumps de dependabot no despliegan. Al saltarse este job, los deploy-* que dependen de él también se saltan.
+    if: ${{ github.actor != 'dependabot[bot]' && github.event.head_commit.author.username != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.set-environment.outputs.environment }}
@@ -22,16 +24,16 @@ jobs:
         id: set-environment
         run: |
           if [[ "${{ inputs.track }}" == "production" || "${{ github.ref }}" == "refs/heads/prod" ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "environment=prod" >> $GITHUB_OUTPUT
           else
-            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "environment=dev" >> $GITHUB_OUTPUT
           fi
 
   deploy-android:
     needs: determine-environment
     # Por ahora vamos a limitar el despliegue de android a producción, ya que aún debemos crear la app de desarrollo para el track de desarrollo.
     # Si el commit inclue [skip deploy] o [skip android-deploy] en el mensaje, se saltará el despliegue.
-    if: ${{ needs.determine-environment.outputs.environment == 'production' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip android-deploy]')) }}
+    if: ${{ needs.determine-environment.outputs.environment == 'prod' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip android-deploy]')) }}
     runs-on: ubuntu-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
@@ -60,7 +62,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-${{ runner.os }}-flutterfire
+          key: dart-global-${{ runner.os }}
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -90,7 +92,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure prod
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a Play Store
         run: bundle exec fastlane android deploy
@@ -133,7 +135,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-ios-${{ runner.os }}-flutterfire
+          key: dart-global-ios-${{ runner.os }}
 
       - name: ⚡ Configurar Cache para CocoaPods
         uses: actions/cache@v5
@@ -151,6 +153,18 @@ jobs:
           key: derived-data-ios-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
           restore-keys: |
             derived-data-ios-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Homebrew
+        uses: actions/cache@v5
+        with:
+          path: |
+            /opt/homebrew/Cellar/xcbeautify
+          key: homebrew-macos-${{ runner.os }}-${{ hashFiles('.github/workflows/deploy.yml') }}
+          restore-keys: homebrew-macos-${{ runner.os }}-
+
+      - name: ⚡ Instalar Herramientas con Homebrew
+        run: |
+          brew install xcbeautify
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -180,10 +194,10 @@ jobs:
       - name: 🪎 Configura bundle
         run: bundle install
 
-      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight (iOS)
         run: bundle exec fastlane ios deploy
@@ -204,6 +218,7 @@ jobs:
           MATCH_REPO: ${{ secrets.MATCH_REPO }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_TYPE: ${{ secrets.MATCH_TYPE }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
@@ -236,7 +251,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.pub-cache/global_packages
-          key: dart-global-macos-${{ runner.os }}-flutterfire
+          key: dart-global-macos-${{ runner.os }}
 
       - name: ⚡ Configurar Cache para CocoaPods
         uses: actions/cache@v5
@@ -254,6 +269,18 @@ jobs:
           key: derived-data-macos-${{ runner.os }}-${{ hashFiles('ios/**/*.swift', 'ios/Podfile.lock') }}
           restore-keys: |
             derived-data-macos-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Homebrew
+        uses: actions/cache@v5
+        with:
+          path: |
+            /opt/homebrew/Cellar/xcbeautify
+          key: homebrew-macos-${{ runner.os }}-${{ hashFiles('.github/workflows/deploy.yml') }}
+          restore-keys: homebrew-macos-${{ runner.os }}-
+
+      - name: ⚡ Instalar Herramientas con Homebrew
+        run: |
+          brew install xcbeautify
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -283,10 +310,10 @@ jobs:
       - name: 🪎 Configura bundle
         run: bundle install
 
-      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment }})
+      - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'production' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
 
       - name: 🚀 Desplegar a TestFlight (macOS)
         run: bundle exec fastlane mac deploy
@@ -307,6 +334,7 @@ jobs:
           MATCH_REPO: ${{ secrets.MATCH_REPO }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_TYPE: ${{ secrets.MATCH_TYPE }}
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}

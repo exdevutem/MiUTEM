@@ -9,6 +9,7 @@ analyzer:
     - lib/firebase_options_*.dart
     - lib/main_dev.dart
     - lib/main_prod.dart
+    - fastlane/build/**
     - build/**
     - android/**
     - ios/**
