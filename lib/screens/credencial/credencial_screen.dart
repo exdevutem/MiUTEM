@@ -47,9 +47,9 @@ class _CredencialScreenState extends State<CredencialScreen> {
         },
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // Padding (16*2) + título (~34) + Space.medium (16) + Space.small (12) + hint text (~20)
+            // Padding (16*2) + Space.large (20) + título (~34) + Space.medium (16) + Space.small (12) + hint text (~20)
             final cardHeight =
-                (constraints.maxHeight - 32 - 34 - 16 - 12 - 20)
+                (constraints.maxHeight - 32 - 20 - 34 - 16 - 12 - 20)
                     .clamp(560.0, double.infinity)
                     .toDouble();
             return SingleChildScrollView(
@@ -62,6 +62,7 @@ class _CredencialScreenState extends State<CredencialScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Space.large,
                       Text(
                         "Credencial",
                         style: Theme.of(context).textTheme.headlineMedium,
