@@ -88,71 +88,26 @@ ruby-install -U ruby
    ```bash
    ./scripts/flutterfire-configure all # Puedes agregar --dry-run para ver que comandos se ejecutarán.
    ```
-2. Se te preguntará que plataformas quieres configurar. Primero deberá ir las de desarrollo. Puedes validar esto ya que saldrá en el output el proyecto de firebase. En este caso es miutem-dev
+   En Windows usa `scripts\flutterfire-configure.ps1` (PowerShell) o `scripts\flutterfire-configure.bat` (CMD). También puedes indicar un solo entorno con `dev` o `prod` en vez de `all`.
+
+   El script pasa todos los parámetros a `flutterfire config`, así que no te preguntará por plataformas ni por build configurations. Por cada entorno ejecuta `flutterfire` dos veces, una por cada build configuration de Xcode:
+
+   | Entorno | Proyecto Firebase | Build configurations                       | Flavor de Android |
+   | ------- | ----------------- | ------------------------------------------ | ----------------- |
+   | `dev`   | `miutem-dev`      | `Debug-development`, `Release-development`  | `development`     |
+   | `prod`  | `miutem-prod`     | `Debug-production`, `Release-production`    | `production`      |
+
+   Las variantes `Debug-*` son las que permiten ejecutar la app en modo debug (`flutter run`), y las `Release-*` las que se usan para compilar y publicar. Si solo necesitas una de las dos, usa `--build-type`:
+
+   ```bash
+   ./scripts/flutterfire-configure all --build-type=Release # Solo Release-development y Release-production
+   ./scripts/flutterfire-configure dev --build-type=Debug   # Solo Debug-development
    ```
-   i Found 7 Firebase projects. Selecting project miutem-dev.   <------ Este es el proyecto de firebase.
-   ? Which platforms should your configuration support (use arrow keys & space to select)? ›
-   ✔ android
-   ✔ ios
-   ✔ macos
-     web
-     windows
-   ```
-   Asegúrate de seleccionar solo las plataformas de desarrollo actual (android, ios, macos).
-3. Luego debes seleccionar `Build Configuration` como tipo de configuración
-   ```
-   i Found 7 Firebase projects. Selecting project miutem-dev.
-   ✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, ios, macos
-   ? You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. ›
-   ❯ Build configuration
-     Target
-   ```
-4. Luego debes seleccionar `Release-development` como tipo de build configuration
-   ```
-   i Found 7 Firebase projects. Selecting project miutem-dev.
-   ✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, ios, macos
-   ✔ You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. · Build configuration
-   ? Please choose one of the following build configurations ›
-     Debug
-     Debug-production
-     Debug-development
-     Release
-     Release-production
-   ❯ Release-development
-     Profile
-     Profile-production
-     Profile-development
-   ```
-5. Ahora deberás seleccionar y configurar `Build Configuration`, esta vez es para la plataforma de macOS
-   ```
-   i Found 7 Firebase projects. Selecting project miutem-dev.
-   ✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, ios, macos
-   ✔ You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. · Build configuration
-   ✔ Please choose one of the following build configurations · Release-development
-   ? You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. ›
-   ❯ Build configuration
-     Target
-   ```
-6. Nuevamente debes seleccionar `Release-development` como tipo de build configuration para macOS
-   ```
-   i Found 7 Firebase projects. Selecting project miutem-dev.
-   ✔ Which platforms should your configuration support (use arrow keys & space to select)? · android, ios, macos
-   ✔ You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. · Build configuration
-   ✔ Please choose one of the following build configurations · Release-development
-   ✔ You have to choose a configuration type. Either build configuration (most likely choice) or a target set up. · Build configuration
-   ? Please choose one of the following build configurations ›
-     Debug
-     Debug-production
-     Debug-development
-     Release
-   ❯ Release-development
-     Release-production
-     Profile
-     Profile-production
-     Profile-development
-   ```
-7. Luego deberás repetir los pasos para configurar producción, pero esta vez seleccionando `Release-production` como tipo de build configuration para cada plataforma. Esto es importante ya que el proyecto de firebase tiene configuraciones separadas para desarrollo y producción.
-8. (Paso Extra) Debido a un bug con flutterfire_cli, deberás reordenar en los entornos Apple los scripts, por lo que deberás abrir el archivo `<entorno>/Runner.xcworkspace` con Xcode, luego ir a `Runner` -> `Build Phases` -> `Targets` -> `Runner` y asegurarte de que el script de FlutteFire (los últimos 2) tengan el siguiente orden:
+
+   Esto es lo que hace el workflow de despliegue, que solo compila en release y por lo tanto no necesita las configuraciones de debug.
+
+   > Si tienes definida la variable de entorno `FIREBASE_TOKEN` (generada con `firebase login:ci`), el script la usará automáticamente. Si no, basta con haber iniciado sesión con `firebase login`.
+2. (Paso Extra) Debido a un bug con flutterfire_cli, deberás reordenar en los entornos Apple los scripts, por lo que deberás abrir el archivo `<entorno>/Runner.xcworkspace` con Xcode, luego ir a `Runner` -> `Build Phases` -> `Targets` -> `Runner` y asegurarte de que el script de FlutteFire (los últimos 2) tengan el siguiente orden:
    ```
    [x] FlutterFire: "flutterfire bundle-service-file"
    [x] FlutterFire: "flutterfire upload-crashlytics-symbols"
@@ -160,13 +115,9 @@ ruby-install -U ruby
    Si no revisas el orden tendrás problemas al compilar ya que el comando para subir los símbolos de crashlytics se ejecutará antes de generar el archivo de configuración de firebase, lo que hará que el comando falle ya que no encontrará el archivo de configuración.
    Mas información del problema la puedes encontrar en la siguiente discusión: [[BUG]: La app no compila por un problema de flutterfire. #29](https://github.com/exdevutem/MiUTEM/discussions/29)
 
-> **IMPORTANTE**: Si te pierdes o eliges mal alguna configuración no hay problema, puedes volver a ejecutar el comando `flutterfire configure` para corregir cualquier error o configuración mal hecha. También puedes revisar el script `scripts/flutterfire-configure` para entender mejor como funciona la configuración de firebase usando `flutterfire`.
+> **IMPORTANTE**: Si algo sale mal no hay problema, el script es idempotente: puedes volver a ejecutarlo las veces que necesites. Sobrescribe los archivos `firebase_options_<env>.dart`, `GoogleService-Info.plist` y `google-services.json` sin tocar ninguna otra parte del código, y acumula las build configurations en `firebase.json` sin borrar las ya existentes.
 >
-> También, si el script te pregunta para reemplazar el archivo `firebase_options_<env>.dart` puedes elegir `yes` ya que el script se encarga de generar el archivo con la configuración correcta para cada entorno. No te preocupes por perder alguna configuración personalizada que hayas hecho en el archivo, ya que el script solo genera la configuración de firebase y no toca ninguna otra parte del código.
->
-> ```
-> ? Generated FirebaseOptions file .../lib/firebase_options_prod.dart already exists, do you want to override it? · yes
-> ```
+> También puedes revisar el script `scripts/flutterfire-configure` para entender mejor como funciona la configuración de firebase usando `flutterfire`. Con `--dry-run` te muestra los comandos que ejecutaría, y con `-v` el detalle de cada valor que resuelve.
 
 <br/>
 
