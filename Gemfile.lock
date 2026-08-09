@@ -327,6 +327,7 @@ PLATFORMS
 
 DEPENDENCIES
   abbrev
+  activesupport
   cocoapods!
   fastlane
   multi_json

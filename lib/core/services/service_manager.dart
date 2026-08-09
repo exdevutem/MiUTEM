@@ -16,7 +16,6 @@ import "package:miutem/core/services/firebase/remote_config_service.dart";
 import "package:miutem/core/services/grades_service.dart";
 import "package:miutem/core/services/horario_service.dart";
 import "package:miutem/core/services/mi_utem/miutem_auth_service.dart";
-import "package:miutem/core/services/mi_utem/miutem_credencial_service.dart";
 import "package:miutem/core/services/mi_utem/miutem_malla_service.dart";
 import "package:miutem/core/services/controllers/horario_controller.dart";
 
@@ -48,7 +47,6 @@ Future<void> initServices(FirebaseOptions firebaseOptions) async {
   // Servicios Mi.UTEM
   Get.lazyPut(() => MiUTEMAuthService());
   Get.lazyPut(() => MiUTEMMallaService());
-  Get.lazyPut(() => MiUTEMCredencialService());
 
   // Controladores (lógica de la app)
   Get.lazyPut(() => NotasController(), fenix: true);
