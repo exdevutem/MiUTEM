@@ -2,7 +2,7 @@ name: miutem
 description: "Plataforma académica para estudiantes de la Universidad Tecnológica Metropolitana (UTEM)"
 publish_to: none
 
-version: 4.0.0+146
+version: 4.0.0+150
 
 environment:
   sdk: ^3.11.1
@@ -83,9 +83,6 @@ flutter:
     - assets/images/utem_isotipo_negativo.png
     - assets/animations/monito.flr
     - assets/animations/utem.flr
-    - assets/images/sibutem.jpg
-    - assets/images/sibutem.svg
-    - assets/images/sibutem.png
     - assets/images/exdev_light.png
     - assets/images/exdev_dark.png
     - assets/images/exdev.png
