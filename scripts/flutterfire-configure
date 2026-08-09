@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ##################################################
-# Script para configurar FlutterFire para múltiples entornos (dev y prod)
+# Script para configurar FlutterFire para múltiples entornos y tipos de build.
 # Autor: Francisco Solis Maturana (Club de Desarrollo Experimental)
-# Uso: ./configure_flutterfire.sh [dev|prod|all]
+# Uso: ./scripts/flutterfire-configure [dev|prod|all]
 # Argumentos:
 #   dev  - Configura FlutterFire para el entorno de desarrollo
 #   prod - Configura FlutterFire para el entorno de producción
@@ -11,20 +11,39 @@
 #   -h, --help - Muestra esta ayuda
 #   -v, --verbose - Muestra información detallada durante la ejecución
 #   --dry-run - Muestra los comandos que se ejecutarían sin ejecutarlos realmente
+#   --build-type=<Debug|Release|all> - Limita las build configurations a generar
+#
+# Por cada entorno se registran las build configurations de Xcode
+# Debug-<flavor> y Release-<flavor>, de modo que la app pueda ejecutarse
+# tanto en modo debug como en release.
 ##################################################
 
+set -eo pipefail
+
+# Se ejecuta siempre desde la raíz del proyecto, sin importar desde dónde se invoque.
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+# entorno|flavor|sufijo de bundle id / package name
 ENVIRONMENTS=(
-  dev
-  prod
+  "dev|development|.dev"
+  "prod|production|"
 )
+
+# Build configurations de Xcode que se generan por cada entorno.
+BUILD_TYPES=(Debug Release)
+
+FIREBASE_PROJECT_PREFIX="miutem"
+APPLE_BUNDLE_ID="cl.utem.miutem"
+ANDROID_PACKAGE_NAME="cl.inndev.miutem"
 
 VERBOSE=false
 DRY_RUN=false
 TARGET_ENV=""
+TARGET_BUILD_TYPE="all"
 
 print_help() {
   cat <<'EOF'
-Uso: ./flutterfire-configure [dev|prod|all] [flags]
+Uso: ./scripts/flutterfire-configure [dev|prod|all] [flags]
 
 Argumentos:
   dev                  Configura FlutterFire para el entorno de desarrollo
@@ -35,105 +54,126 @@ Flags:
   -h, --help           Muestra esta ayuda
   -v, --verbose        Muestra información detallada durante la ejecución
   --dry-run            Muestra los comandos sin ejecutarlos
+  --build-type=<tipo>  Genera solo Debug, solo Release, o all (por defecto: all)
+
+Cada entorno registra las build configurations Debug-<flavor> y Release-<flavor>.
 EOF
 }
 
 log_verbose() {
   if [ "$VERBOSE" = true ]; then
-    echo "[verbose] $1"
+    echo "[verbose] $*"
   fi
 }
 
 run_cmd() {
-  local cmd=("$@")
-
   if [ "$VERBOSE" = true ] || [ "$DRY_RUN" = true ]; then
-    echo "[cmd] ${cmd[*]}"
+    echo "[cmd] $*"
   fi
 
   if [ "$DRY_RUN" = true ]; then
     return 0
   fi
 
-  "${cmd[@]}"
+  "$@"
+}
+
+is_valid_target() {
+  if [ "$1" = "all" ]; then
+    return 0
+  fi
+
+  for entry in "${ENVIRONMENTS[@]}"; do
+    if [ "${entry%%|*}" = "$1" ]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+to_lower() {
+  echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+# Imprime el build type canónico ("Debug", "Release" o "all"), o falla si no es válido.
+resolve_build_type() {
+  local input
+  input=$(to_lower "$1")
+
+  if [ "$input" = "all" ]; then
+    echo "all"
+    return 0
+  fi
+
+  for build_type in "${BUILD_TYPES[@]}"; do
+    if [ "$(to_lower "$build_type")" = "$input" ]; then
+      echo "$build_type"
+      return 0
+    fi
+  done
+
+  return 1
 }
 
 configure_environment() {
-  echo "================================"
-  echo "Configurando FlutterFire para el entorno: $1"
-  echo "================================"
+  local name flavor suffix
+  IFS='|' read -r name flavor suffix <<<"$1"
 
-  # Define variables que pueden usar el mismo entorno como argumento
-  PROJECT="miutem-$1"
-  OUT="lib/firebase_options_$1.dart"
+  local project="$FIREBASE_PROJECT_PREFIX-$name"
+  local dart_out="lib/firebase_options_$name.dart"
+  local bundle_id="$APPLE_BUNDLE_ID$suffix"
+  local package_name="$ANDROID_PACKAGE_NAME$suffix"
+  local ios_out="ios/Firebase/$flavor/GoogleService-Info.plist"
+  local macos_out="macos/Firebase/$flavor/GoogleService-Info.plist"
+  local android_out="android/app/src/$flavor/google-services.json"
 
-  if [ "$1" == "dev" ]; then
-    IOS_BUNDLE_ID="cl.utem.miutem.dev"
-    IOS_OUT="ios/Firebase/development/GoogleService-Info.plist"
-    IOS_BUILD_CONFIG="Release-development"
-    MACOS_BUNDLE_ID="cl.utem.miutem.dev"
-    MACOS_OUT="macos/Firebase/development/GoogleService-Info.plist"
-    MACOS_BUILD_CONFIG="Release-development"
-    ANDROID_PACKAGE_NAME="cl.inndev.miutem.dev"
-    ANDROID_OUT="android/app/src/development/google-services.json"
-  elif [ "$1" == "prod" ]; then
-    IOS_BUNDLE_ID="cl.utem.miutem"
-    IOS_OUT="ios/Firebase/production/GoogleService-Info.plist"
-    IOS_BUILD_CONFIG="Release-production"
-    MACOS_BUNDLE_ID="cl.utem.miutem"
-    MACOS_OUT="macos/Firebase/production/GoogleService-Info.plist"
-    MACOS_BUILD_CONFIG="Release-production"
-    ANDROID_PACKAGE_NAME="cl.inndev.miutem"
-    ANDROID_OUT="android/app/src/production/google-services.json"
-  else
-    echo "Error: Entorno no valido. Use 'dev', 'prod' o 'all'."
-    exit 1
-  fi
-
-  log_verbose "Proyecto Firebase: $PROJECT"
-  log_verbose "Salida Dart: $OUT"
-  log_verbose "iOS bundle id: $IOS_BUNDLE_ID"
-  log_verbose "iOS build config: $IOS_BUILD_CONFIG"
-  log_verbose "iOS plist: $IOS_OUT"
-  log_verbose "macOS bundle id: $MACOS_BUNDLE_ID"
-  log_verbose "macOS build config: $MACOS_BUILD_CONFIG"
-  log_verbose "macOS plist: $MACOS_OUT"
-  log_verbose "Android package: $ANDROID_PACKAGE_NAME"
-  log_verbose "Android json: $ANDROID_OUT"
-
-  
   # Solo si el env "FIREBASE_TOKEN" está definido, se asume que el usuario quiere usarlo en el flutterfire con el flag --token, de lo contrario se omite el flag y se asume que el usuario ya ha iniciado sesión con firebase login
-  if [ -n "$FIREBASE_TOKEN" ]; then
+  local token_flag=()
+  if [ -n "${FIREBASE_TOKEN:-}" ]; then
+    token_flag=(--token="$FIREBASE_TOKEN")
     log_verbose "Usando token de Firebase desde la variable de entorno FIREBASE_TOKEN"
   fi
 
-  run_cmd flutterfire config \
-    --platforms=ios,macos,android \
-    --project="$PROJECT" \
-    --out="$OUT" \
-    --ios-bundle-id="$IOS_BUNDLE_ID" \
-    --ios-out="$IOS_OUT" \
-    --ios-build-config="$IOS_BUILD_CONFIG" \
-    --macos-bundle-id="$MACOS_BUNDLE_ID" \
-    --macos-out="$MACOS_OUT" \
-    --macos-build-config="$MACOS_BUILD_CONFIG" \
-    --android-package-name="$ANDROID_PACKAGE_NAME" \
-    --android-out="$ANDROID_OUT" \
-    ${FIREBASE_TOKEN:+--token="$FIREBASE_TOKEN"} \
-    -f
+  log_verbose "Proyecto Firebase: $project"
+  log_verbose "Salida Dart: $dart_out"
+  log_verbose "Apple bundle id: $bundle_id"
+  log_verbose "iOS plist: $ios_out"
+  log_verbose "macOS plist: $macos_out"
+  log_verbose "Android package: $package_name"
+  log_verbose "Android json: $android_out"
+
+  for build_type in "${BUILD_TYPES[@]}"; do
+    if [ "$TARGET_BUILD_TYPE" != "all" ] && [ "$build_type" != "$TARGET_BUILD_TYPE" ]; then
+      continue
+    fi
+
+    local build_config="$build_type-$flavor"
+
+    echo "================================"
+    echo "Configurando FlutterFire para el entorno: $name ($build_config)"
+    echo "================================"
+
+    run_cmd flutterfire config \
+      --platforms=ios,macos,android \
+      --project="$project" \
+      --out="$dart_out" \
+      --ios-bundle-id="$bundle_id" \
+      --ios-out="$ios_out" \
+      --ios-build-config="$build_config" \
+      --macos-bundle-id="$bundle_id" \
+      --macos-out="$macos_out" \
+      --macos-build-config="$build_config" \
+      --android-package-name="$package_name" \
+      --android-out="$android_out" \
+      "${token_flag[@]}" \
+      -f
+  done
 }
 
 # Parsea argumentos y flags en cualquier orden.
 while [ $# -gt 0 ]; do
   case "$1" in
-    dev|prod|all)
-      if [ -n "$TARGET_ENV" ]; then
-        echo "Error: solo se permite un entorno objetivo (dev, prod o all)."
-        print_help
-        exit 1
-      fi
-      TARGET_ENV="$1"
-      ;;
     -h|--help)
       print_help
       exit 0
@@ -144,26 +184,45 @@ while [ $# -gt 0 ]; do
     --dry-run)
       DRY_RUN=true
       ;;
+    --build-type=*)
+      if ! TARGET_BUILD_TYPE=$(resolve_build_type "${1#*=}"); then
+        echo "Error: build type no válido '${1#*=}'. Use ${BUILD_TYPES[*]} o all." >&2
+        print_help
+        exit 1
+      fi
+      ;;
     *)
-      echo "Error: argumento no reconocido '$1'."
-      print_help
-      exit 1
+      if ! is_valid_target "$1"; then
+        echo "Error: argumento no reconocido '$1'." >&2
+        print_help
+        exit 1
+      fi
+
+      if [ -n "$TARGET_ENV" ]; then
+        echo "Error: solo se permite un entorno objetivo (dev, prod o all)." >&2
+        print_help
+        exit 1
+      fi
+
+      TARGET_ENV="$1"
       ;;
   esac
   shift
 done
 
 if [ -z "$TARGET_ENV" ]; then
-  echo "Error: debe indicar un entorno (dev, prod o all)."
+  echo "Error: debe indicar un entorno (dev, prod o all)." >&2
   print_help
   exit 1
 fi
 
-if [ "$TARGET_ENV" == "all" ]; then
-  for ENV in "${ENVIRONMENTS[@]}"; do
-    configure_environment "$ENV"
-  done
-else
-  configure_environment "$TARGET_ENV"
+if [ "$DRY_RUN" = false ] && ! command -v flutterfire >/dev/null 2>&1; then
+  echo "Error: no se encontró 'flutterfire'. Instálalo con 'dart pub global activate flutterfire_cli'." >&2
+  exit 1
 fi
 
+for entry in "${ENVIRONMENTS[@]}"; do
+  if [ "$TARGET_ENV" = "all" ] || [ "${entry%%|*}" = "$TARGET_ENV" ]; then
+    configure_environment "$entry"
+  fi
+done

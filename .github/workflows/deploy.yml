@@ -92,7 +92,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }} --build-type=Release
 
       - name: 🚀 Desplegar a Play Store
         run: bundle exec fastlane android deploy
@@ -197,7 +197,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }} --build-type=Release
 
       - name: 🚀 Desplegar a TestFlight (iOS)
         run: bundle exec fastlane ios deploy
@@ -313,7 +313,7 @@ jobs:
       - name: 🔐 Configura credenciales de firebase (${{ needs.determine-environment.outputs.environment == 'prod' && 'Producción' || 'Desarrollo' }})
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }}
+        run: ./scripts/flutterfire-configure ${{ needs.determine-environment.outputs.environment == 'prod' && 'prod' || 'dev' }} --build-type=Release
 
       - name: 🚀 Desplegar a TestFlight (macOS)
         run: bundle exec fastlane mac deploy

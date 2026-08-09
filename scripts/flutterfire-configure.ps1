@@ -1,5 +1,5 @@
 ##################################################
-# Script para configurar FlutterFire para múltiples entornos (dev y prod)
+# Script para configurar FlutterFire para múltiples entornos y tipos de build.
 # Autor: Francisco Solis Maturana (Club de Desarrollo Experimental)
 # Uso: .\flutterfire-configure.ps1 [dev|prod|all]
 # Argumentos:
@@ -10,12 +10,30 @@
 #   -h, --help    - Muestra esta ayuda
 #   -v, --verbose - Muestra información detallada durante la ejecución
 #   --dry-run     - Muestra los comandos que se ejecutarían sin ejecutarlos realmente
+#   --build-type=<Debug|Release|all> - Limita las build configurations a generar
+#
+# Por cada entorno se registran las build configurations de Xcode
+# Debug-<flavor> y Release-<flavor>, de modo que la app pueda ejecutarse
+# tanto en modo debug como en release.
 ##################################################
 
-$ENVIRONMENTS = @("dev", "prod")
+# entorno, flavor y sufijo de bundle id / package name
+$ENVIRONMENTS = @(
+    [pscustomobject]@{ Name = "dev";  Flavor = "development"; Suffix = ".dev" }
+    [pscustomobject]@{ Name = "prod"; Flavor = "production";  Suffix = "" }
+)
+
+# Build configurations de Xcode que se generan por cada entorno.
+$BUILD_TYPES = @("Debug", "Release")
+
+$FIREBASE_PROJECT_PREFIX = "miutem"
+$APPLE_BUNDLE_ID = "cl.utem.miutem"
+$ANDROID_PACKAGE_NAME = "cl.inndev.miutem"
+
 $VERBOSE = $false
 $DRY_RUN = $false
 $TARGET_ENV = ""
+$TARGET_BUILD_TYPE = "all"
 
 function Print-Help {
     Write-Host @"
@@ -30,6 +48,9 @@ Flags:
   -h, --help           Muestra esta ayuda
   -v, --verbose        Muestra información detallada durante la ejecución
   --dry-run            Muestra los comandos sin ejecutarlos
+  --build-type=<tipo>  Genera solo Debug, solo Release, o all (por defecto: all)
+
+Cada entorno registra las build configurations Debug-<flavor> y Release-<flavor>.
 "@
 }
 
@@ -52,98 +73,76 @@ function Run-Cmd {
     }
 
     & $Cmd[0] $Cmd[1..($Cmd.Length - 1)]
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Error: '$($Cmd -join ' ')' fallo con codigo $LASTEXITCODE."
+        exit $LASTEXITCODE
+    }
 }
 
 function Configure-Environment {
-    param([string]$Env)
+    param([pscustomobject]$Environment)
 
-    Write-Host "================================"
-    Write-Host "Configurando FlutterFire para el entorno: $Env"
-    Write-Host "================================"
+    $project = "$FIREBASE_PROJECT_PREFIX-$($Environment.Name)"
+    $dartOut = "lib/firebase_options_$($Environment.Name).dart"
+    $bundleId = "$APPLE_BUNDLE_ID$($Environment.Suffix)"
+    $packageName = "$ANDROID_PACKAGE_NAME$($Environment.Suffix)"
+    $iosOut = "ios/Firebase/$($Environment.Flavor)/GoogleService-Info.plist"
+    $macosOut = "macos/Firebase/$($Environment.Flavor)/GoogleService-Info.plist"
+    $androidOut = "android/app/src/$($Environment.Flavor)/google-services.json"
 
-    $PROJECT = "miutem-$Env"
-    $OUT = "lib/firebase_options_$Env.dart"
-
-    if ($Env -eq "dev") {
-        $IOS_BUNDLE_ID = "cl.utem.miutem.dev"
-        $IOS_OUT = "ios/Firebase/development/GoogleService-Info.plist"
-        $IOS_BUILD_CONFIG = "Release-development"
-        $MACOS_BUNDLE_ID = "cl.utem.miutem.dev"
-        $MACOS_OUT = "macos/Firebase/development/GoogleService-Info.plist"
-        $MACOS_BUILD_CONFIG = "Release-development"
-        $ANDROID_PACKAGE_NAME = "cl.inndev.miutem.dev"
-        $ANDROID_OUT = "android/app/src/development/google-services.json"
-    } elseif ($Env -eq "prod") {
-        $IOS_BUNDLE_ID = "cl.utem.miutem"
-        $IOS_OUT = "ios/Firebase/production/GoogleService-Info.plist"
-        $IOS_BUILD_CONFIG = "Release-production"
-        $MACOS_BUNDLE_ID = "cl.utem.miutem"
-        $MACOS_OUT = "macos/Firebase/production/GoogleService-Info.plist"
-        $MACOS_BUILD_CONFIG = "Release-production"
-        $ANDROID_PACKAGE_NAME = "cl.inndev.miutem"
-        $ANDROID_OUT = "android/app/src/production/google-services.json"
-    } else {
-        Write-Host "Error: Entorno no valido. Use 'dev', 'prod' o 'all'."
-        exit 1
-    }
-
-    Log-Verbose "Proyecto Firebase: $PROJECT"
-    Log-Verbose "Salida Dart: $OUT"
-    Log-Verbose "iOS bundle id: $IOS_BUNDLE_ID"
-    Log-Verbose "iOS build config: $IOS_BUILD_CONFIG"
-    Log-Verbose "iOS plist: $IOS_OUT"
-    Log-Verbose "macOS bundle id: $MACOS_BUNDLE_ID"
-    Log-Verbose "macOS build config: $MACOS_BUILD_CONFIG"
-    Log-Verbose "macOS plist: $MACOS_OUT"
-    Log-Verbose "Android package: $ANDROID_PACKAGE_NAME"
-    Log-Verbose "Android json: $ANDROID_OUT"
-
-    $FIREBASE_TOKEN = $env:FIREBASE_TOKEN
+    Log-Verbose "Proyecto Firebase: $project"
+    Log-Verbose "Salida Dart: $dartOut"
+    Log-Verbose "Apple bundle id: $bundleId"
+    Log-Verbose "iOS plist: $iosOut"
+    Log-Verbose "macOS plist: $macosOut"
+    Log-Verbose "Android package: $packageName"
+    Log-Verbose "Android json: $androidOut"
 
     # Solo si el env "FIREBASE_TOKEN" está definido, se usa el flag --token
-    if ($FIREBASE_TOKEN) {
+    $firebaseToken = $env:FIREBASE_TOKEN
+    if ($firebaseToken) {
         Log-Verbose "Usando token de Firebase desde la variable de entorno FIREBASE_TOKEN"
     }
 
-    $cmd = @(
-        "flutterfire", "config",
-        "--platforms=ios,macos,android",
-        "--project=$PROJECT",
-        "--out=$OUT",
-        "--ios-bundle-id=$IOS_BUNDLE_ID",
-        "--ios-out=$IOS_OUT",
-        "--ios-build-config=$IOS_BUILD_CONFIG",
-        "--macos-bundle-id=$MACOS_BUNDLE_ID",
-        "--macos-out=$MACOS_OUT",
-        "--macos-build-config=$MACOS_BUILD_CONFIG",
-        "--android-package-name=$ANDROID_PACKAGE_NAME",
-        "--android-out=$ANDROID_OUT",
-        "-f"
-    )
+    foreach ($buildType in $BUILD_TYPES) {
+        if ($TARGET_BUILD_TYPE -ne "all" -and $buildType -ne $TARGET_BUILD_TYPE) {
+            continue
+        }
 
-    if ($FIREBASE_TOKEN) {
-        $cmd += "--token=$FIREBASE_TOKEN"
+        $buildConfig = "$buildType-$($Environment.Flavor)"
+
+        Write-Host "================================"
+        Write-Host "Configurando FlutterFire para el entorno: $($Environment.Name) ($buildConfig)"
+        Write-Host "================================"
+
+        $cmd = @(
+            "flutterfire", "config",
+            "--platforms=ios,macos,android",
+            "--project=$project",
+            "--out=$dartOut",
+            "--ios-bundle-id=$bundleId",
+            "--ios-out=$iosOut",
+            "--ios-build-config=$buildConfig",
+            "--macos-bundle-id=$bundleId",
+            "--macos-out=$macosOut",
+            "--macos-build-config=$buildConfig",
+            "--android-package-name=$packageName",
+            "--android-out=$androidOut",
+            "-f"
+        )
+
+        if ($firebaseToken) {
+            $cmd += "--token=$firebaseToken"
+        }
+
+        Run-Cmd -Cmd $cmd
     }
-
-    Run-Cmd -Cmd $cmd
 }
 
 # Parsea argumentos y flags en cualquier orden
-$i = 0
-$args_list = $args
-
-while ($i -lt $args_list.Length) {
-    $arg = $args_list[$i]
-
-    switch ($arg) {
-        { $_ -in @("dev", "prod", "all") } {
-            if ($TARGET_ENV -ne "") {
-                Write-Host "Error: solo se permite un entorno objetivo (dev, prod o all)."
-                Print-Help
-                exit 1
-            }
-            $TARGET_ENV = $arg
-        }
+foreach ($arg in $args) {
+    switch -Exact ($arg) {
         { $_ -in @("-h", "--help") } {
             Print-Help
             exit 0
@@ -154,14 +153,38 @@ while ($i -lt $args_list.Length) {
         "--dry-run" {
             $DRY_RUN = $true
         }
+        { $_ -like "--build-type=*" } {
+            $value = $arg.Substring("--build-type=".Length)
+
+            if ($value -eq "all") {
+                $TARGET_BUILD_TYPE = "all"
+            } else {
+                # "-eq" no distingue mayusculas, asi que devuelve el nombre canonico.
+                $canonical = $BUILD_TYPES | Where-Object { $_ -eq $value } | Select-Object -First 1
+
+                if (-not $canonical) {
+                    Write-Host "Error: build type no valido '$value'. Use $($BUILD_TYPES -join ', ') o all."
+                    Print-Help
+                    exit 1
+                }
+
+                $TARGET_BUILD_TYPE = $canonical
+            }
+        }
+        { $ENVIRONMENTS.Name -contains $_ -or $_ -eq "all" } {
+            if ($TARGET_ENV -ne "") {
+                Write-Host "Error: solo se permite un entorno objetivo (dev, prod o all)."
+                Print-Help
+                exit 1
+            }
+            $TARGET_ENV = $arg
+        }
         default {
             Write-Host "Error: argumento no reconocido '$arg'."
             Print-Help
             exit 1
         }
     }
-
-    $i++
 }
 
 if ($TARGET_ENV -eq "") {
@@ -170,10 +193,19 @@ if ($TARGET_ENV -eq "") {
     exit 1
 }
 
-if ($TARGET_ENV -eq "all") {
-    foreach ($ENV in $ENVIRONMENTS) {
-        Configure-Environment -Env $ENV
+if (-not $DRY_RUN -and -not (Get-Command flutterfire -ErrorAction SilentlyContinue)) {
+    Write-Host "Error: no se encontro 'flutterfire'. Instalalo con 'dart pub global activate flutterfire_cli'."
+    exit 1
+}
+
+# Se ejecuta siempre desde la raíz del proyecto, sin importar desde dónde se invoque.
+Push-Location (Split-Path -Parent $PSScriptRoot)
+try {
+    foreach ($environment in $ENVIRONMENTS) {
+        if ($TARGET_ENV -eq "all" -or $environment.Name -eq $TARGET_ENV) {
+            Configure-Environment -Environment $environment
+        }
     }
-} else {
-    Configure-Environment -Env $TARGET_ENV
+} finally {
+    Pop-Location
 }
