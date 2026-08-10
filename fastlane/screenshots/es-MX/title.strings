@@ -1,8 +1,9 @@
-
-"01_login" = "Tu vida académica, en una sola app";
-"02_inicio" = "Mira tus clases de hoy al abrir la app";
-"03_asignaturas" = "Todas tus asignaturas inscritas";
-"04_credencial" = "Tu credencial siempre a mano";
-"05_perfil" = "Tu perfil y tu carrera al día";
-"06_horario" = "El horario de la semana completo";
-"07_malla" = "Revisa tu avance en la malla";
+/* Subtítulo de cada captura: la línea chica bajo el titular de keyword.strings. */
+"01_bienvenida" = "";
+"02_bienvenida" = "Podrás revisar toda tu información\nacadémica en un solo lugar";
+"03_oscuro" = "Ahora tienes disponible el tan\nsolicitado modo oscuro";
+"04_calculadora" = "Igual de útil, y un nuevo diseño";
+"05_inicio" = "Ahora encuentras tus clases\nde hoy al instante";
+"06_credencial" = "Compatible con SIBUTEM";
+"07_horario" = "Consulta cuál es tu siguiente clase\nen un colorido horario";
+"08_malla" = "Consulta tu avance de malla\nen un formato más cómodo";

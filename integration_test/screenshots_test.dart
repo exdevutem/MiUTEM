@@ -1,5 +1,6 @@
 import "dart:io";
 
+import "package:adaptive_theme/adaptive_theme.dart";
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:integration_test/integration_test.dart";
@@ -21,7 +22,10 @@ const bool esProduccion = bool.fromEnvironment("SCREENSHOT_PROD", defaultValue: 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets("Captura las pantallas de la app para la App Store", (tester) async {
+  // Las capturas 01 y 02 no salen de la app: son la composición del teléfono en diagonal
+  // que arma `scripts/compose-store-screenshots`. Por eso el recorrido parte en la 03,
+  // y los nombres llevan el número escrito: el orden del archivo es el orden en la tienda.
+  testWidgets("Captura las pantallas de la app para las tiendas", (tester) async {
     paso(binding, "inicio");
     runMainApp(esProduccion ? prod.DefaultFirebaseOptions.currentPlatform : dev.DefaultFirebaseOptions.currentPlatform);
 
@@ -38,10 +42,6 @@ void main() {
       paso(binding, "superficie convertida a imagen");
     }
 
-    // El video de fondo y el logo tardan en aparecer.
-    await esperar(tester, const Duration(seconds: 8));
-    await capturar(tester, binding, "login");
-
     final campos = find.byType(TextField);
     await tester.enterText(campos.at(0), usuario);
     await tester.enterText(campos.at(1), clave);
@@ -50,29 +50,37 @@ void main() {
 
     final destinos = find.byType(NavigationDestination);
     await esperarPor(tester, binding, destinos, descripcion: "la navegación principal");
-
-    // Las pestañas visibles dependen de los feature flags y del perfil, así que se recorren las que existan.
     final etiquetas = tester.widgetList<NavigationDestination>(destinos).map((destino) => destino.label).toList();
-    for (var i = 0; i < etiquetas.length; i++) {
-      await irAPestana(tester, i);
-      await capturar(tester, binding, etiquetas[i].toLowerCase());
-    }
 
-    // Horario y malla histórica cuelgan de los accesos rápidos de Asignaturas.
-    final idxAsignaturas = etiquetas.indexOf("Asignaturas");
-    if (idxAsignaturas < 0) {
-      paso(binding, "sin pestaña de asignaturas: se omiten horario y malla");
-      return;
-    }
+    // 03 — el inicio, pero en oscuro: es la novedad que se está mostrando.
+    await irAPestana(tester, indiceDe(etiquetas, "Inicio"));
+    await cambiarTema(tester, binding, AdaptiveThemeMode.dark);
+    await capturar(tester, binding, "03_oscuro");
+    await cambiarTema(tester, binding, AdaptiveThemeMode.light);
 
+    // 04 — la calculadora de notas, que cuelga de los accesos rápidos de Asignaturas.
+    final idxAsignaturas = indiceDe(etiquetas, "Asignaturas");
     await irAPestana(tester, idxAsignaturas);
-    for (final acceso in ["Horario", "Malla Histórica"]) {
+    await abrirAccesoRapido(tester, binding, "Notas");
+    await capturar(tester, binding, "04_calculadora");
+    await volver(tester);
+
+    // 05 — el inicio en claro, con la primera clase del día en curso.
+    await irAPestana(tester, indiceDe(etiquetas, "Inicio"));
+    await capturar(tester, binding, "05_inicio");
+
+    // 06 — la credencial con el código QR.
+    await irAPestana(tester, indiceDe(etiquetas, "Credencial"));
+    await capturar(tester, binding, "06_credencial");
+
+    // 07 y 08 — horario y malla histórica, también desde los accesos rápidos.
+    await irAPestana(tester, idxAsignaturas);
+    for (final (acceso, archivo) in [("Horario", "07_horario"), ("Malla Histórica", "08_malla")]) {
       await abrirAccesoRapido(tester, binding, acceso);
-      await capturar(tester, binding, acceso.split(" ").first.toLowerCase());
-      await tester.pageBack();
-      await esperar(tester, const Duration(seconds: 3));
+      await capturar(tester, binding, archivo);
+      await volver(tester);
     }
-  }, timeout: const Timeout(Duration(minutes: 12)));
+  }, timeout: const Timeout(Duration(minutes: 15)));
 }
 
 /// Deja rastro del avance en `reportData`, que el driver escribe en
@@ -85,15 +93,34 @@ void paso(IntegrationTestWidgetsFlutterBinding binding, String texto) {
 
 Finder get botonIngresar => find.widgetWithText(FilledButton, "Ingresar");
 
+/// Posición de una pestaña en la barra inferior. Las pestañas dependen de los feature
+/// flags y del perfil, así que se falla con nombre propio en vez de capturar otra cosa.
+int indiceDe(List<String> etiquetas, String etiqueta) {
+  final indice = etiquetas.indexOf(etiqueta);
+  if (indice < 0) {
+    fail("No está la pestaña \"$etiqueta\". Pestañas disponibles: ${etiquetas.join(", ")}.");
+  }
+
+  return indice;
+}
+
 Future<void> irAPestana(WidgetTester tester, int indice) async {
   await tester.tap(find.byType(NavigationDestination).at(indice));
   await esperar(tester, const Duration(seconds: 8));
 }
 
+/// Cambia el tema sin pasar por Perfil → Pantalla → Tema: el diálogo obliga a hacer
+/// scroll y a esperar animaciones, y acá sólo interesa con qué brillo se dibuja la app.
+Future<void> cambiarTema(WidgetTester tester, IntegrationTestWidgetsFlutterBinding binding, AdaptiveThemeMode modo) async {
+  AdaptiveTheme.of(tester.element(find.byType(NavigationBar))).setThemeMode(modo);
+  paso(binding, "tema $modo");
+  await esperar(tester, const Duration(seconds: 3));
+}
+
 /// Abre una pantalla desde las tarjetas de acceso rápido y espera a que cargue.
 ///
 /// La búsqueda se acota a la pantalla de asignaturas porque el `IndexedStack` de
-/// la navegación mantiene montado el inicio, que tiene un acceso rápido homónimo.
+/// la navegación mantiene montado el inicio, que tiene accesos rápidos homónimos.
 Future<void> abrirAccesoRapido(WidgetTester tester, IntegrationTestWidgetsFlutterBinding binding, String label) async {
   final tarjeta = find.descendant(of: find.byType(AsignaturasScreen), matching: find.text(label));
   if (tarjeta.evaluate().isEmpty) {
@@ -103,6 +130,11 @@ Future<void> abrirAccesoRapido(WidgetTester tester, IntegrationTestWidgetsFlutte
   paso(binding, "abriendo $label");
   await tester.tap(tarjeta.first);
   await esperar(tester, const Duration(seconds: 8));
+}
+
+Future<void> volver(WidgetTester tester) async {
+  await tester.pageBack();
+  await esperar(tester, const Duration(seconds: 3));
 }
 
 /// Bombea frames hasta que [finder] encuentre algo, o falla el test al agotar
@@ -138,17 +170,11 @@ Future<void> esperar(WidgetTester tester, Duration duracion) async {
   }
 }
 
-/// Número correlativo de la captura, para que el orden en App Store Connect
-/// sea el mismo del recorrido.
-var _capturas = 0;
-
 /// Quita el foco y espera a que el teclado se retraiga antes de capturar,
 /// porque el teclado del sistema no se captura y dejaría una franja en blanco.
-Future<void> capturar(WidgetTester tester, IntegrationTestWidgetsFlutterBinding binding, String nombre) async {
+Future<void> capturar(WidgetTester tester, IntegrationTestWidgetsFlutterBinding binding, String archivo) async {
   FocusManager.instance.primaryFocus?.unfocus();
   await esperar(tester, const Duration(seconds: 2));
-
-  final archivo = "${(++_capturas).toString().padLeft(2, "0")}_$nombre";
 
   // La captura nativa de iOS usa `drawViewHierarchyInRect:afterScreenUpdates:YES`, que espera
   // un frame nuevo. El binding de tests sólo dibuja cuando se le pide, así que hay que seguir

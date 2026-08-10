@@ -244,6 +244,9 @@ platform :ios do
       # cambia el tamaño, y frameit recortaría las tiras y rompería la continuidad.
       sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
       frame_screenshots(path: screenshots_dir)
+      # Las dos primeras capturas no salen de la app: se componen aparte, y después de
+      # frameit porque escriben directamente sus *_framed.png.
+      sh(File.join(root, "scripts", "compose-store-screenshots"))
     end
   end
 

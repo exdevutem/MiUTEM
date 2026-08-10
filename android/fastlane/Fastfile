@@ -180,6 +180,9 @@ platform :android do
       opciones_frameit = { path: screenshots_dir, use_platform: "ANDROID" }
       opciones_frameit[:force_device_type] = device_frame unless device_frame.to_s.empty?
       frame_screenshots(**opciones_frameit)
+      # Las dos primeras capturas no salen de la app: se componen aparte, y después de
+      # frameit porque escriben directamente sus *_framed.png.
+      sh(File.join(root, "scripts", "compose-store-screenshots"))
       capturas = Dir.glob(File.join(output_dir, "*_framed.png"))
       UI.user_error!("❌ frameit no generó ninguna captura enmarcada.") if capturas.empty?
     end

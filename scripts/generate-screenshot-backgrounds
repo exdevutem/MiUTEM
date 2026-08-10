@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Genera los fondos de las capturas a partir de una sola foto: la desenfoca, la tiñe
-# con el verde institucional y la corta en tiras verticales, una por captura. Puestas
-# lado a lado en la ficha de la tienda, las capturas reconstruyen la foto completa.
+# Genera los fondos de las capturas a partir de una sola foto: la desenfoca y la corta
+# en tiras verticales, una por captura. Puestas lado a lado en la ficha de la tienda,
+# las capturas reconstruyen la foto completa.
 #
 # Uso: scripts/generate-screenshot-backgrounds
 set -euo pipefail
@@ -9,27 +9,24 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 FUENTE="fastlane/screenshots/background-source.jpg"
-VERDE="#0E7A4E" # Verde institucional con el que se tiñe la foto.
-TINTE=32        # % de tinte verde.
-BRILLO=-16      # Oscurecido general.
-DESENFOQUE=8    # Radio del blur, aplicado antes de ampliar (la ampliación suaviza aún más).
-VELO=32         # % del alto que cubre el degradado oscuro superior, bajo el título.
+BRILLO=-12   # Oscurecido general.
+DESENFOQUE=5 # Radio del blur, aplicado antes de ampliar (la ampliación suaviza aún más).
+VELO=45      # % del alto que cubre el degradado oscuro superior, bajo el título.
 
 command -v magick >/dev/null || { echo "❌ Falta ImageMagick (brew install imagemagick)" >&2; exit 1; }
 [ -f "$FUENTE" ] || { echo "❌ No existe $FUENTE" >&2; exit 1; }
 
-# Recorta la foto al lienzo pedido (cubriendo, centrada), la desenfoca y la tiñe.
-# El desenfoque se hace en pequeño y luego se amplía: mismo resultado, mucho más rápido.
+# Recorta la foto al lienzo pedido (cubriendo, centrada) y la desenfoca. El desenfoque
+# se hace en pequeño y luego se amplía: mismo resultado, mucho más rápido.
 panoramica() {
   local ancho=$1 alto=$2 destino=$3
   local alto_previo=$((1280 * alto / ancho))
   magick "$FUENTE" \
     -resize "1280x${alto_previo}^" -gravity center -extent "1280x${alto_previo}" \
     -blur "0x${DESENFOQUE}" \
-    -fill "$VERDE" -colorize "$TINTE" \
     -brightness-contrast "${BRILLO}x-10" \
     -resize "${ancho}x${alto}!" \
-    \( -size "${ancho}x$((alto * VELO / 100))" gradient:"#000000B3-#00000000" \) \
+    \( -size "${ancho}x$((alto * VELO / 100))" gradient:"#000000D9-#00000000" \) \
     -gravity north -composite \
     -quality 88 "$destino"
 }

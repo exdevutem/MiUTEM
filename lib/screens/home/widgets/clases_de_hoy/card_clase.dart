@@ -60,7 +60,9 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   }
 
   bool isCurrentClassActive() {
-    final now = DateTime.now();
+    // `ahora()` y no `DateTime.now()`: en modo capturas la hora está fijada, y con la
+    // hora real ninguna clase salía marcada como la que está en curso.
+    final now = ahora();
     final start = DateTime(now.year, now.month, now.day, int.parse(widget.horaInicio.split(":")[0]), int.parse(widget.horaInicio.split(":")[1]));
     final end = DateTime(now.year, now.month, now.day, int.parse(widget.horaFin.split(":")[0]), int.parse(widget.horaFin.split(":")[1]));
     return now.isAfter(start) && now.isBefore(end);
