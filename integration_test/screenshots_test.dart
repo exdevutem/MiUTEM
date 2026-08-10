@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:flutter/material.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:integration_test/integration_test.dart";
@@ -22,14 +24,18 @@ void main() {
   testWidgets("Captura las pantallas de la app para la App Store", (tester) async {
     paso(binding, "inicio");
     runMainApp(esProduccion ? prod.DefaultFirebaseOptions.currentPlatform : dev.DefaultFirebaseOptions.currentPlatform);
-    // Arranque: Firebase, RemoteConfig y la resolución de sesión.
-    await esperar(tester, const Duration(seconds: 15));
-    paso(binding, "arrancó, login visible: ${botonIngresar.evaluate().isNotEmpty}");
 
     // En modo capturas la sesión vive en memoria, así que cada corrida parte del login.
     // Si no aparece, la app se compiló sin la bandera y estaría usando datos reales.
-    if (botonIngresar.evaluate().isEmpty) {
-      fail("No se llegó al login: revisa que se compile con --dart-define=SCREENSHOT_MODE=true.");
+    await esperarPor(tester, binding, botonIngresar,
+      descripcion: "el login (¿falta --dart-define=SCREENSHOT_MODE=true?)",
+    );
+
+    // En Android las capturas se toman del render de Flutter, no de la ventana del
+    // sistema, y hay que convertir la superficie una sola vez antes de la primera.
+    if (Platform.isAndroid) {
+      await binding.convertFlutterSurfaceToImage();
+      paso(binding, "superficie convertida a imagen");
     }
 
     // El video de fondo y el logo tardan en aparecer.
@@ -40,13 +46,10 @@ void main() {
     await tester.enterText(campos.at(0), usuario);
     await tester.enterText(campos.at(1), clave);
     await tester.tap(botonIngresar);
-    await esperar(tester, const Duration(seconds: 10));
     paso(binding, "login enviado");
 
     final destinos = find.byType(NavigationDestination);
-    if (destinos.evaluate().isEmpty) {
-      fail("No se llegó a la navegación principal después del login.");
-    }
+    await esperarPor(tester, binding, destinos, descripcion: "la navegación principal");
 
     // Las pestañas visibles dependen de los feature flags y del perfil, así que se recorren las que existan.
     final etiquetas = tester.widgetList<NavigationDestination>(destinos).map((destino) => destino.label).toList();
@@ -69,7 +72,7 @@ void main() {
       await tester.pageBack();
       await esperar(tester, const Duration(seconds: 3));
     }
-  }, timeout: const Timeout(Duration(minutes: 6)));
+  }, timeout: const Timeout(Duration(minutes: 12)));
 }
 
 /// Deja rastro del avance en `reportData`, que el driver escribe en
@@ -100,6 +103,28 @@ Future<void> abrirAccesoRapido(WidgetTester tester, IntegrationTestWidgetsFlutte
   paso(binding, "abriendo $label");
   await tester.tap(tarjeta.first);
   await esperar(tester, const Duration(seconds: 8));
+}
+
+/// Bombea frames hasta que [finder] encuentre algo, o falla el test al agotar
+/// [limite]. El emulador de Android arranca bastante más lento que el simulador
+/// de iOS, así que se espera por lo que hay en pantalla y no por un tiempo fijo.
+Future<void> esperarPor(
+  WidgetTester tester,
+  IntegrationTestWidgetsFlutterBinding binding,
+  Finder finder, {
+  required String descripcion,
+  Duration limite = const Duration(seconds: 90),
+}) async {
+  final fin = DateTime.now().add(limite);
+  while (DateTime.now().isBefore(fin)) {
+    if (finder.evaluate().isNotEmpty) {
+      paso(binding, "apareció $descripcion");
+      return;
+    }
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+
+  fail("No apareció $descripcion después de ${limite.inSeconds}s.");
 }
 
 /// Bombea frames durante [duracion] en tiempo real.

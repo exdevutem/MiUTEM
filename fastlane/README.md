@@ -116,6 +116,22 @@ Decodifica el keystore desde base64 y lo deja en un archivo temporal
 
 Compila la app con flutter
 
+### android screenshots
+
+```sh
+[bundle exec] fastlane android screenshots
+```
+
+Genera las capturas de pantalla en un emulador y las deja en android/fastlane/metadata
+
+### android upload_screenshots
+
+```sh
+[bundle exec] fastlane android upload_screenshots
+```
+
+Sube a Google Play las capturas y las imágenes de la ficha (sin tocar el binario)
+
 ### android upload
 
 ```sh
