@@ -90,3 +90,5 @@ flutter:
     - assets/images/exdev.png
     - assets/images/miutem_claro.png
     - assets/images/miutem_oscuro.png
+    # Datos ficticios para las capturas de las tiendas (SCREENSHOT_MODE)
+    - assets/mock/alex-suprun-unsplash.jpg

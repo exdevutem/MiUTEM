@@ -48,7 +48,7 @@ class _SaludoState extends State<Saludo> with SingleTickerProviderStateMixin {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(let<int, String>(DateTime.now().hour, (hour) => hour >= 6 && hour < 12 ? "¡Buenos Días!," : (hour >= 12 && hour < 19 ? "¡Buenas Tardes!," : "¡Buenas Noches!,")) ?? "¡Te damos la Bienvenida!,",
+          Text(let<int, String>(ahora().hour, (hour) => hour >= 6 && hour < 12 ? "¡Buenos Días!," : (hour >= 12 && hour < 19 ? "¡Buenas Tardes!," : "¡Buenas Noches!,")) ?? "¡Te damos la Bienvenida!,",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
           ),
           Skeletonizer(

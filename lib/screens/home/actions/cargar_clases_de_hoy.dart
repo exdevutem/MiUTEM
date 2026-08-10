@@ -2,11 +2,12 @@ import "package:get/get.dart";
 import "package:miutem/core/models/exceptions/custom_exception.dart";
 import "package:miutem/core/models/horario.dart";
 import "package:miutem/core/services/horario_service.dart";
+import "package:miutem/core/utils/utils.dart";
 
 Future<List<BloqueHorario>?> cargarClasesDeHoy({ bool forceRefresh = false }) async {
   try {
     final horario = await Get.find<HorarioService>().getHorario(forceRefresh: forceRefresh);
-    final diaIdx = DateTime.now().weekday - 1;
+    final diaIdx = ahora().weekday - 1;
     if(diaIdx < 0 || diaIdx >= (horario.horario?.first.length ?? 0)) {
       return Future.error("No tienes clases hoy.");
     }

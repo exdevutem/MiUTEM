@@ -1,6 +1,7 @@
 
 import "package:awesome_notifications/awesome_notifications.dart";
 import "package:flutter/material.dart";
+import "package:miutem/core/utils/constants.dart";
 
 class NotificationController {
 
@@ -29,7 +30,7 @@ class NotificationController {
   static Future<void> checkAndRequestNotificationPermissions() async {
     // Al generar las capturas para las tiendas no se pide el permiso: el diálogo del sistema
     // deja la app inactiva y la pantalla se queda congelada en el splash.
-    if (const bool.fromEnvironment("SCREENSHOT_MODE")) {
+    if (modoCapturas) {
       return;
     }
 

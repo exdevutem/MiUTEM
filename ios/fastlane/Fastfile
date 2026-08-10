@@ -188,17 +188,11 @@ platform :ios do
     devices = array_option(options, :devices, env_var: "SCREENSHOT_DEVICES", default: ["iPhone 17 Pro Max"])
     locale = string_option(options, :locale, env_var: "SCREENSHOT_LOCALE", default: "es-MX")
     app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
-    username = string_option(options, :username, env_var: "SCREENSHOT_USER", default: "")
-    password = string_option(options, :password, env_var: "SCREENSHOT_PASSWORD", default: "")
     clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
 
     scheme = app_env == "prod" ? "production" : "development"
     # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
     output_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots", locale)
-
-    if username.to_s.empty? || password.to_s.empty?
-      UI.important("⚠️  Sin SCREENSHOT_USER/SCREENSHOT_PASSWORD sólo se capturará la pantalla de login.")
-    end
 
     FileUtils.rm_rf(output_dir) if clear
     FileUtils.mkdir_p(output_dir)
@@ -211,19 +205,16 @@ platform :ios do
       ENV["SCREENSHOTS_DIR"] = output_dir
       ENV["SCREENSHOT_PREFIX"] = "#{device} - "
 
-      # print_command: false para que la contraseña de la cuenta demo no quede en el log.
-      Actions.sh_control_output(
+      # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
+      # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
+      sh(
         "flutter", "drive",
         "--driver=test_driver/integration_test.dart",
         "--target=integration_test/screenshots_test.dart",
         "--flavor", scheme,
         "-d", udid,
         "--dart-define=SCREENSHOT_MODE=true",
-        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}",
-        "--dart-define=SCREENSHOT_USER=#{username}",
-        "--dart-define=SCREENSHOT_PASSWORD=#{password}",
-        print_command: false,
-        print_command_output: true
+        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
       )
     end
 

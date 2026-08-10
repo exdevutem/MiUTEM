@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:flutter/material.dart";
+import "package:miutem/core/utils/utils.dart";
 import "package:miutem/styles/styles.dart";
 
 class CardClase extends StatefulWidget {
@@ -26,7 +27,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   void initState() {
     Timer.periodic(const Duration(seconds: 30), (timer) {
       // Si es la hora de inicio o fin de la clase (en el mismo minuto) forzamos un rebuild
-      final now = DateTime.now();
+      final now = ahora();
       final isHoraInicio = now.hour == int.parse(widget.horaInicio.split(":")[0]) && now.minute == int.parse(widget.horaInicio.split(":")[1]);
       final isHoraFin = now.hour == int.parse(widget.horaFin.split(":")[0]) && now.minute == int.parse(widget.horaFin.split(":")[1]);
 
