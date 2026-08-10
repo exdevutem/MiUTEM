@@ -18,5 +18,13 @@
       "font_size": 52
     }
   },
-  "data": []
+  "data": [
+    { "filter": "01_login", "background": "./backgrounds/01_login.jpg" },
+    { "filter": "02_inicio", "background": "./backgrounds/02_inicio.jpg" },
+    { "filter": "03_asignaturas", "background": "./backgrounds/03_asignaturas.jpg" },
+    { "filter": "04_credencial", "background": "./backgrounds/04_credencial.jpg" },
+    { "filter": "05_perfil", "background": "./backgrounds/05_perfil.jpg" },
+    { "filter": "06_horario", "background": "./backgrounds/06_horario.jpg" },
+    { "filter": "07_malla", "background": "./backgrounds/07_malla.jpg" }
+  ]
 }

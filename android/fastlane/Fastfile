@@ -173,6 +173,10 @@ platform :android do
     UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
 
     if frame
+      # Los fondos se cortan al tamaño exacto de las capturas: si cambia la resolución del
+      # emulador, frameit recortaría las tiras y rompería la continuidad entre capturas.
+      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
+
       opciones_frameit = { path: screenshots_dir, use_platform: "ANDROID" }
       opciones_frameit[:force_device_type] = device_frame unless device_frame.to_s.empty?
       frame_screenshots(**opciones_frameit)

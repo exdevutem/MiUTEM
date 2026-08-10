@@ -203,7 +203,8 @@ platform :ios do
     UI.important("⚠️  Capturando el flavor #{scheme}. Para la App Store usa `app_env:prod`.") unless app_env == "prod"
 
     # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
-    screenshots_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots")
+    root = sh("git", "rev-parse", "--show-toplevel", log: false).strip
+    screenshots_dir = File.join(root, "fastlane", "screenshots")
     output_dir = File.join(screenshots_dir, locale)
 
     # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
@@ -238,7 +239,12 @@ platform :ios do
 
     UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
 
-    frame_screenshots(path: screenshots_dir) if frame
+    if frame
+      # Los fondos se cortan al tamaño exacto de las capturas: si cambia el simulador
+      # cambia el tamaño, y frameit recortaría las tiras y rompería la continuidad.
+      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
+      frame_screenshots(path: screenshots_dir)
+    end
   end
 
   desc "Sube a App Store Connect las capturas ya generadas (sin tocar el binario)"
