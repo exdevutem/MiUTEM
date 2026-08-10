@@ -104,11 +104,23 @@ platform :android do
     # 1080x2160 es el máximo que acepta y el mínimo alto en que la credencial entra completa.
     size = string_option(options, :size, env_var: "SCREENSHOT_ANDROID_SIZE", default: "1080x2160")
 
+    frame = bool_option(options, :frame, env_var: "SCREENSHOT_FRAME", default: true)
+    # Vacío deja que frameit elija el marco según el tamaño de la captura. Si se fija uno,
+    # tiene que ser de la lista que acepta frameit (Google Pixel 3, 4, 5, Samsung Galaxy S10...).
+    device_frame = string_option(options, :device_frame, env_var: "SCREENSHOT_ANDROID_FRAME", default: "")
+
     scheme = app_env == "prod" ? "production" : "development"
     package_name = "#{package_name}.dev" unless scheme == "production"
+    # APP_ENV suele quedar en dev en el .env local, y las capturas de la tienda tienen que
+    # salir del flavor de producción (nombre, ícono y package distintos).
+    UI.important("⚠️  Capturando el flavor #{scheme}. Para Google Play usa `app_env:prod`.") unless app_env == "prod"
     # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
-    output_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip,
-                           "android", "fastlane", "metadata", "android", locale, "images", "phoneScreenshots")
+    root = sh("git", "rev-parse", "--show-toplevel", log: false).strip
+    # Las capturas se toman acá, junto a la configuración de frameit, y sólo las finales
+    # se copian a metadata/: supply sube todas las imágenes de esa carpeta y Play acepta 8.
+    screenshots_dir = File.join(root, "android", "fastlane", "screenshots")
+    output_dir = File.join(screenshots_dir, locale)
+    play_dir = File.join(root, "android", "fastlane", "metadata", "android", locale, "images", "phoneScreenshots")
 
     serial = android_connected_device
     started_here = serial.nil?
@@ -120,7 +132,11 @@ platform :android do
     [package_name, "#{package_name}.test"].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
 
     # Google Play sólo acepta 8 capturas por dispositivo: si quedan las anteriores, falla el upload.
-    FileUtils.rm_rf(output_dir) if clear
+    # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
+    if clear
+      Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) }
+      FileUtils.rm_rf(play_dir)
+    end
     FileUtils.mkdir_p(output_dir)
 
     begin
@@ -131,6 +147,9 @@ platform :android do
 
       ENV["SCREENSHOTS_DIR"] = output_dir
       ENV["SCREENSHOT_PREFIX"] = ""
+      # El APK de las capturas es debug y no se distribuye: se firma con la llave de debug
+      # para no depender del keystore de release que traiga el .env.
+      ENV["MIUTEM_USE_DEBUG_SIGNING"] = "true"
 
       # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
       # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
@@ -153,7 +172,18 @@ platform :android do
     capturas = Dir.glob(File.join(output_dir, "*.png"))
     UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
 
-    UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
+    if frame
+      opciones_frameit = { path: screenshots_dir, use_platform: "ANDROID" }
+      opciones_frameit[:force_device_type] = device_frame unless device_frame.to_s.empty?
+      frame_screenshots(**opciones_frameit)
+      capturas = Dir.glob(File.join(output_dir, "*_framed.png"))
+      UI.user_error!("❌ frameit no generó ninguna captura enmarcada.") if capturas.empty?
+    end
+
+    FileUtils.mkdir_p(play_dir)
+    capturas.each { |captura| FileUtils.cp(captura, play_dir) }
+
+    UI.success("✅ #{capturas.length} capturas listas en #{play_dir}")
   end
 
   desc "Sube a Google Play las capturas y las imágenes de la ficha (sin tocar el binario)"

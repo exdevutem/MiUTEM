@@ -71,6 +71,14 @@ Construye y firma la app para distribución en iOS
 
 Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots
 
+### ios upload_screenshots
+
+```sh
+[bundle exec] fastlane ios upload_screenshots
+```
+
+Sube a App Store Connect las capturas ya generadas (sin tocar el binario)
+
 ### ios load_api_key
 
 ```sh

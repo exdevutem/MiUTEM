@@ -183,18 +183,31 @@ platform :ios do
     end
   end
 
+  # El recorrido no usa `snapshot` porque esa herramienta maneja la app con UI Tests de
+  # XCUITest (Swift), y acá las pantallas son de Flutter: el recorrido vive en
+  # integration_test/screenshots_test.dart y lo ejecuta `flutter drive`, que además sirve
+  # igual para Android. Del flujo de snapshot sí se conserva todo lo demás —la carpeta
+  # fastlane/screenshots/<idioma>/ y los nombres "<Dispositivo>-<pantalla>.png"— para que
+  # frameit y deliver reconozcan el dispositivo sin configuración extra.
   desc "Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots"
   lane :screenshots do |options|
     devices = array_option(options, :devices, env_var: "SCREENSHOT_DEVICES", default: ["iPhone 17 Pro Max"])
     locale = string_option(options, :locale, env_var: "SCREENSHOT_LOCALE", default: "es-MX")
     app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
     clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
+    frame = bool_option(options, :frame, env_var: "SCREENSHOT_FRAME", default: true)
 
     scheme = app_env == "prod" ? "production" : "development"
-    # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
-    output_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots", locale)
+    # APP_ENV suele quedar en dev en el .env local, y las capturas de la tienda tienen que
+    # salir del flavor de producción (nombre, ícono y bundle id distintos).
+    UI.important("⚠️  Capturando el flavor #{scheme}. Para la App Store usa `app_env:prod`.") unless app_env == "prod"
 
-    FileUtils.rm_rf(output_dir) if clear
+    # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
+    screenshots_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots")
+    output_dir = File.join(screenshots_dir, locale)
+
+    # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
+    Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) } if clear
     FileUtils.mkdir_p(output_dir)
 
     devices.each do |device|
@@ -203,7 +216,8 @@ platform :ios do
       sh("xcrun", "simctl", "bootstatus", udid, "-b")
 
       ENV["SCREENSHOTS_DIR"] = output_dir
-      ENV["SCREENSHOT_PREFIX"] = "#{device} - "
+      # Mismo formato de nombre que usa snapshot: frameit y deliver deducen de ahí el dispositivo.
+      ENV["SCREENSHOT_PREFIX"] = "#{device}-"
 
       # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
       # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
@@ -223,6 +237,31 @@ platform :ios do
     UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
 
     UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
+
+    frame_screenshots(path: screenshots_dir) if frame
+  end
+
+  desc "Sube a App Store Connect las capturas ya generadas (sin tocar el binario)"
+  lane :upload_screenshots do |options|
+    app_identifier = string_option(options, :app_identifier, env_var: "APP_IDENTIFIER", required: true)
+
+    screenshots_path = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots")
+
+    load_api_key()
+
+    # deliver detecta los *_framed.png y omite las capturas sin marco de la misma carpeta.
+    upload_to_app_store(
+      app_identifier: app_identifier,
+      screenshots_path: screenshots_path,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_screenshots: false,
+      overwrite_screenshots: true,
+      run_precheck_before_submit: false,
+      force: true,
+    )
+
+    UI.success("✅ Capturas subidas a App Store Connect")
   end
 
   desc "Carga la API Key de App Store Connect para autenticación"

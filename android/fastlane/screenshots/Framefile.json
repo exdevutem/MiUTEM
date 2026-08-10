@@ -1,0 +1,22 @@
+{
+  "device_frame_version": "latest",
+  "default": {
+    "background": "./background.jpg",
+    "padding": 50,
+    "title_below_image": false,
+    "show_complete_frame": false,
+    "stack_title": false,
+    "use_platform": "ANDROID",
+    "title": {
+      "font": "../../../fastlane/screenshots/fonts/Roboto.ttf",
+      "color": "#FFFFFF",
+      "font_size": 78
+    },
+    "keyword": {
+      "font": "../../../fastlane/screenshots/fonts/Roboto.ttf",
+      "color": "#B3E6CC",
+      "font_size": 52
+    }
+  },
+  "data": []
+}

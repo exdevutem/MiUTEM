@@ -1,1 +1,3 @@
+# Las capturas se generan con `fastlane android screenshots`; la configuración de frameit sí se versiona.
 metadata/
+screenshots/**/*.png

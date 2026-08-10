@@ -1,3 +1,4 @@
 build/
-screenshots/
+# Las capturas se generan con `fastlane ios screenshots`; la configuración de frameit sí se versiona.
+screenshots/**/*.png
 *.xml

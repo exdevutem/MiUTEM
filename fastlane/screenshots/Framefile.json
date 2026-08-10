@@ -1,0 +1,21 @@
+{
+  "device_frame_version": "latest",
+  "default": {
+    "background": "./background.jpg",
+    "padding": 60,
+    "title_below_image": false,
+    "show_complete_frame": false,
+    "stack_title": false,
+    "title": {
+      "font": "./fonts/Roboto.ttf",
+      "color": "#FFFFFF",
+      "font_size": 96
+    },
+    "keyword": {
+      "font": "./fonts/Roboto.ttf",
+      "color": "#B3E6CC",
+      "font_size": 64
+    }
+  },
+  "data": []
+}
