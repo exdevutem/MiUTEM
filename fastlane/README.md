@@ -63,6 +63,14 @@ Compila la app con flutter para iOS
 
 Construye y firma la app para distribución en iOS
 
+### ios screenshots
+
+```sh
+[bundle exec] fastlane ios screenshots
+```
+
+Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots
+
 ### ios load_api_key
 
 ```sh

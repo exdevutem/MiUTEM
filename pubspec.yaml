@@ -2,7 +2,7 @@ name: miutem
 description: "Plataforma académica para estudiantes de la Universidad Tecnológica Metropolitana (UTEM)"
 publish_to: none
 
-version: 4.0.0+150
+version: 4.0.0+151
 
 environment:
   sdk: ^3.11.1
@@ -62,6 +62,8 @@ dependencies:
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
 

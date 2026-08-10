@@ -1,5 +1,18 @@
 import "../fastlane/src/helpers.rb"
 
+require "json"
+
+# Busca el UDID de un simulador por nombre, prefiriendo el runtime de iOS más nuevo.
+def ios_simulator_udid(name)
+  devices = JSON.parse(sh("xcrun", "simctl", "list", "devices", "available", "--json", log: false))["devices"]
+  runtimes = devices.keys.sort_by { |runtime| runtime.scan(/\d+/).map(&:to_i) }.reverse
+  device = runtimes.flat_map { |runtime| devices[runtime] }.find { |d| d["name"] == name }
+
+  UI.user_error!("❌ No existe el simulador '#{name}'. Créalo en Xcode o ajusta SCREENSHOT_DEVICES.") unless device
+
+  device["udid"]
+end
+
 platform :ios do
   desc "Asegura que exista un keychain limpio para importar los certificados de Apple"
   lane :ensure_keychain do |options|
@@ -168,6 +181,57 @@ platform :ios do
         xcodebuild_formatter: is_ci ? "xcbeautify --renderer github-actions" : "xcbeautify",
       )
     end
+  end
+
+  desc "Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots"
+  lane :screenshots do |options|
+    devices = array_option(options, :devices, env_var: "SCREENSHOT_DEVICES", default: ["iPhone 17 Pro Max"])
+    locale = string_option(options, :locale, env_var: "SCREENSHOT_LOCALE", default: "es-MX")
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
+    username = string_option(options, :username, env_var: "SCREENSHOT_USER", default: "")
+    password = string_option(options, :password, env_var: "SCREENSHOT_PASSWORD", default: "")
+    clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
+
+    scheme = app_env == "prod" ? "production" : "development"
+    # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
+    output_dir = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip, "fastlane", "screenshots", locale)
+
+    if username.to_s.empty? || password.to_s.empty?
+      UI.important("⚠️  Sin SCREENSHOT_USER/SCREENSHOT_PASSWORD sólo se capturará la pantalla de login.")
+    end
+
+    FileUtils.rm_rf(output_dir) if clear
+    FileUtils.mkdir_p(output_dir)
+
+    devices.each do |device|
+      udid = ios_simulator_udid(device)
+      UI.message("📱 Preparando #{device} (#{udid})")
+      sh("xcrun", "simctl", "bootstatus", udid, "-b")
+
+      ENV["SCREENSHOTS_DIR"] = output_dir
+      ENV["SCREENSHOT_PREFIX"] = "#{device} - "
+
+      # print_command: false para que la contraseña de la cuenta demo no quede en el log.
+      Actions.sh_control_output(
+        "flutter", "drive",
+        "--driver=test_driver/integration_test.dart",
+        "--target=integration_test/screenshots_test.dart",
+        "--flavor", scheme,
+        "-d", udid,
+        "--dart-define=SCREENSHOT_MODE=true",
+        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}",
+        "--dart-define=SCREENSHOT_USER=#{username}",
+        "--dart-define=SCREENSHOT_PASSWORD=#{password}",
+        print_command: false,
+        print_command_output: true
+      )
+    end
+
+    # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+    capturas = Dir.glob(File.join(output_dir, "*.png"))
+    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
+
+    UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
   end
 
   desc "Carga la API Key de App Store Connect para autenticación"
