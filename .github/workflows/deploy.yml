@@ -286,6 +286,11 @@ jobs:
       - name: 🔥 Instalar FlutterFire
         run: dart pub global activate flutterfire_cli
 
+      # flutterfire configure invoca `ruby -e "require 'xcodeproj'"` fuera de bundler, así
+      # que la gem tiene que estar instalada global (igual que en deploy-ios y deploy-macos).
+      - name: 💍 Instala gem xcodeproj
+        run: sudo gem install xcodeproj
+
       - name: 🪎 Configura bundle
         run: bundle install
 

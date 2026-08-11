@@ -3,7 +3,7 @@
 # en tiras verticales, una por captura. Puestas lado a lado en la ficha de la tienda,
 # las capturas reconstruyen la foto completa.
 #
-# Uso: scripts/generate-screenshot-backgrounds
+# Uso: scripts/generate-screenshot-backgrounds [ios|android|all]
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -70,5 +70,11 @@ generar() {
   echo "✅ $n fondos de ${ancho}x${alto} en $tiras"
 }
 
-generar "fastlane/screenshots" "es-MX" 1320 2868
-generar "android/fastlane/screenshots" "es-419" 1080 2160
+PLATAFORMA="${1:-all}"
+case "$PLATAFORMA" in
+  ios|android|all) ;;
+  *) echo "❌ Uso: $(basename "$0") [ios|android|all]" >&2; exit 1 ;;
+esac
+
+[ "$PLATAFORMA" = android ] || generar "fastlane/screenshots" "es-MX" 1320 2868
+[ "$PLATAFORMA" = ios ] || generar "android/fastlane/screenshots" "es-419" 1080 2160

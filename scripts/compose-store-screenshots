@@ -7,7 +7,10 @@
 #
 # Se ejecuta después de `frameit`, porque escribe directamente los *_framed.png.
 #
-# Uso: scripts/compose-store-screenshots
+# Uso: scripts/compose-store-screenshots [ios|android|all]
+#
+# La plataforma importa porque en CI cada una corre en un job (y un runner) distinto: sin
+# el argumento, el job de iOS moriría buscando las capturas de Android y viceversa.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -116,5 +119,11 @@ componer() {
   echo "✅ ${prefijo}01_bienvenida_framed.png y ${prefijo}02_bienvenida_framed.png en $dir"
 }
 
-componer "fastlane/screenshots" "es-MX"
-componer "android/fastlane/screenshots" "es-419" "android"
+PLATAFORMA="${1:-all}"
+case "$PLATAFORMA" in
+  ios|android|all) ;;
+  *) echo "❌ Uso: $(basename "$0") [ios|android|all]" >&2; exit 1 ;;
+esac
+
+[ "$PLATAFORMA" = android ] || componer "fastlane/screenshots" "es-MX"
+[ "$PLATAFORMA" = ios ] || componer "android/fastlane/screenshots" "es-419" "android"
