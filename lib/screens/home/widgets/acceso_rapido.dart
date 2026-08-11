@@ -21,6 +21,7 @@ Widget build(BuildContext context) {
         colorDark: AppTheme.darkBlueCard,
         label: "Horario",
         icon: AppIcons.timetable,
+        flagKey: "horario",
         onTap: () => visitarHorario(context),
       ),
     CardAccesoRapido(
@@ -29,6 +30,7 @@ Widget build(BuildContext context) {
       label: "Notas",
       icon: AppIcons.calculator,
       fill: 0,
+      flagKey: "calculadora",
       onTap: () => visitarNotas(context),
     ),
     CardAccesoRapido(
@@ -37,6 +39,7 @@ Widget build(BuildContext context) {
       label: "Novedades",
       icon: AppIcons.updates,
       fill: 0,
+      flagKey: "novedades",
       onTap: () => visitarNovedades(context),
     ),
   ];

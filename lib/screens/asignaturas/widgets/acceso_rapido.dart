@@ -17,6 +17,7 @@ class AccesoRapido extends StatelessWidget {
           colorDark: AppTheme.darkBlueCard,
           label: "Horario",
           icon: AppIcons.timetable,
+          flagKey: "horario",
           onTap: () => visitarHorario(context),
         ),
       CardAccesoRapido(
@@ -25,6 +26,7 @@ class AccesoRapido extends StatelessWidget {
         label: "Notas",
         icon: AppIcons.calculator,
         fill: 0,
+        flagKey: "calculadora",
         onTap: () => visitarCalculadoraNotas(context),
       ),
       if (showEstudianteActions)
@@ -34,6 +36,7 @@ class AccesoRapido extends StatelessWidget {
           label: "Malla Histórica",
           icon: AppIcons.historicTimetable,
           fill: 0,
+          flagKey: "malla_historica",
           onTap: () => visitarMallaHistorica(context),
         ),
     ];
