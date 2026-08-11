@@ -1,5 +1,6 @@
 import "dart:async";
 import "package:flutter/material.dart";
+import "package:miutem/core/utils/utils.dart";
 import "package:miutem/styles/styles.dart";
 
 class CardClase extends StatefulWidget {
@@ -26,7 +27,7 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   void initState() {
     Timer.periodic(const Duration(seconds: 30), (timer) {
       // Si es la hora de inicio o fin de la clase (en el mismo minuto) forzamos un rebuild
-      final now = DateTime.now();
+      final now = ahora();
       final isHoraInicio = now.hour == int.parse(widget.horaInicio.split(":")[0]) && now.minute == int.parse(widget.horaInicio.split(":")[1]);
       final isHoraFin = now.hour == int.parse(widget.horaFin.split(":")[0]) && now.minute == int.parse(widget.horaFin.split(":")[1]);
 
@@ -59,7 +60,9 @@ class _CardClaseState extends State<CardClase> with WidgetsBindingObserver {
   }
 
   bool isCurrentClassActive() {
-    final now = DateTime.now();
+    // `ahora()` y no `DateTime.now()`: en modo capturas la hora está fijada, y con la
+    // hora real ninguna clase salía marcada como la que está en curso.
+    final now = ahora();
     final start = DateTime(now.year, now.month, now.day, int.parse(widget.horaInicio.split(":")[0]), int.parse(widget.horaInicio.split(":")[1]));
     final end = DateTime(now.year, now.month, now.day, int.parse(widget.horaFin.split(":")[0]), int.parse(widget.horaFin.split(":")[1]));
     return now.isAfter(start) && now.isBefore(end);

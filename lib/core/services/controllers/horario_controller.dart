@@ -57,7 +57,7 @@ class HorarioController {
   ];
 
   final _randomColors = List<Color>.from(_pastelColors)..shuffle();
-  final _now = DateTime.now();
+  final _now = ahora();
 
   num daysCount = 6;
   num periodsCount = 9;

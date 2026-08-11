@@ -63,6 +63,22 @@ Compila la app con flutter para iOS
 
 Construye y firma la app para distribución en iOS
 
+### ios screenshots
+
+```sh
+[bundle exec] fastlane ios screenshots
+```
+
+Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots
+
+### ios upload_screenshots
+
+```sh
+[bundle exec] fastlane ios upload_screenshots
+```
+
+Sube a App Store Connect las capturas ya generadas (sin tocar el binario)
+
 ### ios load_api_key
 
 ```sh
@@ -107,6 +123,22 @@ Decodifica el keystore desde base64 y lo deja en un archivo temporal
 ```
 
 Compila la app con flutter
+
+### android screenshots
+
+```sh
+[bundle exec] fastlane android screenshots
+```
+
+Genera las capturas de pantalla en un emulador y las deja en android/fastlane/metadata
+
+### android upload_screenshots
+
+```sh
+[bundle exec] fastlane android upload_screenshots
+```
+
+Sube a Google Play las capturas y las imágenes de la ficha (sin tocar el binario)
 
 ### android upload
 

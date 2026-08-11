@@ -1,0 +1,56 @@
+{
+  "device_frame_version": "latest",
+  "default": {
+    "background": "./backgrounds/05_inicio.jpg",
+    "padding": 50,
+    "title_below_image": false,
+    "show_complete_frame": false,
+    "stack_title": true,
+    "use_platform": "ANDROID",
+    "keyword": {
+      "font": "../../../fastlane/screenshots/fonts/Roboto.ttf",
+      "color": "#FFFFFF",
+      "font_size": 68
+    },
+    "title": {
+      "font": "../../../fastlane/screenshots/fonts/Roboto.ttf",
+      "color": "#CFE8DC",
+      "font_size": 40
+    },
+    "title_min_height": 508
+  },
+  "data": [
+    {
+      "filter": "01_bienvenida",
+      "background": "./backgrounds/01_bienvenida.jpg"
+    },
+    {
+      "filter": "02_bienvenida",
+      "background": "./backgrounds/02_bienvenida.jpg"
+    },
+    {
+      "filter": "03_oscuro",
+      "background": "./backgrounds/03_oscuro.jpg"
+    },
+    {
+      "filter": "04_calculadora",
+      "background": "./backgrounds/04_calculadora.jpg"
+    },
+    {
+      "filter": "05_inicio",
+      "background": "./backgrounds/05_inicio.jpg"
+    },
+    {
+      "filter": "06_credencial",
+      "background": "./backgrounds/06_credencial.jpg"
+    },
+    {
+      "filter": "07_horario",
+      "background": "./backgrounds/07_horario.jpg"
+    },
+    {
+      "filter": "08_malla",
+      "background": "./backgrounds/08_malla.jpg"
+    }
+  ]
+}

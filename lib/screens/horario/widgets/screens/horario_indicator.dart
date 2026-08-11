@@ -3,6 +3,7 @@ import "dart:async";
 import "package:flutter/material.dart";
 import "package:get/get.dart";
 import "package:miutem/core/services/controllers/horario_controller.dart";
+import "package:miutem/core/utils/utils.dart";
 
 import "../widgets.dart";
 
@@ -94,7 +95,7 @@ class _HorarioIndicatorState extends State<HorarioIndicator> {
                   BorderRadius.circular(HorarioIndicator._circleRadius),
                 ),
                 child: _horarioController.indicatorIsOpen.value ? Center(
-                  child: TickerTimeText(time: DateTime.now()),
+                  child: TickerTimeText(time: ahora()),
                 ) : Container(),
               )),
             ),

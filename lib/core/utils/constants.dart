@@ -2,6 +2,16 @@ import "package:flutter/services.dart";
 import "package:flutter_secure_storage/flutter_secure_storage.dart";
 import "package:shared_preferences/shared_preferences.dart";
 
+/// Modo de generación de capturas para las tiendas: la app no habla con SIGA ni
+/// con Mi.UTEM, sino que usa los datos ficticios de `lib/core/mock/`.
+/// Se activa con `--dart-define=SCREENSHOT_MODE=true` (lane `ios screenshots`).
+const bool modoCapturas = bool.fromEnvironment("SCREENSHOT_MODE");
+
+/// Fecha que la app da por "hoy" en modo capturas: lunes 30 de agosto,
+/// aniversario de la fundación de la UTEM (30/08/1993). El año es el próximo
+/// en que el 30 de agosto cae lunes, para que el horario muestre día hábil.
+final DateTime fechaCapturas = DateTime(2027, 8, 30, 8, 30);
+
 /// UUID Namespace es para generar IDs determinísticos usando UUID v5, por ejemplo para generar un ID de usuario a partir de su correo electrónico sin necesidad de guardar el ID en la base de datos.
 const miutemUuidNamespace = "a590b229-221c-4d24-a41d-23f5b60ce757";
 const sigaHost = "https://siga.utem.cl";

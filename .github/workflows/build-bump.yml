@@ -1,0 +1,29 @@
+name: Número de compilación
+on:
+  pull_request:
+    types: [opened]
+    branches: [dev]
+
+permissions:
+  contents: write
+
+jobs:
+  incrementar:
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: 🔢 Incrementar número de compilación
+        run: perl -i -pe 's/^(version:\s*\d+\.\d+\.\d+\+)(\d+)\s*$/$1.($2+1)."\n"/e' pubspec.yaml
+
+      - name: 📤 Publicar cambios
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -am 'chore: incrementa número de compilación'
+          git push

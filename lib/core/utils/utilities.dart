@@ -76,9 +76,13 @@ Color fromHex(String hexString) {
   return Color(int.parse(buffer.toString(), radix: 16));
 }
 
+/// Fecha y hora actual. En modo capturas siempre devuelve [fechaCapturas], para
+/// que el saludo, el horario y las clases de hoy salgan iguales en cada corrida.
+DateTime ahora() => modoCapturas ? fechaCapturas : DateTime.now();
+
 /// Obtiene el día actual en formato 'Día, Numero de Mes'.
 String getToday() {
-  final now = DateTime.now();
+  final now = ahora();
   return "${days[now.weekday - 1]}, ${now.day} de ${months[now.month - 1]}";
 }
 

@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# Arma las dos primeras capturas de la ficha: un teléfono en diagonal con la pantalla de
+# splash, que ocupa la captura 1 (junto al logo de la UTEM) y se corta en la 2, donde va
+# el texto. Son las únicas dos que no salen de la app, así que no pasan por frameit; el
+# marco del teléfono sí se lo pide prestado, porque frameit sin Framefile en la carpeta
+# deja el marco solo, con el resto transparente.
+#
+# Se ejecuta después de `frameit`, porque escribe directamente los *_framed.png.
+#
+# Uso: scripts/compose-store-screenshots [ios|android|all]
+#
+# La plataforma importa porque en CI cada una corre en un job (y un runner) distinto: sin
+# el argumento, el job de iOS moriría buscando las capturas de Android y viceversa.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+ROTACION=-18       # Grados de inclinación del teléfono.
+ALTO_TELEFONO=0.92 # Alto del teléfono en altos de captura, antes de inclinarlo.
+CENTRO_X=0.95      # Centro del teléfono, en anchos de captura desde el borde izquierdo.
+CENTRO_Y=0.48
+LOGO_ANCHO=0.46    # Ancho del logo de la UTEM, en anchos de captura.
+LOGO_MARGEN=0.06
+TEXTO_CENTRO_X=1.58 # Centro del texto, en anchos de captura: corrido a la derecha para
+TEXTO_ARRIBA=0.10   # no chocar con la punta del teléfono, que entra en la segunda captura.
+
+command -v magick >/dev/null || { echo "❌ Falta ImageMagick (brew install imagemagick)" >&2; exit 1; }
+command -v fastlane >/dev/null || { echo "❌ fastlane no está en el PATH" >&2; exit 1; }
+
+FUENTE_TEXTO="fastlane/screenshots/fonts/Roboto.ttf"
+LOGO_UTEM="assets/images/utem_logo_color_blanco.png" # El blanco: va sobre el fondo oscuro.
+SPLASH_LOGO="assets/launcher_icons/production/miutem-splash-light.png"
+SPLASH_MARCA="assets/images/exdev_dark.png"
+SPLASH_FONDO="#fafafa" # El mismo de flutter_native_splash-production.yaml.
+
+calc() { python3 -c "print(round($1))"; }
+
+# Valor de una clave en un archivo .strings, con los \n convertidos en saltos reales.
+texto_de() {
+  printf "%b" "$(sed -n "s/^\"$2\" = \"\(.*\)\";$/\1/p" "$1")"
+}
+
+# Tamaño de fuente declarado en el Framefile, para que estas dos capturas usen el mismo
+# cuerpo que las que arma frameit.
+tamano_fuente() {
+  python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['default'][sys.argv[2]]['font_size'])" "$1" "$2"
+}
+
+# componer <carpeta de screenshots> <locale> [plataforma de frameit]
+componer() {
+  local base=$1 locale=$2 plataforma=${3:-}
+  local dir="$base/$locale"
+
+  # Las capturas de la app mandan sobre el tamaño y sobre el prefijo de dispositivo: en
+  # iOS los archivos se llaman "<Dispositivo>-NN_pantalla.png" y frameit lee de ahí el marco.
+  local muestra
+  muestra=$(find "$dir" -name "*.png" ! -name "*_framed.png" | sort | head -1 || true)
+  [ -n "$muestra" ] || { echo "❌ No hay capturas en $dir: genéralas antes." >&2; exit 1; }
+
+  local ancho alto prefijo
+  read -r ancho alto <<<"$(magick identify -format "%w %h" "$muestra")"
+  prefijo="$(basename "$muestra")"
+  prefijo="${prefijo%%[0-9][0-9]_*}"
+
+  local tmp
+  tmp=$(mktemp -d)
+
+  # 1. La pantalla de splash, con los mismos assets que flutter_native_splash.
+  magick -size "${ancho}x${alto}" "xc:$SPLASH_FONDO" \
+    \( "$SPLASH_LOGO" -resize "$((ancho * 46 / 100))x" \) -gravity center -composite \
+    \( "$SPLASH_MARCA" -resize "$((ancho * 26 / 100))x" \) -gravity south -geometry "+0+$((alto * 5 / 100))" -composite \
+    "$tmp/${prefijo}splash.png"
+
+  # 2. El marco del teléfono, prestado de frameit.
+  (cd "$tmp" && fastlane frameit ${plataforma:+"$plataforma"} >/dev/null 2>&1)
+  local telefono="$tmp/${prefijo}splash_framed.png"
+  [ -f "$telefono" ] || { echo "❌ frameit no dejó el marco en $telefono" >&2; rm -rf "$tmp"; exit 1; }
+
+  # 3. El lienzo de las dos capturas juntas, con el trozo de foto de fondo que les toca.
+  magick "$base/backgrounds/01_bienvenida.jpg" "$base/backgrounds/02_bienvenida.jpg" +append "$tmp/lienzo.png"
+
+  # 4. El teléfono inclinado, cruzando la unión entre las dos capturas.
+  magick "$telefono" -background none -resize "x$(calc "$alto * $ALTO_TELEFONO")" -rotate "$ROTACION" "$tmp/telefono.png"
+
+  local tel_ancho tel_alto
+  read -r tel_ancho tel_alto <<<"$(magick identify -format "%w %h" "$tmp/telefono.png")"
+
+  magick "$tmp/lienzo.png" \
+    "$tmp/telefono.png" -gravity northwest \
+      -geometry "$(printf "%+d%+d" "$(calc "$ancho * $CENTRO_X - $tel_ancho / 2")" "$(calc "$alto * $CENTRO_Y - $tel_alto / 2")")" -composite \
+    \( "$LOGO_UTEM" -resize "$(calc "$ancho * $LOGO_ANCHO")x" \) -gravity southwest \
+      -geometry "+$(calc "$ancho * $LOGO_MARGEN")+$(calc "$alto * $LOGO_MARGEN")" -composite \
+    "$tmp/compuesto.png"
+
+  # 5. El texto, centrado en la mitad derecha, con el mismo par titular/subtítulo del resto.
+  local titular subtitulo cuerpo_titular cuerpo_subtitulo
+  titular=$(texto_de "$dir/keyword.strings" "02_bienvenida")
+  subtitulo=$(texto_de "$dir/title.strings" "02_bienvenida")
+  cuerpo_titular=$(tamano_fuente "$base/Framefile.json" keyword)
+  cuerpo_subtitulo=$(tamano_fuente "$base/Framefile.json" title)
+
+  # El espacio entre titular y subtítulo se hace con -splice y no con una imagen vacía:
+  # el -size de esa imagen se quedaría pegado y recortaría el label siguiente.
+  magick -background none -font "$FUENTE_TEXTO" \
+    \( -fill "#FFFFFF" -pointsize "$cuerpo_titular" -gravity center label:"$titular" \) \
+    \( -fill "#CFE8DC" -pointsize "$cuerpo_subtitulo" -gravity center label:"$subtitulo" \
+       -gravity north -splice "0x$((cuerpo_titular / 2))" \) \
+    -gravity center -append +repage "$tmp/texto.png"
+
+  magick "$tmp/compuesto.png" "$tmp/texto.png" -gravity north \
+    -geometry "$(printf "%+d%+d" "$(calc "$ancho * ($TEXTO_CENTRO_X - 1)")" "$(calc "$alto * $TEXTO_ARRIBA")")" \
+    -composite "$tmp/final.png"
+
+  # 6. Cortar en dos: cada mitad es una captura de la ficha.
+  magick "$tmp/final.png" -crop "${ancho}x${alto}+0+0" +repage "$dir/${prefijo}01_bienvenida_framed.png"
+  magick "$tmp/final.png" -crop "${ancho}x${alto}+${ancho}+0" +repage "$dir/${prefijo}02_bienvenida_framed.png"
+
+  rm -rf "$tmp"
+  echo "✅ ${prefijo}01_bienvenida_framed.png y ${prefijo}02_bienvenida_framed.png en $dir"
+}
+
+PLATAFORMA="${1:-all}"
+case "$PLATAFORMA" in
+  ios|android|all) ;;
+  *) echo "❌ Uso: $(basename "$0") [ios|android|all]" >&2; exit 1 ;;
+esac
+
+[ "$PLATAFORMA" = android ] || componer "fastlane/screenshots" "es-MX"
+[ "$PLATAFORMA" = ios ] || componer "android/fastlane/screenshots" "es-419" "android"
