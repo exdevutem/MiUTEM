@@ -175,14 +175,14 @@ platform :android do
     if frame
       # Los fondos se cortan al tamaño exacto de las capturas: si cambia la resolución del
       # emulador, frameit recortaría las tiras y rompería la continuidad entre capturas.
-      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
+      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"), "android")
 
       opciones_frameit = { path: screenshots_dir, use_platform: "ANDROID" }
       opciones_frameit[:force_device_type] = device_frame unless device_frame.to_s.empty?
       frame_screenshots(**opciones_frameit)
       # Las dos primeras capturas no salen de la app: se componen aparte, y después de
       # frameit porque escriben directamente sus *_framed.png.
-      sh(File.join(root, "scripts", "compose-store-screenshots"))
+      sh(File.join(root, "scripts", "compose-store-screenshots"), "android")
       capturas = Dir.glob(File.join(output_dir, "*_framed.png"))
       UI.user_error!("❌ frameit no generó ninguna captura enmarcada.") if capturas.empty?
     end

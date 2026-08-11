@@ -242,11 +242,11 @@ platform :ios do
     if frame
       # Los fondos se cortan al tamaño exacto de las capturas: si cambia el simulador
       # cambia el tamaño, y frameit recortaría las tiras y rompería la continuidad.
-      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
+      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"), "ios")
       frame_screenshots(path: screenshots_dir)
       # Las dos primeras capturas no salen de la app: se componen aparte, y después de
       # frameit porque escriben directamente sus *_framed.png.
-      sh(File.join(root, "scripts", "compose-store-screenshots"))
+      sh(File.join(root, "scripts", "compose-store-screenshots"), "ios")
     end
   end
 
