@@ -19,6 +19,12 @@ final remoteConfigDefaults = {
       "apuntes": false,
       "perfil": true,
     },
+    "acceso_rapido": {
+      "horario": {"enabled": true},
+      "calculadora": {"enabled": true},
+      "novedades": {"enabled": true},
+      "malla_historica": {"enabled": true},
+    },
     "profile": {
       "notificaciones": true,
       "bug_report": true,
