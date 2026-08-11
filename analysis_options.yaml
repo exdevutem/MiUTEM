@@ -9,6 +9,9 @@ analyzer:
     - lib/firebase_options_*.dart
     - lib/main_dev.dart
     - lib/main_prod.dart
+    # Importa las opciones de firebase de los dos entornos, que las genera
+    # `scripts/flutterfire-configure` y no están versionadas.
+    - integration_test/screenshots_test.dart
     - fastlane/build/**
     - build/**
     - android/**
