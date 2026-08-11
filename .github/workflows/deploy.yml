@@ -7,11 +7,11 @@ on:
       track:
         description: "Selecciona el track de despliegue"
         required: true
-        default: "development"
+        default: "dev"
         type: choice
         options:
-          - production
-          - development
+          - prod
+          - dev
 jobs:
   determine-environment:
     # Los bumps de dependabot no despliegan. Al saltarse este job, los deploy-* que dependen de él también se saltan.
