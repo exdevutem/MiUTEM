@@ -1,0 +1,12 @@
+/* Titular de cada captura: la línea grande de arriba. El subtítulo va en title.strings.
+   Los saltos de línea se escriben \n y hay que ponerlos a mano: frameit no corta el texto,
+   sólo lo achica hasta que quepa a lo ancho. Las claves 01 y 02 las usa
+   scripts/compose-store-screenshots, que arma esas dos capturas fuera de frameit. */
+"01_bienvenida" = "";
+"02_bienvenida" = "La aplicación móvil\noficial de la UTEM";
+"03_oscuro" = "Modo Oscuro";
+"04_calculadora" = "Nueva Calculadora";
+"05_inicio" = "Pantalla Principal";
+"06_credencial" = "Ten siempre a mano\ntu Credencial";
+"07_horario" = "Un horario más dinámico";
+"08_malla" = "Revisa tu malla";

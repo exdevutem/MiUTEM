@@ -19,10 +19,15 @@ class UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveFontSize = fontSize ?? (radius * 0.8);
+    final foto = estudiante?.fotoUrl;
 
     return CircleAvatar(
       radius: radius,
       backgroundColor: AppTheme.colorScheme.primary.withValues(alpha: 0.2),
+      // Si la foto no carga (URL caída, sin sesión) el CircleAvatar deja ver las iniciales de abajo.
+      foregroundImage: foto == null || foto.isEmpty
+          ? null
+          : (foto.startsWith("assets/") ? AssetImage(foto) as ImageProvider : NetworkImage(foto)),
       child: Text(
         estudiante?.iniciales[0] ?? "J",
         style: TextStyle(

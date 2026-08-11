@@ -1,5 +1,49 @@
 import "../fastlane/src/helpers.rb"
 
+require "timeout"
+
+# Raíz del SDK de Android. `adb` y `emulator` casi nunca están en el PATH de un lane.
+def android_sdk_root
+  root = ENV["ANDROID_HOME"] || ENV["ANDROID_SDK_ROOT"] || File.expand_path("~/Library/Android/sdk")
+  UI.user_error!("❌ No se encontró el SDK de Android. Define ANDROID_HOME.") unless Dir.exist?(root)
+
+  root
+end
+
+def adb_bin
+  File.join(android_sdk_root, "platform-tools", "adb")
+end
+
+def emulator_bin
+  File.join(android_sdk_root, "emulator", "emulator")
+end
+
+# Serial del primer dispositivo o emulador listo, o nil si no hay ninguno.
+def android_connected_device
+  `#{adb_bin} devices`.lines.map(&:strip).find { |linea| linea.end_with?("\tdevice") }&.split("\t")&.first
+end
+
+# Arranca el AVD indicado (o el primero disponible) y espera a que termine de bootear.
+def android_boot_emulator(avd)
+  avds = `#{emulator_bin} -list-avds`.split("\n").map(&:strip).reject(&:empty?)
+  UI.user_error!("❌ No hay ningún AVD creado. Crea uno desde Android Studio.") if avds.empty?
+
+  avd = avds.first if avd.to_s.empty?
+  UI.user_error!("❌ No existe el AVD '#{avd}'. Disponibles: #{avds.join(', ')}") unless avds.include?(avd)
+
+  UI.message("📱 Arrancando el emulador #{avd}...")
+  Process.spawn(emulator_bin, "-avd", avd, "-no-snapshot-save", "-no-boot-anim", %i[out err] => File::NULL)
+
+  Timeout.timeout(600) do
+    sleep(3) until (serial = android_connected_device)
+    sleep(3) until `#{adb_bin} -s #{serial} shell getprop sys.boot_completed`.strip == "1"
+  end
+
+  android_connected_device
+rescue Timeout::Error
+  UI.user_error!("❌ El emulador #{avd} no terminó de arrancar.")
+end
+
 platform :android do
   desc "Decodifica el keystore desde base64 y lo deja en un archivo temporal"
   lane :setup_keystore do |options|
@@ -46,6 +90,131 @@ platform :android do
     command << "--build-number=#{build_number}" if build_number && !build_number.empty?
 
     sh(*command)
+  end
+
+  desc "Genera las capturas de pantalla en un emulador y las deja en android/fastlane/metadata"
+  lane :screenshots do |options|
+    avd = string_option(options, :avd, env_var: "SCREENSHOT_AVD", default: "")
+    locale = string_option(options, :locale, env_var: "PLAY_SCREENSHOT_LOCALE", default: "es-419")
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
+    clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
+    package_name = string_option(options, :package_name, env_var: "APP_PACKAGE_NAME", required: true)
+    # Google Play rechaza las capturas cuyo lado mayor supere el doble del menor, y los
+    # teléfonos actuales son más alargados que eso (un Pixel 9a da 1080x2424 = 2,24:1).
+    # 1080x2160 es el máximo que acepta y el mínimo alto en que la credencial entra completa.
+    size = string_option(options, :size, env_var: "SCREENSHOT_ANDROID_SIZE", default: "1080x2160")
+
+    frame = bool_option(options, :frame, env_var: "SCREENSHOT_FRAME", default: true)
+    # Vacío deja que frameit elija el marco según el tamaño de la captura. Si se fija uno,
+    # tiene que ser de la lista que acepta frameit (Google Pixel 3, 4, 5, Samsung Galaxy S10...).
+    device_frame = string_option(options, :device_frame, env_var: "SCREENSHOT_ANDROID_FRAME", default: "")
+
+    scheme = app_env == "prod" ? "production" : "development"
+    package_name = "#{package_name}.dev" unless scheme == "production"
+    # APP_ENV suele quedar en dev en el .env local, y las capturas de la tienda tienen que
+    # salir del flavor de producción (nombre, ícono y package distintos).
+    UI.important("⚠️  Capturando el flavor #{scheme}. Para Google Play usa `app_env:prod`.") unless app_env == "prod"
+    # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
+    root = sh("git", "rev-parse", "--show-toplevel", log: false).strip
+    # Las capturas se toman acá, junto a la configuración de frameit, y sólo las finales
+    # se copian a metadata/: supply sube todas las imágenes de esa carpeta y Play acepta 8.
+    screenshots_dir = File.join(root, "android", "fastlane", "screenshots")
+    output_dir = File.join(screenshots_dir, locale)
+    play_dir = File.join(root, "android", "fastlane", "metadata", "android", locale, "images", "phoneScreenshots")
+
+    serial = android_connected_device
+    started_here = serial.nil?
+    serial = android_boot_emulator(avd) if started_here
+    UI.message("📱 Usando #{serial}")
+
+    # Una instalación previa firmada con otra llave deja a `flutter drive` sin poder
+    # lanzar la actividad, con un error que no dice que el problema es ese.
+    [package_name, "#{package_name}.test"].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
+
+    # Google Play sólo acepta 8 capturas por dispositivo: si quedan las anteriores, falla el upload.
+    # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
+    if clear
+      Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) }
+      FileUtils.rm_rf(play_dir)
+    end
+    FileUtils.mkdir_p(output_dir)
+
+    begin
+      unless size.to_s.empty?
+        sh(adb_bin, "-s", serial, "shell", "wm", "size", size)
+        sleep(5) # La UI del sistema se reinicia al cambiar la resolución.
+      end
+
+      ENV["SCREENSHOTS_DIR"] = output_dir
+      ENV["SCREENSHOT_PREFIX"] = ""
+      # El APK de las capturas es debug y no se distribuye: se firma con la llave de debug
+      # para no depender del keystore de release que traiga el .env.
+      ENV["MIUTEM_USE_DEBUG_SIGNING"] = "true"
+
+      # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
+      # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
+      sh(
+        "flutter", "drive",
+        "--driver=test_driver/integration_test.dart",
+        "--target=integration_test/screenshots_test.dart",
+        "--flavor", scheme,
+        "-d", serial,
+        "--dart-define=SCREENSHOT_MODE=true",
+        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
+      )
+    ensure
+      # El emulador puede ser uno que ya tenía abierto quien ejecuta el lane.
+      `#{adb_bin} -s #{serial} shell wm size reset` unless size.to_s.empty?
+      `#{adb_bin} -s #{serial} emu kill` if started_here
+    end
+
+    # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+    capturas = Dir.glob(File.join(output_dir, "*.png"))
+    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
+
+    if frame
+      # Los fondos se cortan al tamaño exacto de las capturas: si cambia la resolución del
+      # emulador, frameit recortaría las tiras y rompería la continuidad entre capturas.
+      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"))
+
+      opciones_frameit = { path: screenshots_dir, use_platform: "ANDROID" }
+      opciones_frameit[:force_device_type] = device_frame unless device_frame.to_s.empty?
+      frame_screenshots(**opciones_frameit)
+      # Las dos primeras capturas no salen de la app: se componen aparte, y después de
+      # frameit porque escriben directamente sus *_framed.png.
+      sh(File.join(root, "scripts", "compose-store-screenshots"))
+      capturas = Dir.glob(File.join(output_dir, "*_framed.png"))
+      UI.user_error!("❌ frameit no generó ninguna captura enmarcada.") if capturas.empty?
+    end
+
+    FileUtils.mkdir_p(play_dir)
+    capturas.each { |captura| FileUtils.cp(captura, play_dir) }
+
+    UI.success("✅ #{capturas.length} capturas listas en #{play_dir}")
+  end
+
+  desc "Sube a Google Play las capturas y las imágenes de la ficha (sin tocar el binario)"
+  lane :upload_screenshots do |options|
+    json_key_data = string_option(options, :json_key_data, env_var: "GOOGLE_PLAY_JSON_KEY", required: true)
+    package_name = string_option(options, :package_name, env_var: "APP_PACKAGE_NAME", required: true)
+
+    metadata_path = File.join(sh("git", "rev-parse", "--show-toplevel", log: false).strip,
+                              "android", "fastlane", "metadata", "android")
+
+    upload_to_play_store(
+      package_name: package_name,
+      json_key_data: json_key_data,
+      metadata_path: metadata_path,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      # Los textos de la ficha se editan en Play Console, acá sólo van las imágenes.
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+    )
+
+    UI.success("✅ Capturas subidas a Google Play")
   end
 
   desc "Sube el AAB a Google Play"

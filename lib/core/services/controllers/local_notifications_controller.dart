@@ -1,6 +1,7 @@
 
 import "package:awesome_notifications/awesome_notifications.dart";
 import "package:flutter/material.dart";
+import "package:miutem/core/utils/constants.dart";
 
 class NotificationController {
 
@@ -27,6 +28,12 @@ class NotificationController {
     // TODO debo cambiar la logica para que verifique si existe la preferencia allow notifications y que si no existe pregunte, si existe que no pida permisos.
   // TODO En teoria si esto funciona bien, sera llamado cada vez que se quiera crear una task para verificar si existe el permiso o no.
   static Future<void> checkAndRequestNotificationPermissions() async {
+    // Al generar las capturas para las tiendas no se pide el permiso: el diálogo del sistema
+    // deja la app inactiva y la pantalla se queda congelada en el splash.
+    if (modoCapturas) {
+      return;
+    }
+
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
       await AwesomeNotifications().requestPermissionToSendNotifications();

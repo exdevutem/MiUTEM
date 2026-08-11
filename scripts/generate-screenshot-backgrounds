@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Genera los fondos de las capturas a partir de una sola foto: la desenfoca y la corta
+# en tiras verticales, una por captura. Puestas lado a lado en la ficha de la tienda,
+# las capturas reconstruyen la foto completa.
+#
+# Uso: scripts/generate-screenshot-backgrounds
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+FUENTE="fastlane/screenshots/background-source.jpg"
+BRILLO=-12   # Oscurecido general.
+DESENFOQUE=5 # Radio del blur, aplicado antes de ampliar (la ampliación suaviza aún más).
+VELO=45      # % del alto que cubre el degradado oscuro superior, bajo el título.
+
+command -v magick >/dev/null || { echo "❌ Falta ImageMagick (brew install imagemagick)" >&2; exit 1; }
+[ -f "$FUENTE" ] || { echo "❌ No existe $FUENTE" >&2; exit 1; }
+
+# Recorta la foto al lienzo pedido (cubriendo, centrada) y la desenfoca. El desenfoque
+# se hace en pequeño y luego se amplía: mismo resultado, mucho más rápido.
+panoramica() {
+  local ancho=$1 alto=$2 destino=$3
+  local alto_previo=$((1280 * alto / ancho))
+  magick "$FUENTE" \
+    -resize "1280x${alto_previo}^" -gravity center -extent "1280x${alto_previo}" \
+    -blur "0x${DESENFOQUE}" \
+    -brightness-contrast "${BRILLO}x-10" \
+    -resize "${ancho}x${alto}!" \
+    \( -size "${ancho}x$((alto * VELO / 100))" gradient:"#000000D9-#00000000" \) \
+    -gravity north -composite \
+    -quality 88 "$destino"
+}
+
+# generar <carpeta de screenshots> <locale> <ancho por defecto> <alto por defecto>
+generar() {
+  local base=$1 locale=$2 ancho=$3 alto=$4
+
+  # Las capturas ya tomadas mandan sobre el tamaño por defecto: si el alto no calza
+  # con el de la captura, frameit reescala y recorta el fondo y se pierde la continuidad.
+  local muestra
+  muestra=$(find "$base/$locale" -name "*.png" ! -name "*_framed.png" | sort | head -1 || true)
+  if [ -n "$muestra" ]; then
+    read -r ancho alto <<<"$(magick identify -format "%w %h" "$muestra")"
+  fi
+
+  # El orden lo define title.strings, que es el mismo con el que se suben las capturas.
+  local claves=()
+  while IFS= read -r clave; do claves+=("$clave"); done \
+    < <(grep -o '^"[^"]*"' "$base/$locale/title.strings" | tr -d '"')
+  local n=${#claves[@]}
+  [ "$n" -gt 0 ] || { echo "❌ $base/$locale/title.strings no tiene claves" >&2; exit 1; }
+
+  local tiras="$base/backgrounds"
+  rm -rf "$tiras" && mkdir -p "$tiras"
+
+  local panoramica_tmp="$tiras/.panoramica.jpg"
+  panoramica $((ancho * n)) "$alto" "$panoramica_tmp"
+
+  local i=0
+  for clave in "${claves[@]}"; do
+    magick "$panoramica_tmp" -crop "${ancho}x${alto}+$((i * ancho))+0" +repage \
+      -quality 88 "$tiras/${clave}.jpg"
+    i=$((i + 1))
+  done
+  rm -f "$panoramica_tmp"
+
+  # Fondo por defecto del Framefile: una captura sin entrada propia en `data` cae acá.
+  panoramica "$ancho" "$alto" "$base/background.jpg"
+
+  echo "✅ $n fondos de ${ancho}x${alto} en $tiras"
+}
+
+generar "fastlane/screenshots" "es-MX" 1320 2868
+generar "android/fastlane/screenshots" "es-419" 1080 2160
