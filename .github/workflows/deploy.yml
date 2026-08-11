@@ -223,6 +223,213 @@ jobs:
           APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
 
+  # Las capturas van en jobs aparte y no dentro de deploy-*: corren en paralelo con el
+  # despliegue, no tocan la firma del binario que sí se publica y, si fallan, el release
+  # ya salió igual. Además necesitan otra configuración de firebase (Debug y los dos
+  # entornos, porque `flutter drive` compila en debug y el test importa ambas opciones).
+  screenshots-ios:
+    needs: determine-environment
+    runs-on: macos-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    timeout-minutes: 60
+    # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
+    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚒️ Configurar Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ vars.XCODE_VERSION }}
+
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-screenshots-ios-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-screenshots-ios-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para CocoaPods
+        uses: actions/cache@v5
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+          key: pods-screenshots-ios-${{ runner.os }}-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: pods-screenshots-ios-${{ runner.os }}-
+
+      - name: 🪄 Instalar ImageMagick
+        # frameit y los scripts de fondos y composición trabajan con `magick`.
+        run: brew install imagemagick
+
+      - name: 🐦 Configurar Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          cache: true
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
+
+      - name: 💎 Configurar Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ vars.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 🗳️ Instalar firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: 📦 Instalar librerías
+        run: flutter pub get
+
+      - name: 🔥 Instalar FlutterFire
+        run: dart pub global activate flutterfire_cli
+
+      - name: 🪎 Configura bundle
+        run: bundle install
+
+      - name: 🔐 Configura credenciales de firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        # `all` y Debug: `flutter drive` compila en debug y integration_test/screenshots_test.dart
+        # importa las opciones de firebase de los dos entornos.
+        run: ./scripts/flutterfire-configure all --build-type=Debug
+
+      - name: 📸 Generar capturas de pantalla
+        run: bundle exec fastlane ios screenshots
+        env:
+          APP_ENV: ${{ vars.APP_ENV }}
+
+      - name: 📤 Subir capturas como artefacto
+        id: artefacto
+        uses: actions/upload-artifact@v7
+        with:
+          name: capturas-ios
+          path: fastlane/screenshots/*/*.png
+          if-no-files-found: error
+
+      - name: 📝 Publicar capturas en el resumen
+        env:
+          ARTEFACTO_URL: ${{ steps.artefacto.outputs.artifact-url }}
+        run: |
+          {
+            echo "## 📸 Capturas de pantalla (iOS)"
+            echo ""
+            echo "- $(find fastlane/screenshots -name '*_framed.png' | wc -l | tr -d ' ') capturas enmarcadas para la App Store"
+            echo "- [Descargar artefacto]($ARTEFACTO_URL)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  screenshots-android:
+    needs: determine-environment
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+    timeout-minutes: 60
+    # Igual que deploy-android, sólo producción: las capturas son las de la ficha de Play.
+    if: ${{ needs.determine-environment.outputs.environment == 'prod' && (!contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]')) }}
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: 🖥️ Habilitar KVM
+        # Sin esto el emulador arranca por software y el recorrido no alcanza a terminar.
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: ⚡ Configurar Cache para Gradle
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-screenshots-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-screenshots-${{ runner.os }}-
+
+      - name: ⚡ Configurar Cache para Flutter pub
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-screenshots-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: pub-cache-screenshots-${{ runner.os }}-
+
+      - name: 🪄 Instalar ImageMagick
+        # frameit y los scripts de fondos y composición trabajan con `magick`, que sólo
+        # existe en ImageMagick 7: el paquete de apt es el 6 y deja únicamente `convert`.
+        # El binario oficial es un AppImage, así que también hace falta FUSE.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2t64 || sudo apt-get install -y libfuse2
+          sudo curl -fsSL -o /usr/local/bin/magick https://imagemagick.org/archive/binaries/magick
+          sudo chmod +x /usr/local/bin/magick
+          magick -version
+
+      - name: 🐦 Configurar Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          cache: true
+          channel: ${{ vars.FLUTTER_CHANNEL }}
+          version: ${{ vars.FLUTTER_VERSION }}
+
+      - name: 💎 Configurar Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ vars.RUBY_VERSION }}
+          bundler-cache: true
+
+      - name: 🗳️ Instalar firebase-tools
+        run: npm install -g firebase-tools
+
+      - name: 📦 Instalar librerías
+        run: flutter pub get
+
+      - name: 🔥 Instalar FlutterFire
+        run: dart pub global activate flutterfire_cli
+
+      - name: 🪎 Configura bundle
+        run: bundle install
+
+      - name: 🔐 Configura credenciales de firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: ./scripts/flutterfire-configure all --build-type=Debug
+
+      - name: 📸 Generar capturas de pantalla
+        # El lane reutiliza el emulador que deja levantado la acción en vez de arrancar uno.
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          APP_ENV: ${{ vars.APP_ENV }}
+          APP_PACKAGE_NAME: ${{ secrets.APP_PACKAGE_NAME }}
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: bundle exec fastlane android screenshots
+
+      - name: 📤 Subir capturas como artefacto
+        id: artefacto
+        uses: actions/upload-artifact@v7
+        with:
+          name: capturas-android
+          path: android/fastlane/screenshots/*/*.png
+          if-no-files-found: error
+
+      - name: 📝 Publicar capturas en el resumen
+        env:
+          ARTEFACTO_URL: ${{ steps.artefacto.outputs.artifact-url }}
+        run: |
+          {
+            echo "## 📸 Capturas de pantalla (Android)"
+            echo ""
+            echo "- $(find android/fastlane/screenshots -name '*_framed.png' | wc -l | tr -d ' ') capturas enmarcadas para Google Play"
+            echo "- [Descargar artefacto]($ARTEFACTO_URL)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
   deploy-macos:
     needs: determine-environment
     runs-on: macos-latest
