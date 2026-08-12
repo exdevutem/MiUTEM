@@ -9,8 +9,8 @@
 #
 # Uso: scripts/compose-store-screenshots [ios|android|all]
 #
-# La plataforma importa porque en CI cada una corre en un job (y un runner) distinto: sin
-# el argumento, el job de iOS moriría buscando las capturas de Android y viceversa.
+# La plataforma importa porque cada una se compone al terminar su propio recorrido: sin el
+# argumento, el paso de iOS moriría buscando las capturas de Android y viceversa.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
