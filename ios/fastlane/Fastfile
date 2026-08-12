@@ -1,16 +1,20 @@
 import "../fastlane/src/helpers.rb"
 
 require "json"
+require "tmpdir"
 
-# Busca el UDID de un simulador por nombre, prefiriendo el runtime de iOS más nuevo.
-def ios_simulator_udid(name)
+# Busca un simulador por nombre y devuelve [udid, nombre real], prefiriendo el runtime de
+# iOS más nuevo. El nombre puede ser un prefijo ("iPad Air 13-inch" toma el M2, M3 o M4
+# según el Xcode del runner, que cambia con cada versión).
+def ios_simulator(name)
   devices = JSON.parse(sh("xcrun", "simctl", "list", "devices", "available", "--json", log: false))["devices"]
   runtimes = devices.keys.sort_by { |runtime| runtime.scan(/\d+/).map(&:to_i) }.reverse
-  device = runtimes.flat_map { |runtime| devices[runtime] }.find { |d| d["name"] == name }
+  disponibles = runtimes.flat_map { |runtime| devices[runtime] }
+  device = disponibles.find { |d| d["name"] == name } || disponibles.find { |d| d["name"].start_with?(name) }
 
   UI.user_error!("❌ No existe el simulador '#{name}'. Créalo en Xcode o ajusta SCREENSHOT_DEVICES.") unless device
 
-  device["udid"]
+  [device["udid"], device["name"]]
 end
 
 platform :ios do
@@ -189,9 +193,12 @@ platform :ios do
   # igual para Android. Del flujo de snapshot sí se conserva todo lo demás —la carpeta
   # fastlane/screenshots/<idioma>/ y los nombres "<Dispositivo>-<pantalla>.png"— para que
   # frameit y deliver reconozcan el dispositivo sin configuración extra.
-  desc "Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots"
+  desc "Genera las capturas de pantalla de iPhone y iPad en el simulador y las guarda en fastlane/screenshots"
   lane :screenshots do |options|
-    devices = array_option(options, :devices, env_var: "SCREENSHOT_DEVICES", default: ["iPhone 17 Pro Max"])
+    # La App Store pide un juego por tamaño de pantalla: el iPhone más grande y un iPad de
+    # 13". El iPad Air es el único de ese tamaño que da 2048x2732, la resolución que frameit
+    # sabe enmarcar (los iPad Pro M4 en adelante dan 2064x2752 y frameit no los conoce).
+    devices = array_option(options, :devices, env_var: "SCREENSHOT_DEVICES", default: ["iPhone 17 Pro Max", "iPad Air 13-inch"])
     locale = string_option(options, :locale, env_var: "SCREENSHOT_LOCALE", default: "es-MX")
     app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
     clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
@@ -211,14 +218,19 @@ platform :ios do
     Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) } if clear
     FileUtils.mkdir_p(output_dir)
 
+    # Cada dispositivo se enmarca solo en la carpeta y recién al final se juntan todos: los
+    # fondos y el marco salen del tamaño de las capturas que estén ahí, así que mezclar
+    # iPhone con iPad dejaría a uno de los dos con los fondos recortados del otro.
+    listas = Dir.mktmpdir("miutem-capturas")
+
     devices.each do |device|
-      udid = ios_simulator_udid(device)
-      UI.message("📱 Preparando #{device} (#{udid})")
+      udid, nombre = ios_simulator(device)
+      UI.message("📱 Preparando #{nombre} (#{udid})")
       sh("xcrun", "simctl", "bootstatus", udid, "-b")
 
       ENV["SCREENSHOTS_DIR"] = output_dir
       # Mismo formato de nombre que usa snapshot: frameit y deliver deducen de ahí el dispositivo.
-      ENV["SCREENSHOT_PREFIX"] = "#{device}-"
+      ENV["SCREENSHOT_PREFIX"] = "#{nombre}-"
 
       # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
       # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
@@ -231,23 +243,36 @@ platform :ios do
         "--dart-define=SCREENSHOT_MODE=true",
         "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
       )
+
+      # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+      capturas = Dir.glob(File.join(output_dir, "*.png"))
+      UI.user_error!("❌ No se generó ninguna captura de #{nombre}. Revisa el log de `flutter drive`.") if capturas.empty?
+
+      if frame
+        # Los fondos se cortan al tamaño exacto de las capturas: si cambia el simulador
+        # cambia el tamaño, y frameit recortaría las tiras y rompería la continuidad.
+        sh(File.join(root, "scripts", "generate-screenshot-backgrounds"), "ios")
+        frame_screenshots(path: screenshots_dir)
+        # Las dos primeras capturas no salen de la app: se componen aparte, y después de
+        # frameit porque escriben directamente sus *_framed.png.
+        sh(File.join(root, "scripts", "compose-store-screenshots"), "ios")
+
+        # frameit no falla cuando no puede leer los títulos (pasa si el locale no es UTF-8):
+        # simplemente no enmarca nada, y las capturas sin marco no sirven para la ficha.
+        enmarcadas = Dir.glob(File.join(output_dir, "*_framed.png"))
+        UI.user_error!("❌ frameit no generó ninguna captura enmarcada de #{nombre}.") if enmarcadas.empty?
+      end
+
+      Dir.glob(File.join(output_dir, "*.png")).each { |captura| FileUtils.mv(captura, listas) }
+      # Apagarlo libera la RAM del runner para el siguiente simulador (y para el emulador de Android).
+      sh("xcrun simctl shutdown #{udid} || true")
     end
 
-    # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+    Dir.glob(File.join(listas, "*.png")).each { |captura| FileUtils.mv(captura, output_dir) }
+    FileUtils.remove_entry(listas)
+
     capturas = Dir.glob(File.join(output_dir, "*.png"))
-    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
-
     UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
-
-    if frame
-      # Los fondos se cortan al tamaño exacto de las capturas: si cambia el simulador
-      # cambia el tamaño, y frameit recortaría las tiras y rompería la continuidad.
-      sh(File.join(root, "scripts", "generate-screenshot-backgrounds"), "ios")
-      frame_screenshots(path: screenshots_dir)
-      # Las dos primeras capturas no salen de la app: se componen aparte, y después de
-      # frameit porque escriben directamente sus *_framed.png.
-      sh(File.join(root, "scripts", "compose-store-screenshots"), "ios")
-    end
   end
 
   desc "Sube a App Store Connect las capturas ya generadas (sin tocar el binario)"

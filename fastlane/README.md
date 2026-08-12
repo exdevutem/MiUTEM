@@ -69,7 +69,7 @@ Construye y firma la app para distribución en iOS
 [bundle exec] fastlane ios screenshots
 ```
 
-Genera las capturas de pantalla de iPhone en el simulador y las guarda en fastlane/screenshots
+Genera las capturas de pantalla de iPhone y iPad en el simulador y las guarda en fastlane/screenshots
 
 ### ios upload_screenshots
 
