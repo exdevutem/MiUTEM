@@ -71,10 +71,19 @@ componer() {
     \( "$SPLASH_MARCA" -resize "$((ancho * 26 / 100))x" \) -gravity south -geometry "+0+$((alto * 5 / 100))" -composite \
     "$tmp/${prefijo}splash.png"
 
-  # 2. El marco del teléfono, prestado de frameit.
-  (cd "$tmp" && fastlane frameit ${plataforma:+"$plataforma"} >/dev/null 2>&1)
+  # 2. El marco del teléfono, prestado de frameit. La salida se guarda en vez de tirarla:
+  # frameit es ruidoso cuando funciona, pero cuando no (le falta ImageMagick, no puede
+  # bajar los marcos) es lo único que dice por qué, y `set -e` cortaría acá sin abrir la boca.
+  local bitacora="$tmp/frameit.log"
+  (cd "$tmp" && fastlane frameit ${plataforma:+"$plataforma"} >"$bitacora" 2>&1) || true
+
   local telefono="$tmp/${prefijo}splash_framed.png"
-  [ -f "$telefono" ] || { echo "❌ frameit no dejó el marco en $telefono" >&2; rm -rf "$tmp"; exit 1; }
+  if [ ! -f "$telefono" ]; then
+    echo "❌ frameit no dejó el marco en $telefono" >&2
+    tail -20 "$bitacora" >&2
+    rm -rf "$tmp"
+    exit 1
+  fi
 
   # 3. El lienzo de las dos capturas juntas, con el trozo de foto de fondo que les toca.
   magick "$base/backgrounds/01_bienvenida.jpg" "$base/backgrounds/02_bienvenida.jpg" +append "$tmp/lienzo.png"
