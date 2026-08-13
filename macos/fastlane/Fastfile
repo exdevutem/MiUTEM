@@ -208,6 +208,20 @@ platform :mac do
         end
       end
       proyecto.save
+
+      # Los entitlements restringidos (keychain-access-groups y los com.apple.developer.*)
+      # solo valen si un perfil los autoriza. Firmados ad-hoc el kernel mata la app apenas
+      # parte, y `flutter drive` lo reporta como "Error waiting for a debug connection: The
+      # log reader stopped unexpectedly, or never started". Ninguno hace falta para el
+      # recorrido de capturas, que corre con datos ficticios.
+      restringidos = ["com.apple.developer.", "keychain-access-groups", "application-identifier", "com.apple.security.application-groups"]
+      ["DebugProfile.entitlements", "Release.entitlements"].each do |archivo|
+        ruta = File.join(root, "macos", "Runner", archivo)
+        entitlements = Xcodeproj::Plist.read_from_path(ruta)
+        entitlements.delete_if { |clave, _| restringidos.any? { |prefijo| clave.start_with?(prefijo) } }
+        Xcodeproj::Plist.write_to_path(entitlements, ruta)
+      end
+
       UI.important("🔓 Firma ad-hoc: las capturas no salen del runner.")
     end
 
