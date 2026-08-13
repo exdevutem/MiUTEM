@@ -209,6 +209,14 @@ Compila la app con flutter para macOS
 
 Construye y firma la app para distribución en macOS
 
+### mac screenshots
+
+```sh
+[bundle exec] fastlane mac screenshots
+```
+
+Genera las capturas de pantalla de macOS y las guarda en macos/fastlane/screenshots
+
 ### mac load_api_key
 
 ```sh

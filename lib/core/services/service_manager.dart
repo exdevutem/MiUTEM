@@ -4,6 +4,7 @@ import "package:firebase_core/firebase_core.dart" show Firebase, FirebaseOptions
 import "package:firebase_crashlytics/firebase_crashlytics.dart";
 import "package:flutter/cupertino.dart";
 import "package:get/get.dart";
+import "package:get_storage/get_storage.dart";
 import "package:miutem/core/mock/mock_services.dart";
 import "package:miutem/core/models/config/user_config.dart";
 import "package:miutem/core/repositories/secure_storage_repository.dart";
@@ -30,6 +31,10 @@ Future<void> initServices(FirebaseOptions firebaseOptions) async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  // Sin esto, GetStorage lee y escribe sobre un mapa vacío que se reemplaza cuando termina
+  // de cargar el archivo: los colores del horario se perdían y todos los ramos salían celestes.
+  await GetStorage.init();
 
   Get.lazyPut(() => RemoteConfigService());
   await Get.find<RemoteConfigService>().initialize();
