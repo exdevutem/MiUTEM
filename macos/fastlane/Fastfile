@@ -168,6 +168,66 @@ platform :mac do
     end
   end
 
+  # Mismo recorrido que iOS y Android (integration_test/screenshots_test.dart con
+  # `flutter drive`), pero sin frameit: no existen marcos de Mac, y la Mac App Store
+  # recibe las capturas tal cual, sin fondo ni título.
+  desc "Genera las capturas de pantalla de macOS y las guarda en macos/fastlane/screenshots"
+  lane :screenshots do |options|
+    locale = string_option(options, :locale, env_var: "SCREENSHOT_LOCALE", default: "es-MX")
+    app_env = string_option(options, :app_env, env_var: "APP_ENV", default: "prod")
+    clear = bool_option(options, :clear, env_var: "SCREENSHOT_CLEAR", default: true)
+    # Tamaño de la ventana en puntos. 1440x900 es una de las formas que acepta la tienda y
+    # el recorrido rasteriza al doble, así las capturas salen en 2880x1800.
+    size = string_option(options, :size, env_var: "SCREENSHOT_MACOS_SIZE", default: "1440x900")
+
+    scheme = app_env == "prod" ? "production" : "development"
+    # APP_ENV suele quedar en dev en el .env local, y las capturas de la tienda tienen que
+    # salir del flavor de producción (nombre, ícono y bundle id distintos).
+    UI.important("⚠️  Capturando el flavor #{scheme}. Para la Mac App Store usa `app_env:prod`.") unless app_env == "prod"
+
+    # Ruta absoluta: el CWD de un lane es la carpeta fastlane/, no la raíz del repo.
+    root = sh("git", "rev-parse", "--show-toplevel", log: false).strip
+    output_dir = File.join(root, "macos", "fastlane", "screenshots", locale)
+
+    Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) } if clear
+    FileUtils.mkdir_p(output_dir)
+
+    ENV["SCREENSHOTS_DIR"] = output_dir
+    ENV["SCREENSHOT_PREFIX"] = ""
+    # La lee MainFlutterWindow.swift al abrir la ventana.
+    ENV["MIUTEM_WINDOW_SIZE"] = size
+
+    # El paso de símbolos de Crashlytics que agrega flutterfire deduce la carpeta de
+    # paquetes de Swift desde $BUILD_ROOT (".../Build/Products") y busca ahí
+    # SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run. Eso calza con el
+    # DerivedData por defecto que usa iOS, pero `flutter build macos` pasa
+    # `-derivedDataPath build/macos` y ahí los checkouts quedan un nivel más arriba, así
+    # que el paso corta la compilación con "No such file or directory". El enlace deja el
+    # checkout donde el script lo espera (los lanes de despliegue no lo necesitan: compilan
+    # con xcodebuild y su DerivedData de siempre).
+    productos = File.join(root, "build", "macos", "Build", "Products")
+    FileUtils.mkdir_p(productos)
+    FileUtils.ln_sf(File.join(root, "build", "macos", "SourcePackages"), File.join(productos, "SourcePackages"))
+
+    # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
+    # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
+    sh(
+      "flutter", "drive",
+      "--driver=test_driver/integration_test.dart",
+      "--target=integration_test/screenshots_test.dart",
+      "--flavor", scheme,
+      "-d", "macos",
+      "--dart-define=SCREENSHOT_MODE=true",
+      "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
+    )
+
+    # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+    capturas = Dir.glob(File.join(output_dir, "*.png"))
+    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
+
+    UI.success("✅ #{capturas.length} capturas guardadas en #{output_dir}")
+  end
+
   desc "Carga la API Key de App Store Connect para autenticación"
   lane :load_api_key do |options|
     key_id = string_option(options, :key_id, env_var: "APP_STORE_CONNECT_API_KEY_ID", required: true)

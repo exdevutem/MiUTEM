@@ -73,26 +73,85 @@ final Asignatura practicaProfesional = Asignatura(
   intentos: 1,
 );
 
+final Asignatura computacionWebYMovil = Asignatura(
+  id: "1004",
+  codigo: "INFB8004",
+  nombre: "Computación Web y Móvil",
+  tipoHora: "Cátedra",
+  estado: "Inscrito",
+  seccion: "304",
+  docente: Persona(nombreCompleto: "Ignacio Salinas Bravo"),
+  tipoAsignatura: "Obligatoria",
+  sala: "M1 - 303",
+  intentos: 1,
+);
+
+final Asignatura gestionDeProyectos = Asignatura(
+  id: "1005",
+  codigo: "INFB8003",
+  nombre: "Gestión de Proyectos Informáticos",
+  tipoHora: "Cátedra",
+  estado: "Inscrito",
+  seccion: "301",
+  docente: Persona(nombreCompleto: "Marcela Tapia Reyes"),
+  tipoAsignatura: "Obligatoria",
+  sala: "M2 - 201",
+  intentos: 1,
+);
+
+final Asignatura electivoEspecializacion = Asignatura(
+  id: "1006",
+  codigo: "ELEC8050",
+  nombre: "Electivo de Formación Especializada II",
+  tipoHora: "Cátedra",
+  estado: "Inscrito",
+  seccion: "101",
+  docente: Persona(nombreCompleto: "Hernán Pimentel Torrejón"),
+  tipoAsignatura: "Electivo",
+  sala: "M3 - 303",
+  intentos: 1,
+);
+
 final List<Asignatura> asignaturasMock = [
   computacionEnLaNube,
   trabajoDeTitulo,
   practicaProfesional,
+  computacionWebYMovil,
+  gestionDeProyectos,
+  electivoEspecializacion,
 ];
 
 /// Clases de la semana como (período 1..9, día 1..6, asignatura).
-/// El lunes concentra las tres asignaturas para que "Clases de Hoy" no quede vacío.
+///
+/// Seis asignaturas repartidas de lunes a viernes: el horario recibe un color por
+/// asignatura, así que mientras más variadas las clases del día, más colorida sale la
+/// captura. El lunes es el día de [fechaCapturas] y lleva cuatro ramos distintos, para
+/// que ni el horario ni "Clases de Hoy" queden en un solo tono.
 final List<(int, int, Asignatura)> _clasesMock = [
+  // Lunes
   (1, 1, computacionEnLaNube),
-  (3, 1, trabajoDeTitulo),
-  (5, 1, practicaProfesional),
-  (2, 2, computacionEnLaNube),
-  (6, 2, trabajoDeTitulo),
-  (1, 3, practicaProfesional),
-  (4, 3, computacionEnLaNube),
-  (3, 4, trabajoDeTitulo),
-  (5, 4, practicaProfesional),
-  (2, 5, computacionEnLaNube),
-  (4, 5, practicaProfesional),
+  (2, 1, computacionWebYMovil),
+  (4, 1, gestionDeProyectos),
+  (5, 1, electivoEspecializacion),
+  (6, 1, electivoEspecializacion),
+  // Martes
+  (1, 2, computacionEnLaNube),
+  (3, 2, electivoEspecializacion),
+  (4, 2, computacionWebYMovil),
+  (6, 2, practicaProfesional),
+  // Miércoles
+  (1, 3, computacionEnLaNube),
+  (2, 3, gestionDeProyectos),
+  (4, 3, computacionWebYMovil),
+  (5, 3, trabajoDeTitulo),
+  // Jueves
+  (3, 4, practicaProfesional),
+  (4, 4, computacionWebYMovil),
+  (5, 4, trabajoDeTitulo),
+  // Viernes
+  (1, 5, gestionDeProyectos),
+  (3, 5, gestionDeProyectos),
+  (4, 5, electivoEspecializacion),
 ];
 
 /// Horario de 18 medios bloques x 6 días, igual a la matriz que arma [HorarioService].
@@ -131,13 +190,22 @@ Grades notasMock(Asignatura asignatura) => switch (asignatura.codigo) {
     notaPresentacion: 6.6,
     notaFinal: 6.6,
   ),
-  _ => Grades(
+  "INFB900" => Grades(
     notasParciales: [
       REvaluacion(descripcion: "Informe de Práctica", porcentaje: 60, nota: 6.9),
       REvaluacion(descripcion: "Evaluación de la Empresa", porcentaje: 40, nota: 7.0),
     ],
     notaPresentacion: 6.9,
     notaFinal: 6.9,
+  ),
+  _ => Grades(
+    notasParciales: [
+      REvaluacion(descripcion: "Solemne 1", porcentaje: 35, nota: 5.9),
+      REvaluacion(descripcion: "Solemne 2", porcentaje: 35, nota: 6.1),
+      REvaluacion(descripcion: "Trabajos", porcentaje: 30, nota: 6.7),
+    ],
+    notaPresentacion: 6.2,
+    notaFinal: 6.2,
   ),
 };
 
@@ -150,22 +218,26 @@ AsignaturaMalla _inscrita(int nivel, String nombre, {String tipo = "Obligatoria"
 AsignaturaMalla _noCursada(int nivel, String nombre, {String tipo = "Obligatoria"}) =>
     AsignaturaMalla(nivel: nivel, nombre: nombre, tipo: tipo, intentos: 0, estado: "No Cursado", nota: "-");
 
-/// Malla de Ingeniería en Informática, con las tres asignaturas en curso inscritas
-/// y Trabajo de Título II todavía sin cursar.
+AsignaturaMalla _reprobada(int nivel, String nombre, String nota, {String tipo = "Obligatoria"}) =>
+    AsignaturaMalla(nivel: nivel, nombre: nombre, tipo: tipo, intentos: 1, estado: "Reprobado", nota: nota);
+
+/// Malla de Ingeniería en Informática, con las asignaturas en curso inscritas y Trabajo
+/// de Título II todavía sin cursar. Los niveles 1 y 2 llevan un ramo reprobado y dos
+/// inscritos (se están cursando de nuevo) para que la captura muestre los cuatro estados.
 final List<AsignaturaMalla> mallaMock = [
   // Nivel 1
   _aprobada(1, "Habilidades de Razonamiento Lógico", "6,2", tipo: "Nivelación"),
   _aprobada(1, "Taller de Ciencia y Tecnología", "4,5"),
   _aprobada(1, "Introducción a la Ingeniería en Informática", "6,0"),
   _aprobada(1, "Algoritmos y Programación", "6,4"),
-  _aprobada(1, "Taller de Matemática", "4,0"),
-  _aprobada(1, "Design Thinking", "5,0"),
+  _reprobada(1, "Taller de Matemática", "3,4"),
+  _inscrita(1, "Design Thinking"),
   // Nivel 2
   _aprobada(2, "Electivo de Formación General I", "6,0", tipo: "Electivo"),
   _aprobada(2, "Habilidades de Trabajo Académico", "5,4", tipo: "Nivelación"),
   _aprobada(2, "Cálculo Diferencial", "4,0"),
   _aprobada(2, "Estructuras de Datos", "5,1"),
-  _aprobada(2, "Mecánica Clásica", "4,2"),
+  _inscrita(2, "Mecánica Clásica"),
   _aprobada(2, "Álgebra Clásica", "4,4"),
   // Nivel 3
   _aprobada(3, "Electromagnetismo", "4,1"),
@@ -196,11 +268,11 @@ final List<AsignaturaMalla> mallaMock = [
   _aprobada(6, "Ingeniería de Software", "5,1"),
   // Nivel 7
   _aprobada(7, "Electivo de Formación Especializada I", "6,8", tipo: "Electivo"),
-  _aprobada(7, "Electivo de Formación Especializada II", "6,3", tipo: "Electivo"),
+  _inscrita(7, "Electivo de Formación Especializada II", tipo: "Electivo"),
   _inscrita(7, "Trabajo de Título I"),
-  _aprobada(7, "Gestión de Proyectos Informáticos", "5,1"),
+  _inscrita(7, "Gestión de Proyectos Informáticos"),
   _inscrita(7, "Computación en la Nube"),
-  _aprobada(7, "Computación Web y Móvil", "4,5"),
+  _inscrita(7, "Computación Web y Móvil"),
   // Nivel 8
   _noCursada(8, "Trabajo de Título II"),
   _inscrita(8, "Práctica Profesional"),
