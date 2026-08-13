@@ -484,6 +484,10 @@ jobs:
     timeout-minutes: 60
     # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
     if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
+    env:
+      # Los títulos de las capturas llevan tildes y el runner de macOS no define locale.
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
@@ -509,6 +513,10 @@ jobs:
             ~/.cocoapods
           key: pods-screenshots-macos-${{ runner.os }}-${{ hashFiles('macos/Podfile.lock') }}
           restore-keys: pods-screenshots-macos-${{ runner.os }}-
+
+      - name: 🪄 Instalar ImageMagick
+        # Los scripts de fondos y de enmarcado trabajan con `magick`.
+        run: brew install imagemagick
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4
@@ -568,7 +576,7 @@ jobs:
           {
             echo "## 📸 Capturas de pantalla (macOS)"
             echo ""
-            echo "- $(find macos/fastlane/screenshots -name '*.png' | wc -l | tr -d ' ') capturas de 2880x1800 para la Mac App Store"
+            echo "- $(find macos/fastlane/screenshots -name '*_framed.png' | wc -l | tr -d ' ') capturas enmarcadas de 2880x1800 para la Mac App Store"
             echo "- [Descargar artefacto]($ARTEFACTO_URL)"
           } >> "$GITHUB_STEP_SUMMARY"
 
