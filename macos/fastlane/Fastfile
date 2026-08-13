@@ -192,6 +192,25 @@ platform :mac do
     Dir.glob(File.join(output_dir, "*.png")).each { |captura| File.delete(captura) } if clear
     FileUtils.mkdir_p(output_dir)
 
+    # El job de capturas no sincroniza match, así que en CI no existe el perfil que el
+    # proyecto exige ("No profile for team 'X' matching 'match Development ... macos'"). Una
+    # compilación de debug que solo corre dentro del runner no necesita perfil: se firma
+    # ad-hoc. En local no se toca nada, ahí sí hay certificados.
+    if bool_option(options, :ad_hoc_signing, env_var: "IS_CI", default: false)
+      proyecto = Xcodeproj::Project.open(File.join(root, "macos", "Runner.xcodeproj"))
+      ([proyecto] + proyecto.targets).each do |objetivo|
+        objetivo.build_configurations.each do |config|
+          # Se borran también las variantes con condición (CODE_SIGN_IDENTITY[sdk=macosx*]),
+          # que ganan sobre la clave sin condición.
+          config.build_settings.delete_if { |clave, _| clave.start_with?("PROVISIONING_PROFILE", "DEVELOPMENT_TEAM") }
+          config.build_settings.keys.grep(/^CODE_SIGN_IDENTITY/).each { |clave| config.build_settings[clave] = "-" }
+          config.build_settings["CODE_SIGN_STYLE"] = "Manual"
+        end
+      end
+      proyecto.save
+      UI.important("🔓 Firma ad-hoc: las capturas no salen del runner.")
+    end
+
     ENV["SCREENSHOTS_DIR"] = output_dir
     ENV["SCREENSHOT_PREFIX"] = ""
     # La lee MainFlutterWindow.swift al abrir la ventana.
