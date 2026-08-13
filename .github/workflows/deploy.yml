@@ -551,6 +551,7 @@ jobs:
         run: bundle exec fastlane mac screenshots
         env:
           APP_ENV: ${{ vars.APP_ENV }}
+          IS_CI: ${{ vars.IS_CI }}
 
       - name: 📤 Subir capturas como artefacto
         id: artefacto
