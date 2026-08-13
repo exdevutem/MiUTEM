@@ -3,7 +3,7 @@
 # en tiras verticales, una por captura. Puestas lado a lado en la ficha de la tienda,
 # las capturas reconstruyen la foto completa.
 #
-# Uso: scripts/generate-screenshot-backgrounds [ios|android|all]
+# Uso: scripts/generate-screenshot-backgrounds [ios|android|macos|all]
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -31,24 +31,39 @@ panoramica() {
     -quality 88 "$destino"
 }
 
-# generar <carpeta de screenshots> <locale> <ancho por defecto> <alto por defecto>
+# Capturas ya tomadas de una carpeta, en el orden en que van en la ficha. El `|| true` es
+# para la carpeta que todavía no existe: con `pipefail` el find fallido cortaría el script
+# sin decir nada, y quien pregunta por las capturas es justamente quien sabe si faltan.
+capturas_de() {
+  find "$1" -name "*.png" ! -name "*_framed.png" 2>/dev/null | sort || true
+}
+
+# generar <carpeta de screenshots> <locale> <ancho por defecto> <alto por defecto> [claves]
+#
+# Las claves salen de title.strings salvo que se pida `capturas`: macOS reusa los textos de
+# iOS y no tiene capturas compuestas aparte, así que ahí las claves son las que hay tomadas.
 generar() {
-  local base=$1 locale=$2 ancho=$3 alto=$4
+  local base=$1 locale=$2 ancho=$3 alto=$4 origen=${5:-strings}
 
   # Las capturas ya tomadas mandan sobre el tamaño por defecto: si el alto no calza
   # con el de la captura, frameit reescala y recorta el fondo y se pierde la continuidad.
   local muestra
-  muestra=$(find "$base/$locale" -name "*.png" ! -name "*_framed.png" | sort | head -1 || true)
+  muestra=$(capturas_de "$base/$locale" | head -1)
   if [ -n "$muestra" ]; then
     read -r ancho alto <<<"$(magick identify -format "%w %h" "$muestra")"
   fi
 
   # El orden lo define title.strings, que es el mismo con el que se suben las capturas.
   local claves=()
-  while IFS= read -r clave; do claves+=("$clave"); done \
-    < <(grep -o '^"[^"]*"' "$base/$locale/title.strings" | tr -d '"')
+  if [ "$origen" = capturas ]; then
+    while IFS= read -r captura; do claves+=("$(basename "$captura" .png)"); done \
+      < <(capturas_de "$base/$locale")
+  else
+    while IFS= read -r clave; do claves+=("$clave"); done \
+      < <(grep -o '^"[^"]*"' "$base/$locale/title.strings" | tr -d '"')
+  fi
   local n=${#claves[@]}
-  [ "$n" -gt 0 ] || { echo "❌ $base/$locale/title.strings no tiene claves" >&2; exit 1; }
+  [ "$n" -gt 0 ] || { echo "❌ No hay claves para los fondos de $base/$locale: revisa las capturas y title.strings" >&2; exit 1; }
 
   local tiras="$base/backgrounds"
   rm -rf "$tiras" && mkdir -p "$tiras"
@@ -72,9 +87,17 @@ generar() {
 
 PLATAFORMA="${1:-all}"
 case "$PLATAFORMA" in
-  ios|android|all) ;;
-  *) echo "❌ Uso: $(basename "$0") [ios|android|all]" >&2; exit 1 ;;
+  ios|android|macos|all) ;;
+  *) echo "❌ Uso: $(basename "$0") [ios|android|macos|all]" >&2; exit 1 ;;
 esac
 
-[ "$PLATAFORMA" = android ] || generar "fastlane/screenshots" "es-MX" 1320 2868
-[ "$PLATAFORMA" = ios ] || generar "android/fastlane/screenshots" "es-419" 1080 2160
+case "$PLATAFORMA" in ios|all) generar "fastlane/screenshots" "es-MX" 1320 2868 ;; esac
+case "$PLATAFORMA" in android|all) generar "android/fastlane/screenshots" "es-419" 1080 2160 ;; esac
+# macOS necesita capturas ya tomadas, que de ahí saca las claves. Sin ellas no hay nada que
+# cortar: pedido a mano se avisa, y en `all` se salta, que es lo normal si sólo se corrió el
+# recorrido de iOS o de Android.
+case "$PLATAFORMA" in
+  macos) generar "macos/fastlane/screenshots" "es-MX" 2880 1800 capturas ;;
+  all) [ -z "$(capturas_de macos/fastlane/screenshots/es-MX)" ] \
+    || generar "macos/fastlane/screenshots" "es-MX" 2880 1800 capturas ;;
+esac

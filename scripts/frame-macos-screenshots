@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+# Enmarca las capturas de macOS como las de iOS y Android: el mismo fondo panorámico, el
+# mismo par titular/subtítulo arriba, y la captura dentro de una ventana de macOS (barra de
+# título con semáforos, esquinas redondeadas y sombra). Deja los *_framed.png al lado.
+#
+# No lo hace frameit, aunque tenga un MacEditor: ese editor sólo pega la captura sobre el
+# fondo ("Macs don't need frames - backgrounds only") y encima nunca llega a correr, porque
+# reconoce al Mac comparando el nombre del dispositivo con "MacBook" y el de su propia lista
+# es "Apple MacBook"; la captura termina tratada como un iPhone sin marco y frameit se va
+# sin escribir nada.
+#
+# Se ejecuta después de `scripts/generate-screenshot-backgrounds macos`, que es quien deja
+# las tiras de fondo con el nombre de cada captura.
+#
+# Uso: scripts/frame-macos-screenshots [locale]
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+BASE="macos/fastlane/screenshots"
+TEXTOS="fastlane/screenshots" # Los titulares son los de iOS: son las mismas pantallas.
+FUENTE_TEXTO="fastlane/screenshots/fonts/Roboto.ttf"
+
+# Las medidas van en fracciones del alto de la captura —el lado corto, porque es apaisada—
+# para que el resultado no dependa del tamaño en que se hayan tomado.
+CUERPO_TITULAR=0.064    # Mismo cuerpo relativo que el Framefile de iOS (84 sobre 1320).
+CUERPO_SUBTITULO=0.037
+COLOR_TITULAR="#FFFFFF"
+COLOR_SUBTITULO="#CFE8DC"
+MARGEN_SUPERIOR=0.055   # Del borde de arriba al titular.
+ESPACIO_BAJO_TEXTO=0.05 # Del subtítulo a la ventana.
+MARGEN_INFERIOR=0.08    # Tiene que dar para la sombra, o se corta contra el borde.
+ANCHO_VENTANA=0.80      # Ancho máximo de la ventana, en anchos de captura.
+BARRA=0.038             # Alto de la barra de título.
+RADIO=0.012             # Radio de las esquinas de la ventana.
+SOMBRA=0.022            # Desenfoque de la sombra.
+SOMBRA_OPACIDAD=0.6
+
+command -v magick >/dev/null || { echo "❌ Falta ImageMagick (brew install imagemagick)" >&2; exit 1; }
+
+calc() { python3 -c "print(round($1))"; }
+
+# Valor de una clave en un archivo .strings, en una sola línea: los \n de esos textos están
+# puestos para las pantallas verticales de iOS y Android, y acá sobra ancho.
+texto_de() {
+  sed -n "s/^\"$2\" = \"\(.*\)\";$/\1/p" "$1" | sed 's/\\n/ /g'
+}
+
+LOCALE="${1:-es-MX}"
+DIR="$BASE/$LOCALE"
+
+capturas=()
+while IFS= read -r captura; do capturas+=("$captura"); done \
+  < <(find "$DIR" -name "*.png" ! -name "*_framed.png" 2>/dev/null | sort)
+[ "${#capturas[@]}" -gt 0 ] || { echo "❌ No hay capturas en $DIR: genéralas antes." >&2; exit 1; }
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+for captura in "${capturas[@]}"; do
+  clave=$(basename "$captura" .png)
+
+  read -r ancho alto <<<"$(magick identify -format "%w %h" "$captura")"
+
+  fondo="$BASE/backgrounds/$clave.jpg"
+  [ -f "$fondo" ] || fondo="$BASE/background.jpg"
+  [ -f "$fondo" ] || { echo "❌ Falta el fondo de $clave: corre generate-screenshot-backgrounds macos" >&2; exit 1; }
+
+  titular=$(texto_de "$TEXTOS/$LOCALE/keyword.strings" "$clave")
+  subtitulo=$(texto_de "$TEXTOS/$LOCALE/title.strings" "$clave")
+  [ -n "$titular" ] || { echo "❌ Falta el titular de $clave en $TEXTOS/$LOCALE/keyword.strings" >&2; exit 1; }
+  [ -n "$subtitulo" ] || { echo "❌ Falta el subtítulo de $clave en $TEXTOS/$LOCALE/title.strings" >&2; exit 1; }
+
+  # 1. La barra de título, del color del borde superior de la captura: la app dibuja hasta
+  # el tope de la ventana, así que la barra sale del mismo color que lo que queda debajo,
+  # igual que en pantalla. Va sin el nombre de la ventana: quedaría justo encima del título
+  # de la pantalla que ya dibuja la app, y los semáforos solos se leen igual de bien.
+  barra=$(calc "$alto * $BARRA")
+  color_barra=$(magick "$captura" -crop "${ancho}x8+0+0" +repage -resize 1x1! \
+    -format "%[pixel:p{0,0}]" info:)
+
+  # Los semáforos, con las medidas de macOS (12 pt de diámetro, 20 pt entre centros y del
+  # borde) llevadas a la escala de la barra, que en el sistema mide 28 pt.
+  radio_boton=$(calc "$barra * 12 / 28 / 2")
+  paso=$(calc "$barra * 20 / 28")
+  centro=$(calc "$barra / 2")
+
+  magick -size "${ancho}x${barra}" "xc:$color_barra" \
+    -fill "#FF5F57" -draw "circle $paso,$centro $((paso + radio_boton)),$centro" \
+    -fill "#FEBC2E" -draw "circle $((paso * 2)),$centro $((paso * 2 + radio_boton)),$centro" \
+    -fill "#28C840" -draw "circle $((paso * 3)),$centro $((paso * 3 + radio_boton)),$centro" \
+    "$tmp/barra.png"
+
+  # 2. La ventana: barra más captura, recortada con las esquinas redondeadas del sistema.
+  alto_marco=$((barra + alto))
+  radio=$(calc "$alto * $RADIO")
+  magick "$tmp/barra.png" "$captura" -append \
+    \( -size "${ancho}x${alto_marco}" xc:none -fill white \
+       -draw "roundrectangle 0,0,$((ancho - 1)),$((alto_marco - 1)),$radio,$radio" \) \
+    -alpha set -compose DstIn -composite "$tmp/ventana.png"
+
+  # 3. El texto, con el mismo par titular/subtítulo del resto de las tiendas. El espacio
+  # entre los dos se hace con -splice y no con una imagen vacía: el -size de esa imagen se
+  # quedaría pegado y recortaría el label siguiente.
+  cuerpo_titular=$(calc "$alto * $CUERPO_TITULAR")
+  cuerpo_subtitulo=$(calc "$alto * $CUERPO_SUBTITULO")
+  magick -background none -font "$FUENTE_TEXTO" \
+    \( -fill "$COLOR_TITULAR" -pointsize "$cuerpo_titular" -gravity center label:"$titular" \) \
+    \( -fill "$COLOR_SUBTITULO" -pointsize "$cuerpo_subtitulo" -gravity center label:"$subtitulo" \
+       -gravity north -splice "0x$((cuerpo_titular / 2))" \) \
+    -gravity center -append +repage \
+    -resize "$(calc "$ancho * 0.9")x>" \
+    "$tmp/texto.png"
+
+  # 4. La ventana, achicada a lo que queda libre bajo el texto.
+  alto_texto=$(magick identify -format "%h" "$tmp/texto.png")
+  arriba_texto=$(calc "$alto * $MARGEN_SUPERIOR")
+  arriba_ventana=$((arriba_texto + alto_texto + $(calc "$alto * $ESPACIO_BAJO_TEXTO")))
+  alto_libre=$((alto - arriba_ventana - $(calc "$alto * $MARGEN_INFERIOR")))
+  magick "$tmp/ventana.png" -resize "$(calc "$ancho * $ANCHO_VENTANA")x${alto_libre}" "$tmp/ventana_final.png"
+
+  # 5. La sombra, dentro de un margen fijo para saber cuánto crece el conjunto y poder
+  # centrarlo después.
+  desenfoque=$(calc "$alto * $SOMBRA")
+  caida=$(calc "$desenfoque * 0.8")
+  margen=$(calc "$desenfoque * 2.5 + $caida")
+  read -r ancho_ventana alto_ventana <<<"$(magick identify -format "%w %h" "$tmp/ventana_final.png")"
+  magick -size "$((ancho_ventana + margen * 2))x$((alto_ventana + margen * 2))" xc:none \
+    \( "$tmp/ventana_final.png" -fill black -colorize 100 \
+       -channel A -evaluate multiply "$SOMBRA_OPACIDAD" +channel \
+       -bordercolor none -border "$margen" -blur "0x$desenfoque" \) \
+    -gravity northwest -geometry "+0+$caida" -composite \
+    "$tmp/ventana_final.png" -gravity northwest -geometry "+$margen+$margen" -composite \
+    "$tmp/conjunto.png"
+
+  # 6. Todo junto sobre la tira de fondo que le toca a esta captura.
+  read -r ancho_conjunto _ <<<"$(magick identify -format "%w %h" "$tmp/conjunto.png")"
+  magick "$fondo" -resize "${ancho}x${alto}^" -gravity center -extent "${ancho}x${alto}" \
+    "$tmp/conjunto.png" -gravity northwest \
+      -geometry "+$(((ancho - ancho_conjunto) / 2))+$((arriba_ventana - margen))" -composite \
+    "$tmp/texto.png" -gravity north -geometry "+0+$arriba_texto" -composite \
+    "$DIR/${clave}_framed.png"
+done
+
+echo "✅ ${#capturas[@]} capturas enmarcadas en $DIR"
