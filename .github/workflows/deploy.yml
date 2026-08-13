@@ -391,16 +391,24 @@ jobs:
         # frameit y los scripts de fondos y composición trabajan con `magick`, que sólo
         # existe en ImageMagick 7: el paquete de apt sigue en el 6 y deja únicamente
         # `convert`. El runner ya trae Homebrew (instalado pero fuera del PATH) y su
-        # fórmula sí es la 7, así que se instala igual que en macOS y se enlaza sólo el
-        # binario, para no meter todo el prefijo de brew delante del PATH del resto del job.
+        # fórmula sí es la 7, así que se instala igual que en macOS y se enlazan sólo los
+        # binarios, para no meter todo el prefijo de brew delante del PATH del resto del job.
+        #
+        # `convert` va aunque nadie lo llame: es el binario de ImageMagick 6 y frameit lo
+        # sigue buscando para decidir si tiene con qué trabajar, así que sin él el
+        # `fastlane frameit` de scripts/compose-store-screenshots se niega a partir.
         env:
           HOMEBREW_NO_AUTO_UPDATE: "1"
           HOMEBREW_NO_INSTALL_CLEANUP: "1"
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew install imagemagick
-          sudo ln -sf "$HOMEBREW_PREFIX/bin/magick" /usr/local/bin/magick
-          magick -version
+          for binario in magick convert; do
+            sudo ln -sf "$HOMEBREW_PREFIX/bin/$binario" "/usr/local/bin/$binario"
+          done
+          # Por la ruta enlazada, que es la que ven los pasos siguientes (sin el PATH de brew).
+          /usr/local/bin/magick -version
+          /usr/local/bin/convert -version
 
       - name: 🐦 Configurar Flutter SDK
         uses: flutter-actions/setup-flutter@v4

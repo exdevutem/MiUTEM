@@ -48,8 +48,6 @@ android {
         ?: (keystoreProperties["keyPassword"] as String?)
     val useDebugSigning = System.getenv("MIUTEM_USE_DEBUG_SIGNING")?.toBoolean() ?: false
 
-    val debugKeystore = file("${System.getProperty("user.home")}/.android/debug.keystore")
-
     signingConfigs {
         create("release") {
             keyAlias = resolvedKeyAlias
@@ -57,11 +55,18 @@ android {
             storeFile = resolvedStoreFile?.let { file(it) }
             storePassword = resolvedStorePassword
         }
+        // Sin keystore propio se deja el `debug` tal cual lo trae AGP, que apunta a
+        // ~/.android/debug.keystore y lo crea la primera vez que lo necesita. Fijarle el
+        // `storeFile` a mano lo convierte en un keystore del usuario y Gradle exige que ya
+        // exista: en una máquina limpia —los runners de CI lo son— el build muere con
+        // "Keystore file '~/.android/debug.keystore' not found for signing config 'debug'".
         getByName("debug") {
-            keyAlias = if (useDebugSigning) "androiddebugkey" else (resolvedKeyAlias ?: "androiddebugkey")
-            keyPassword = if (useDebugSigning) "android" else (resolvedKeyPassword ?: "android")
-            storeFile = if (useDebugSigning) debugKeystore else (resolvedStoreFile?.let { file(it) } ?: debugKeystore)
-            storePassword = if (useDebugSigning) "android" else (resolvedStorePassword ?: "android")
+            if (!useDebugSigning && resolvedStoreFile != null) {
+                keyAlias = resolvedKeyAlias ?: "androiddebugkey"
+                keyPassword = resolvedKeyPassword ?: "android"
+                storeFile = file(resolvedStoreFile)
+                storePassword = resolvedStorePassword ?: "android"
+            }
         }
     }
 
