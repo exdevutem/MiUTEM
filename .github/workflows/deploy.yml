@@ -239,8 +239,21 @@ jobs:
     needs: determine-environment
     runs-on: macos-latest
     environment: ${{ needs.determine-environment.outputs.environment }}
-    # El recorrido corre dos veces (iPhone y iPad) y cada uno se lleva ~25 minutos.
-    timeout-minutes: 90
+    # Un runner por dispositivo: hechos uno tras otro el job se iba a hora y media, y son dos
+    # recorridos independientes. fail-fast apagado para que un simulador que falle no cancele
+    # el otro, que igual sirve para la ficha.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Los mismos dos que trae por defecto el lane, uno en cada runner. Por qué esos
+          # modelos y no otros está explicado ahí.
+          - dispositivo: iPhone 17 Pro Max
+            artefacto: iphone
+          - dispositivo: iPad Air 13-inch
+            artefacto: ipad
+    # Un recorrido se lleva ~25 minutos, más la compilación y la preparación del runner.
+    timeout-minutes: 60
     # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
     if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
     env:
@@ -315,25 +328,27 @@ jobs:
         # importa las opciones de firebase de los dos entornos.
         run: ./scripts/flutterfire-configure all --build-type=Debug
 
-      - name: 📸 Generar capturas de iOS (iPhone y iPad)
+      - name: 📸 Generar capturas de iOS
         run: bundle exec fastlane ios screenshots
         env:
           APP_ENV: ${{ vars.APP_ENV }}
+          SCREENSHOT_DEVICES: ${{ matrix.dispositivo }}
 
       - name: 📤 Subir capturas como artefacto
         id: artefacto
         uses: actions/upload-artifact@v7
         with:
-          name: capturas-ios
+          name: capturas-${{ matrix.artefacto }}
           path: fastlane/screenshots/*/*.png
           if-no-files-found: error
 
       - name: 📝 Publicar capturas en el resumen
         env:
           ARTEFACTO_URL: ${{ steps.artefacto.outputs.artifact-url }}
+          DISPOSITIVO: ${{ matrix.dispositivo }}
         run: |
           {
-            echo "## 📸 Capturas de pantalla (iOS)"
+            echo "## 📸 Capturas de pantalla ($DISPOSITIVO)"
             echo ""
             echo "- $(find fastlane/screenshots -name '*_framed.png' | wc -l | tr -d ' ') capturas enmarcadas para la App Store"
             echo "- [Descargar artefacto]($ARTEFACTO_URL)"
