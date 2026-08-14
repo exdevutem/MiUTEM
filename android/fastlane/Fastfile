@@ -1,6 +1,20 @@
 import "../fastlane/src/helpers.rb"
 
+require "json"
 require "timeout"
+
+# applicationId que AGP deja anotado junto al APK que acaba de compilar, o nil si no está.
+#
+# Es el nombre con el que el paquete queda instalado en el dispositivo, sufijos de flavor
+# incluidos, y no tiene por qué coincidir con APP_PACKAGE_NAME: ese secreto es el de la
+# ficha de Google Play.
+def android_application_id(metadata)
+  return nil unless File.exist?(metadata)
+
+  JSON.parse(File.read(metadata))["applicationId"]
+rescue JSON::ParserError
+  nil
+end
 
 # Raíz del SDK de Android. `adb` y `emulator` casi nunca están en el PATH de un lane.
 def android_sdk_root
@@ -132,10 +146,6 @@ platform :android do
     serial = android_boot_emulator(avd) if started_here
     UI.message("📱 Usando #{serial}")
 
-    # Una instalación previa firmada con otra llave deja a screengrab sin poder instalar
-    # los APK, con un error que no dice que el problema es ese.
-    [package_name, "#{package_name}.test"].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
-
     # Google Play sólo acepta 8 capturas por dispositivo: si quedan las anteriores, falla el upload.
     # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
     if clear
@@ -179,11 +189,23 @@ platform :android do
         UI.user_error!("❌ No se generó #{apk}.") unless File.exist?(apk)
       end
 
+      # Los nombres salen de lo que anotó AGP al compilar y no de APP_PACKAGE_NAME + el
+      # sufijo del flavor: si no calzan, screengrab instala los dos APK igual y recién
+      # después se cae con "package not found" al dar los permisos y al instrumentar.
+      # El secreto queda de respaldo, que es lo que hay cuando no está el metadata.
+      package_name = android_application_id(File.join(root, "build", "app", "outputs", "apk", scheme, "debug", "output-metadata.json")) || package_name
+      tests_package_name = android_application_id(File.join(root, "build", "app", "outputs", "apk", "androidTest", scheme, "debug", "output-metadata.json")) || "#{package_name}.test"
+      UI.message("📦 Instalando #{package_name} y #{tests_package_name}")
+
+      # Una instalación previa firmada con otra llave deja a screengrab sin poder instalar
+      # los APK, con un error que no dice que el problema es ese.
+      [package_name, tests_package_name].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
+
       # El resto de las opciones (idiomas, paquete de los tests, nombres sin marca de
       # tiempo) están en fastlane/Screengrabfile.
       capture_android_screenshots(
         app_package_name: package_name,
-        tests_package_name: "#{package_name}.test",
+        tests_package_name: tests_package_name,
         app_apk_path: app_apk,
         tests_apk_path: tests_apk,
         specific_device: serial,
