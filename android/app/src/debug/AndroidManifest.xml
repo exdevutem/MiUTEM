@@ -13,8 +13,13 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-    <!-- Allows storing screenshots on external storage, where it can be accessed by ADB -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
+    <!-- Allows storing screenshots on external storage, where it can be accessed by ADB.
+         Va sin el `android:maxSdkVersion="18"` con el que aparece en la guía: el plugin
+         file_saver declara el mismo permiso con 28 y el merge de manifests corta el build
+         con "Attribute uses-permission#...@maxSdkVersion value=(18) is also present at
+         [:file_saver] value=(28)". Pisarlo con tools:replace le sacaría a file_saver el
+         permiso en las APIs 19 a 28; dejarlo sin el atributo no le quita nada a nadie. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- Allows changing locales -->
     <uses-permission
