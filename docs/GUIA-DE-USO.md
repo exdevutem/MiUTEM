@@ -294,9 +294,24 @@ los datos ficticios y no necesitan ninguna cuenta real. La configuración de sna
 [`fastlane/Screengrabfile`](../fastlane/Screengrabfile).
 
 En CI los ejecuta el workflow [`screenshots.yml`](../.github/workflows/screenshots.yml), que corre
-al hacer push a `dev` y `prod`, al abrir una pull request, al sacarla de borrador y a mano desde la
-pestaña Actions. En las pull requests deja además un comentario con lo que salió en cada plataforma
-y el enlace para descargar las capturas, que arma
+al hacer push a `dev` y `prod`, al abrir una pull request, al sacarla de borrador, a mano desde la
+pestaña Actions y comentando en una pull request:
+
+```
+@miutem screenshot            # las tres plataformas
+@miutem screenshot ios        # sólo iPhone y iPad
+@miutem screenshot android
+@miutem screenshot macos
+@miutem screenshot all
+```
+
+El comando sólo lo atiende a quien tenga permiso de escritura en el repositorio, porque la corrida
+usa los secretos del repositorio sobre el código de la rama de la pull request. Cuando se toma, el
+comentario queda con una reacción 👀: el run no aparece entre los checks de la pull request, así que
+esa es la señal de que arrancó.
+
+En las pull requests el workflow deja además un comentario con lo que salió en cada plataforma y el
+enlace para descargar las capturas, que arma
 [`scripts/pr-screenshots-comment`](../scripts/pr-screenshots-comment): las imágenes no se pueden
 mostrar embebidas porque GitHub no deja adjuntar archivos a un comentario desde su API.
 

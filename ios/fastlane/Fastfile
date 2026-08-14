@@ -222,6 +222,20 @@ platform :ios do
     # iPhone con iPad dejaría a uno de los dos con los fondos recortados del otro.
     listas = Dir.mktmpdir("miutem-capturas")
 
+    # El paso de símbolos de Crashlytics que agrega flutterfire saca la carpeta de paquetes
+    # de Swift de $BUILD_ROOT: le recorta todo lo que venga después de "DerivedData/<algo>"
+    # y busca ahí SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run. snapshot compila
+    # en una carpeta temporal (/var/folders/.../snapshot_derived*), que no tiene ese tramo en
+    # la ruta, así que el recorte no hace nada y el script termina buscando los checkouts
+    # dentro de Build/Products, donde xcodebuild no los deja: la fase se cae con
+    # "PhaseScriptExecution FlutterFire: upload-crashlytics-symbols" y no llega a correr ni
+    # un test. Con la carpeta fija se puede dejar el enlace donde el script lo espera, que es
+    # lo mismo que hace el lane de macOS.
+    derived_data = File.join(root, "build", "ios-capturas")
+    productos = File.join(derived_data, "Build", "Products")
+    FileUtils.mkdir_p(productos)
+    FileUtils.ln_sf(File.join(derived_data, "SourcePackages"), File.join(productos, "SourcePackages"))
+
     # snapshot compila con xcodebuild, que no sabe nada de `--dart-define`. `--config-only`
     # no compila: deja el punto de entrada y los defines en ios/Flutter/Generated.xcconfig,
     # y de ahí los toma la fase de compilación de Flutter cuando xcodebuild construye la app.
@@ -253,6 +267,7 @@ platform :ios do
         output_directory: screenshots_dir,
         scheme: scheme,
         configuration: "Debug-#{scheme}",
+        derived_data_path: derived_data,
       )
 
       # Un test que se cuelga y agota el tiempo igual deja el lane en verde sin escribir

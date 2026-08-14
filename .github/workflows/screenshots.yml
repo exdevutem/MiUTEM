@@ -19,10 +19,16 @@ on:
     branches: [dev, prod]
   # Al abrir la PR y al sacarla de borrador, para ver en la propia PR cómo queda la app.
   # `synchronize` no está a propósito: cada corrida se lleva runners de macOS por casi una
-  # hora y no vale la pena repetirla en cada push a la rama.
+  # hora y no vale la pena repetirla en cada push a la rama. Para volver a generarlas está
+  # el comentario de abajo.
   pull_request:
     types: [opened, ready_for_review]
     branches: [dev, prod]
+  # Comentando en la PR "@miutem screenshot <ios|macos|android|all>" (sin argumento, all).
+  # El filtro va en el `if` de determine-environment, porque acá el evento llega por
+  # cualquier comentario del repositorio.
+  issue_comment:
+    types: [created]
   workflow_dispatch:
     inputs:
       track:
@@ -37,19 +43,61 @@ jobs:
   determine-environment:
     # Los bumps de dependabot no generan capturas. Al saltarse este job, los screenshots-*
     # que dependen de él también se saltan.
-    if: ${{ github.actor != 'dependabot[bot]' && github.event.head_commit.author.username != 'dependabot[bot]' }}
+    #
+    # De los comentarios sólo pasan los que piden capturas en una PR, y sólo si quien
+    # comenta tiene permiso de escritura: un comentario corre con los secretos del repo y
+    # sobre el código de la rama de la PR, así que no puede quedar abierto a cualquiera.
+    if: >-
+      ${{ github.actor != 'dependabot[bot]'
+      && github.event.head_commit.author.username != 'dependabot[bot]'
+      && (github.event_name != 'issue_comment'
+          || (github.event.issue.pull_request
+              && contains(github.event.comment.body, '@miutem screenshot')
+              && contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association))) }}
     runs-on: ubuntu-latest
+    permissions:
+      # Para dejar la reacción con la que se acusa recibo del comando.
+      issues: write
     outputs:
       environment: ${{ steps.set-environment.outputs.environment }}
+      plataformas: ${{ steps.set-environment.outputs.plataformas }}
     steps:
-      - name: Determinar entorno de despliegue
+      - name: Determinar entorno y plataformas
         id: set-environment
+        env:
+          # Por variable de entorno y no interpolado en el script: el cuerpo del comentario
+          # lo escribe quien sea y dentro del `run` sería una inyección de shell.
+          COMENTARIO: ${{ github.event.comment.body }}
+          EVENTO: ${{ github.event_name }}
         run: |
           if [[ "${{ inputs.track }}" == "production" || "${{ github.ref }}" == "refs/heads/prod" ]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
           else
             echo "environment=dev" >> $GITHUB_OUTPUT
           fi
+
+          # Se capturan todas las plataformas salvo que el comando pida una sola.
+          plataformas=all
+          if [[ "$EVENTO" == "issue_comment" ]]; then
+            if [[ "$COMENTARIO" =~ @miutem[[:space:]]+screenshot([[:space:]]+(ios|macos|android|all))? ]]; then
+              plataformas="${BASH_REMATCH[2]:-all}"
+            fi
+          fi
+
+          echo "Plataformas a capturar: $plataformas"
+          echo "plataformas=$plataformas" >> $GITHUB_OUTPUT
+
+      - name: 👀 Acusar recibo del comando
+        # El run de un comentario no aparece entre los checks de la PR, así que sin esto
+        # quien lo pide se queda sin saber si se tomó hasta que llega el comentario final.
+        if: ${{ github.event_name == 'issue_comment' }}
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${{ github.api_url }}/repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions" \
+            -d '{"content":"eyes"}' > /dev/null
 
   screenshots-ios:
     needs: determine-environment
@@ -71,7 +119,11 @@ jobs:
     # Un recorrido se lleva ~25 minutos, más la compilación y la preparación del runner.
     timeout-minutes: 60
     # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
-    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
+    # `plataformas` sale del comando del comentario; en el resto de los eventos es `all`.
+    if: >-
+      ${{ !contains(github.event.head_commit.message, '[skip deploy]')
+      && !contains(github.event.head_commit.message, '[skip screenshots]')
+      && contains(fromJSON('["all", "ios"]'), needs.determine-environment.outputs.plataformas) }}
     env:
       # Los títulos de las capturas llevan tildes y el runner de macOS no define locale:
       # frameit se cae al leer los .strings y termina sin enmarcar ninguna captura.
@@ -80,6 +132,11 @@ jobs:
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
+        with:
+          # El run de un comentario sale de la rama por defecto: hay que traer el código de
+          # la PR a la que se le pidieron las capturas. En el resto de los eventos, vacío
+          # deja el checkout como viene.
+          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
 
       - name: ⚒️ Configurar Xcode
         uses: maxim-lobanov/setup-xcode@v1
@@ -176,7 +233,11 @@ jobs:
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
     # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
-    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
+    # `plataformas` sale del comando del comentario; en el resto de los eventos es `all`.
+    if: >-
+      ${{ !contains(github.event.head_commit.message, '[skip deploy]')
+      && !contains(github.event.head_commit.message, '[skip screenshots]')
+      && contains(fromJSON('["all", "android"]'), needs.determine-environment.outputs.plataformas) }}
     env:
       # Los títulos llevan tildes y frameit los lee con el encoding del entorno: si no es
       # UTF-8 no falla, simplemente deja las capturas sin enmarcar. C.UTF-8 siempre existe
@@ -186,6 +247,11 @@ jobs:
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
+        with:
+          # El run de un comentario sale de la rama por defecto: hay que traer el código de
+          # la PR a la que se le pidieron las capturas. En el resto de los eventos, vacío
+          # deja el checkout como viene.
+          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
 
       - name: 🖥️ Habilitar KVM
         # Sin esto el emulador arranca por software y el recorrido no alcanza a terminar.
@@ -314,7 +380,11 @@ jobs:
     environment: ${{ needs.determine-environment.outputs.environment }}
     timeout-minutes: 60
     # Si contiene [skip deploy] o [skip screenshots] en el mensaje del commit, se saltará.
-    if: ${{ !contains(github.event.head_commit.message, '[skip deploy]') && !contains(github.event.head_commit.message, '[skip screenshots]') }}
+    # `plataformas` sale del comando del comentario; en el resto de los eventos es `all`.
+    if: >-
+      ${{ !contains(github.event.head_commit.message, '[skip deploy]')
+      && !contains(github.event.head_commit.message, '[skip screenshots]')
+      && contains(fromJSON('["all", "macos"]'), needs.determine-environment.outputs.plataformas) }}
     env:
       # Los títulos de las capturas llevan tildes y el runner de macOS no define locale.
       LANG: en_US.UTF-8
@@ -322,6 +392,11 @@ jobs:
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
+        with:
+          # El run de un comentario sale de la rama por defecto: hay que traer el código de
+          # la PR a la que se le pidieron las capturas. En el resto de los eventos, vacío
+          # deja el checkout como viene.
+          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
 
       - name: ⚒️ Configurar Xcode
         uses: maxim-lobanov/setup-xcode@v1
@@ -423,8 +498,14 @@ jobs:
     runs-on: ubuntu-latest
     # `always()` para comentar también cuando una plataforma falla: saber cuál se cayó es
     # parte de lo que se revisa en la PR. En PRs desde un fork no corre, porque ahí el
-    # token es de sólo lectura y tampoco hay secretos con los que generar las capturas.
-    if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    # token es de sólo lectura y tampoco hay secretos con los que generar las capturas; en
+    # los comentarios el token sí puede escribir, y quién puede pedirlas ya lo filtró
+    # determine-environment.
+    if: >-
+      ${{ always()
+      && (github.event_name == 'issue_comment'
+          || (github.event_name == 'pull_request'
+              && github.event.pull_request.head.repo.full_name == github.repository)) }}
     permissions:
       actions: read
       contents: read
@@ -432,6 +513,11 @@ jobs:
     steps:
       - name: 📚 Clonar Repositorio
         uses: actions/checkout@v4
+        with:
+          # El run de un comentario sale de la rama por defecto: hay que traer el código de
+          # la PR a la que se le pidieron las capturas. En el resto de los eventos, vacío
+          # deja el checkout como viene.
+          ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
 
       - name: 📥 Descargar las capturas
         uses: actions/download-artifact@v7
@@ -445,7 +531,8 @@ jobs:
       - name: 💬 Comentar en la PR
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMERO: ${{ github.event.pull_request.number }}
+          # En un comentario la PR llega como issue: son el mismo número.
+          PR_NUMERO: ${{ github.event.pull_request.number || github.event.issue.number }}
           RESULTADO_IOS: ${{ needs.screenshots-ios.result }}
           RESULTADO_ANDROID: ${{ needs.screenshots-android.result }}
           RESULTADO_MACOS: ${{ needs.screenshots-macos.result }}
