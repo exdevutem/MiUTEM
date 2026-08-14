@@ -519,14 +519,40 @@ jobs:
           # deja el checkout como viene.
           ref: ${{ github.event_name == 'issue_comment' && format('refs/pull/{0}/head', github.event.issue.number) || '' }}
 
-      - name: 📥 Descargar las capturas
+      # Un paso por artefacto en vez de un `pattern`: cuando calza uno solo,
+      # download-artifact lo extrae directamente en `path` sin crearle su carpeta, y el
+      # comentario terminaba diciendo que no se generó ninguna captura teniéndola al lado.
+      # Pidiéndolo por nombre la ruta es siempre la misma.
+      #
+      # `continue-on-error` en todos: la plataforma que falla no deja artefacto, y el
+      # comentario igual tiene que salir para contar cuál se cayó.
+      - name: 📥 Descargar las capturas de iPhone
         uses: actions/download-artifact@v7
-        # Si todas las plataformas fallaron no hay artefactos, y el comentario igual tiene
-        # que salir para contar que no se generó ninguna captura.
         continue-on-error: true
         with:
-          pattern: capturas-*
-          path: capturas
+          name: capturas-iphone
+          path: capturas/capturas-iphone
+
+      - name: 📥 Descargar las capturas de iPad
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: capturas-ipad
+          path: capturas/capturas-ipad
+
+      - name: 📥 Descargar las capturas de Android
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: capturas-android
+          path: capturas/capturas-android
+
+      - name: 📥 Descargar las capturas de macOS
+        uses: actions/download-artifact@v7
+        continue-on-error: true
+        with:
+          name: capturas-macos
+          path: capturas/capturas-macos
 
       - name: 💬 Comentar en la PR
         env:

@@ -62,13 +62,12 @@ def seccion(titulo: str, resultado: str, carpeta: pathlib.Path, enlace: str | No
     if resultado == "skipped" or resultado == "":
         return None
 
-    if not carpeta.is_dir():
+    # La carpeta puede existir y estar vacía: cuando el artefacto no está, el paso que lo
+    # descarga la crea igual antes de fallar.
+    capturas = crudas(carpeta) if carpeta.is_dir() else []
+    if not capturas:
         motivo = "el job falló antes de generarlas" if resultado == "failure" else "no quedó ningún artefacto"
         return f"### {titulo}\n\n❌ Sin capturas: {motivo}."
-
-    capturas = crudas(carpeta)
-    if not capturas:
-        return f"### {titulo}\n\n❌ Sin capturas: el artefacto no trae ninguna."
 
     filas = "\n".join(f"| `{png.name}` | {resolucion(png)} |" for png in capturas)
     lineas = [
