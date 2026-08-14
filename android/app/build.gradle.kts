@@ -72,11 +72,15 @@ android {
 
     defaultConfig {
         applicationId = "cl.inndev.miutem"
-        
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // El runner con el que screengrab ejecuta el recorrido de las capturas.
+        // https://docs.fastlane.tools/getting-started/android/screenshots/
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -110,4 +114,15 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
+    // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
+    androidTestImplementation("tools.fastlane:screengrab:2.1.1")
+    // screengrab ya arrastra runner, rules, espresso y UI Automator, pero en versiones de
+    // 2020: estas dos las traen al día, y ActivityScenarioRule —el que usa el ejemplo de
+    // la guía— vive en androidx.test.ext:junit, que no viene con screengrab.
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.4.0")
 }
