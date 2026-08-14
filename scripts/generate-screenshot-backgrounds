@@ -38,12 +38,12 @@ capturas_de() {
   find "$1" -name "*.png" ! -name "*_framed.png" 2>/dev/null | sort || true
 }
 
-# generar <carpeta de screenshots> <locale> <ancho por defecto> <alto por defecto> [claves]
+# generar <carpeta de screenshots> <locale> <ancho por defecto> <alto por defecto> [carpeta de textos]
 #
-# Las claves salen de title.strings salvo que se pida `capturas`: macOS reusa los textos de
-# iOS y no tiene capturas compuestas aparte, así que ahí las claves son las que hay tomadas.
+# Las claves y su orden salen de title.strings. macOS no tiene el suyo: reusa el de iOS,
+# porque son las mismas pantallas y la ficha lleva las mismas ocho capturas.
 generar() {
-  local base=$1 locale=$2 ancho=$3 alto=$4 origen=${5:-strings}
+  local base=$1 locale=$2 ancho=$3 alto=$4 textos=${5:-$base/$locale}
 
   # Las capturas ya tomadas mandan sobre el tamaño por defecto: si el alto no calza
   # con el de la captura, frameit reescala y recorta el fondo y se pierde la continuidad.
@@ -55,13 +55,8 @@ generar() {
 
   # El orden lo define title.strings, que es el mismo con el que se suben las capturas.
   local claves=()
-  if [ "$origen" = capturas ]; then
-    while IFS= read -r captura; do claves+=("$(basename "$captura" .png)"); done \
-      < <(capturas_de "$base/$locale")
-  else
-    while IFS= read -r clave; do claves+=("$clave"); done \
-      < <(grep -o '^"[^"]*"' "$base/$locale/title.strings" | tr -d '"')
-  fi
+  while IFS= read -r clave; do claves+=("$clave"); done \
+    < <(grep -o '^"[^"]*"' "$textos/title.strings" | tr -d '"')
   local n=${#claves[@]}
   [ "$n" -gt 0 ] || { echo "❌ No hay claves para los fondos de $base/$locale: revisa las capturas y title.strings" >&2; exit 1; }
 
@@ -93,11 +88,4 @@ esac
 
 case "$PLATAFORMA" in ios|all) generar "fastlane/screenshots" "es-MX" 1320 2868 ;; esac
 case "$PLATAFORMA" in android|all) generar "android/fastlane/screenshots" "es-419" 1080 2160 ;; esac
-# macOS necesita capturas ya tomadas, que de ahí saca las claves. Sin ellas no hay nada que
-# cortar: pedido a mano se avisa, y en `all` se salta, que es lo normal si sólo se corrió el
-# recorrido de iOS o de Android.
-case "$PLATAFORMA" in
-  macos) generar "macos/fastlane/screenshots" "es-MX" 2880 1800 capturas ;;
-  all) [ -z "$(capturas_de macos/fastlane/screenshots/es-MX)" ] \
-    || generar "macos/fastlane/screenshots" "es-MX" 2880 1800 capturas ;;
-esac
+case "$PLATAFORMA" in macos|all) generar "macos/fastlane/screenshots" "es-MX" 2880 1800 "fastlane/screenshots/es-MX" ;; esac

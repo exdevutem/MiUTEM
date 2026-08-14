@@ -1,4 +1,6 @@
 build/
 # Las capturas se generan con `fastlane ios screenshots`; la configuración de frameit sí se versiona.
 screenshots/**/*.png
+# Los marcos de dispositivo no se generan: están bajados de fastlane.github.io/frameit-frames.
+!screenshots/frames/*.png
 *.xml
