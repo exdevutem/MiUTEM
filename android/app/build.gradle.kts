@@ -120,9 +120,16 @@ dependencies {
     // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
     // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
     androidTestImplementation("tools.fastlane:screengrab:2.1.1")
-    // screengrab ya arrastra runner, rules, espresso y UI Automator, pero en versiones de
-    // 2020: estas dos las traen al día, y ActivityScenarioRule —el que usa el ejemplo de
-    // la guía— vive en androidx.test.ext:junit, que no viene con screengrab.
+    // ActivityScenarioRule —el que usa el ejemplo de la guía— vive en androidx.test.ext:junit,
+    // que no viene con screengrab.
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.4.0")
+    // screengrab arrastra core, runner y rules en 1.3.0 (de 2020) y ext:junit sube `core`
+    // solo: con la mezcla, ActivityScenario se cae al arrancar con
+    // "AbstractMethodError: ActivityInvoker.getIntentForActivity", porque la interfaz
+    // creció un método que la implementación vieja de runner no tiene. Se fija la versión
+    // de las tres para que suban juntas.
+    androidTestImplementation("androidx.test:core:1.7.0")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test:rules:1.7.0")
 }
