@@ -1,11 +1,13 @@
 package cl.inndev.miutem
 
+import android.content.Intent
 import android.os.SystemClock
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,15 +33,36 @@ import tools.fastlane.screengrab.locale.LocaleTestRule
 @RunWith(JUnit4::class)
 class ScreenshotsTest {
 
-    @get:Rule
-    val activityRule = ActivityScenarioRule(MainActivity::class.java)
-
     @Rule
     @JvmField
     val localeTestRule = LocaleTestRule()
 
     private val device: UiDevice
         get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+    /**
+     * Abre la app como lo haría el lanzador del sistema.
+     *
+     * No se usa ActivityScenarioRule, que es lo que muestra el ejemplo de la guía: vive en
+     * androidx.test.ext:junit y arrastra un androidx.test:core más nuevo que el runner
+     * 1.3.0 que trae screengrab. Como AGP alinea las dependencias de los tests con las de
+     * la app, runner no se puede subir, y con las versiones mezcladas ActivityScenario
+     * revienta con "AbstractMethodError: ActivityInvoker.getIntentForActivity".
+     */
+    @Before
+    fun abrirLaApp() {
+        val contexto = InstrumentationRegistry.getInstrumentation().targetContext
+        val intent = requireNotNull(contexto.packageManager.getLaunchIntentForPackage(contexto.packageName)) {
+            "El paquete ${contexto.packageName} no tiene actividad de lanzamiento."
+        }
+        // Sin la tarea anterior: cada corrida parte de cero, igual que abriendo la app a mano.
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        contexto.startActivity(intent)
+
+        if (device.wait(Until.hasObject(By.pkg(contexto.packageName).depth(0)), LIMITE) != true) {
+            throw AssertionError("La app no llegó a mostrarse después de ${LIMITE / 1000}s.")
+        }
+    }
 
     /**
      * Las capturas 01 y 02 no salen de la app: son la composición del teléfono en diagonal

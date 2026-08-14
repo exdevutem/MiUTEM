@@ -119,17 +119,9 @@ flutter {
 dependencies {
     // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
     // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
+    // Sola: trae runner, rules, espresso y UI Automator, y con eso alcanza. Subirle la
+    // versión a androidx.test no es opción —AGP alinea las dependencias de los tests con
+    // las de la app (consistent resolution) y ahí runner está fijo en 1.3.0—, así que el
+    // recorrido se escribe contra lo que hay: UI Automator y JUnit4, sin ActivityScenario.
     androidTestImplementation("tools.fastlane:screengrab:2.1.1")
-    // ActivityScenarioRule —el que usa el ejemplo de la guía— vive en androidx.test.ext:junit,
-    // que no viene con screengrab.
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.4.0")
-    // screengrab arrastra core, runner y rules en 1.3.0 (de 2020) y ext:junit sube `core`
-    // solo: con la mezcla, ActivityScenario se cae al arrancar con
-    // "AbstractMethodError: ActivityInvoker.getIntentForActivity", porque la interfaz
-    // creció un método que la implementación vieja de runner no tiene. Se fija la versión
-    // de las tres para que suban juntas.
-    androidTestImplementation("androidx.test:core:1.7.0")
-    androidTestImplementation("androidx.test:runner:1.7.0")
-    androidTestImplementation("androidx.test:rules:1.7.0")
 }
