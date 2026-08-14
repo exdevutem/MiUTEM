@@ -236,6 +236,12 @@ platform :ios do
     FileUtils.mkdir_p(productos)
     FileUtils.ln_sf(File.join(derived_data, "SourcePackages"), File.join(productos, "SourcePackages"))
 
+    # Antes de compilar, snapshot pregunta por los ajustes con `xcodebuild -showBuildSettings`,
+    # y eso en este proyecto resuelve primero todos los paquetes de Swift (Firebase incluido):
+    # en un runner frío no alcanza a responder en los 3 segundos que fastlane espera por
+    # defecto, ni en los 4 reintentos que hace doblando el plazo. La palanca es esta variable.
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "180"
+
     # snapshot compila con xcodebuild, que no sabe nada de `--dart-define`. `--config-only`
     # no compila: deja el punto de entrada y los defines en ios/Flutter/Generated.xcconfig,
     # y de ahí los toma la fase de compilación de Flutter cuando xcodebuild construye la app.
