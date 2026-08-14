@@ -1,0 +1,171 @@
+#!/usr/bin/env python3
+"""Comenta en la PR qué capturas de pantalla generó el workflow.
+
+GitHub no deja adjuntar archivos a un comentario desde la API, así que las imágenes no se
+pueden mostrar embebidas: el comentario lleva el detalle de lo que salió en cada
+plataforma —el nombre y el tamaño de cada captura— y el enlace para descargar el artefacto.
+
+El comentario se actualiza en vez de duplicarse: se reconoce por la marca invisible que
+lleva al principio.
+
+Uso: scripts/pr-screenshots-comment <carpeta con los artefactos descargados>
+
+Variables de entorno (las define el workflow):
+- GITHUB_TOKEN: token con permiso de escritura en pull requests
+- GITHUB_REPOSITORY, GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_API_URL: las da Actions
+- PR_NUMERO: número de la pull request
+- RESULTADO_IOS, RESULTADO_ANDROID, RESULTADO_MACOS: resultado de cada job
+"""
+
+import json
+import os
+import pathlib
+import sys
+import urllib.error
+import urllib.request
+
+MARCA = "<!-- capturas-de-pantalla -->"
+
+# Artefacto, título y de qué job depende. El orden es el del comentario.
+PLATAFORMAS = [
+    ("capturas-iphone", "📱 iPhone", "RESULTADO_IOS"),
+    ("capturas-ipad", "📱 iPad", "RESULTADO_IOS"),
+    ("capturas-android", "🤖 Android", "RESULTADO_ANDROID"),
+    ("capturas-macos", "🖥️ macOS", "RESULTADO_MACOS"),
+]
+
+
+def resolucion(png: pathlib.Path) -> str:
+    """Ancho×alto leídos de la cabecera IHDR, que en un PNG siempre va al principio."""
+    with png.open("rb") as archivo:
+        cabecera = archivo.read(24)
+
+    if len(cabecera) < 24 or cabecera[:8] != b"\x89PNG\r\n\x1a\n":
+        return "?"
+
+    ancho = int.from_bytes(cabecera[16:20], "big")
+    alto = int.from_bytes(cabecera[20:24], "big")
+    return f"{ancho}×{alto}"
+
+
+def crudas(carpeta: pathlib.Path) -> list[pathlib.Path]:
+    """Las capturas tal cual salen del simulador o del emulador.
+
+    Se dejan fuera las *_framed.png, que son las de la ficha de la tienda: acá interesa
+    cómo quedó la app, no cómo queda el marco.
+    """
+    return sorted(png for png in carpeta.rglob("*.png") if not png.name.endswith("_framed.png"))
+
+
+def seccion(titulo: str, resultado: str, carpeta: pathlib.Path, enlace: str | None) -> str | None:
+    """Bloque de una plataforma, o None si su job no llegó a correr."""
+    if resultado == "skipped" or resultado == "":
+        return None
+
+    if not carpeta.is_dir():
+        motivo = "el job falló antes de generarlas" if resultado == "failure" else "no quedó ningún artefacto"
+        return f"### {titulo}\n\n❌ Sin capturas: {motivo}."
+
+    capturas = crudas(carpeta)
+    if not capturas:
+        return f"### {titulo}\n\n❌ Sin capturas: el artefacto no trae ninguna."
+
+    filas = "\n".join(f"| `{png.name}` | {resolucion(png)} |" for png in capturas)
+    lineas = [
+        f"### {titulo}",
+        "",
+        f"{len(capturas)} captura{'s' if len(capturas) != 1 else ''}:",
+        "",
+        "| Captura | Tamaño |",
+        "| --- | --- |",
+        filas,
+    ]
+
+    if enlace:
+        lineas += ["", f"📦 [Descargar el artefacto]({enlace}) (incluye también las enmarcadas para la tienda)"]
+    if resultado == "failure":
+        lineas += ["", "⚠️ El job terminó con error: puede que falten capturas."]
+
+    return "\n".join(lineas)
+
+
+def cuerpo(raiz: pathlib.Path, enlaces: dict[str, str], run_url: str) -> str | None:
+    """Comentario completo, o None si no hay nada que contar."""
+    secciones = [
+        bloque
+        for artefacto, titulo, variable in PLATAFORMAS
+        if (bloque := seccion(titulo, os.environ.get(variable, ""), raiz / artefacto, enlaces.get(artefacto)))
+    ]
+
+    if not secciones:
+        return None
+
+    return "\n\n".join([
+        MARCA,
+        "## 📸 Capturas de pantalla",
+        "Así quedó la app con los datos de demostración. Las imágenes no se pueden mostrar acá "
+        f"—GitHub no deja adjuntarlas desde la API—, así que van en los artefactos del "
+        f"[run]({run_url}).",
+        *secciones,
+    ])
+
+
+def pedir(url: str, token: str, metodo: str = "GET", datos: dict | None = None) -> dict | list:
+    peticion = urllib.request.Request(
+        url,
+        method=metodo,
+        data=json.dumps(datos).encode() if datos else None,
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+            "Content-Type": "application/json",
+        },
+    )
+
+    with urllib.request.urlopen(peticion) as respuesta:
+        return json.loads(respuesta.read() or "{}")
+
+
+def main() -> int:
+    raiz = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "capturas")
+    token = os.environ["GITHUB_TOKEN"]
+    repo = os.environ["GITHUB_REPOSITORY"]
+    pr = os.environ["PR_NUMERO"]
+    run_id = os.environ["GITHUB_RUN_ID"]
+    api = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+    server = os.environ.get("GITHUB_SERVER_URL", "https://github.com")
+
+    run_url = f"{server}/{repo}/actions/runs/{run_id}"
+    artefactos = pedir(f"{api}/repos/{repo}/actions/runs/{run_id}/artifacts?per_page=100", token)
+    enlaces = {
+        artefacto["name"]: f"{run_url}/artifacts/{artefacto['id']}"
+        for artefacto in artefactos.get("artifacts", [])
+    }
+
+    texto = cuerpo(raiz, enlaces, run_url)
+    if not texto:
+        print("No corrió ninguna plataforma: no hay nada que comentar.")
+        return 0
+
+    # Se actualiza el comentario anterior en vez de encadenar uno nuevo por corrida.
+    comentarios = pedir(f"{api}/repos/{repo}/issues/{pr}/comments?per_page=100", token)
+    anterior = next((c for c in comentarios if MARCA in (c.get("body") or "")), None)
+
+    if anterior:
+        pedir(f"{api}/repos/{repo}/issues/comments/{anterior['id']}", token, "PATCH", {"body": texto})
+        print(f"Comentario actualizado: {anterior['html_url']}")
+    else:
+        nuevo = pedir(f"{api}/repos/{repo}/issues/{pr}/comments", token, "POST", {"body": texto})
+        print(f"Comentario publicado: {nuevo['html_url']}")
+
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except urllib.error.HTTPError as error:
+        print(f"❌ {error.code} {error.reason} en {error.url}", file=sys.stderr)
+        print(error.read().decode(errors="replace"), file=sys.stderr)
+        sys.exit(1)

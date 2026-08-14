@@ -17,6 +17,12 @@ name: Capturas de pantalla
 on:
   push:
     branches: [dev, prod]
+  # Al abrir la PR y al sacarla de borrador, para ver en la propia PR cómo queda la app.
+  # `synchronize` no está a propósito: cada corrida se lleva runners de macOS por casi una
+  # hora y no vale la pena repetirla en cada push a la rama.
+  pull_request:
+    types: [opened, ready_for_review]
+    branches: [dev, prod]
   workflow_dispatch:
     inputs:
       track:
@@ -405,3 +411,42 @@ jobs:
             echo "- $(find macos/fastlane/screenshots -name '*_framed.png' | wc -l | tr -d ' ') capturas enmarcadas de 2880x1800 para la Mac App Store"
             echo "- [Descargar artefacto]($ARTEFACTO_URL)"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # Deja en la PR el detalle de lo que salió en cada plataforma. Las imágenes no se pueden
+  # mostrar embebidas —GitHub no deja adjuntar archivos a un comentario desde la API—, así
+  # que el comentario lleva la lista de capturas y el enlace para descargar el artefacto.
+  #
+  # Va en un job aparte y no dentro de cada plataforma para dejar un solo comentario por
+  # corrida, en vez de cuatro compitiendo por el mismo hilo.
+  comentario-en-pr:
+    needs: [screenshots-ios, screenshots-android, screenshots-macos]
+    runs-on: ubuntu-latest
+    # `always()` para comentar también cuando una plataforma falla: saber cuál se cayó es
+    # parte de lo que se revisa en la PR. En PRs desde un fork no corre, porque ahí el
+    # token es de sólo lectura y tampoco hay secretos con los que generar las capturas.
+    if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    steps:
+      - name: 📚 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: 📥 Descargar las capturas
+        uses: actions/download-artifact@v7
+        # Si todas las plataformas fallaron no hay artefactos, y el comentario igual tiene
+        # que salir para contar que no se generó ninguna captura.
+        continue-on-error: true
+        with:
+          pattern: capturas-*
+          path: capturas
+
+      - name: 💬 Comentar en la PR
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMERO: ${{ github.event.pull_request.number }}
+          RESULTADO_IOS: ${{ needs.screenshots-ios.result }}
+          RESULTADO_ANDROID: ${{ needs.screenshots-android.result }}
+          RESULTADO_MACOS: ${{ needs.screenshots-macos.result }}
+        run: ./scripts/pr-screenshots-comment capturas
