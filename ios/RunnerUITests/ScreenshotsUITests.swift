@@ -75,18 +75,26 @@ final class ScreenshotsUITests: XCTestCase {
       "el login (¿falta --dart-define=SCREENSHOT_MODE=true?)"
     )
     campoUsuario.tap()
-    campoUsuario.typeText(usuario)
 
-    // La contraseña va oculta, así que Flutter la publica como campo seguro. Si el
-    // simulador no la reporta así, es el segundo campo de texto del formulario.
-    let campoClave = app.secureTextFields.firstMatch.exists
-      ? app.secureTextFields.firstMatch
-      : app.textFields.element(boundBy: 1)
-    esperar(campoClave, "el campo de contraseña")
-    campoClave.tap()
-    campoClave.typeText(clave)
+    // Flutter le da campo de texto nativo sólo al que tiene el foco, así que los dos no
+    // existen a la vez y al de la contraseña no se le puede apuntar. Se escribe el usuario
+    // y se manda la acción del teclado, que en este formulario pasa el foco a la
+    // contraseña; la de la contraseña envía el formulario.
+    app.typeText(usuario)
+    app.typeText("\n")
+    app.typeText(clave)
+    app.typeText("\n")
+    esperarCarga(3)
 
-    tocar(app, "Ingresar", "el botón de ingresar")
+    // Si el foco no llegó a saltar, queda el botón.
+    let navegacion = app.descendants(matching: .any).matching(predicado("Inicio")).firstMatch
+    if !navegacion.exists {
+      let ingresar = app.buttons.matching(predicado("Ingresar")).firstMatch
+      if ingresar.exists && ingresar.isHittable {
+        ingresar.tap()
+      }
+    }
+
     esperar(app, "Inicio", "la navegación principal")
     esperarCarga()
   }
