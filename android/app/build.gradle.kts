@@ -119,9 +119,16 @@ flutter {
 dependencies {
     // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
     // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
-    // Sola: trae runner, rules, espresso y UI Automator, y con eso alcanza. Subirle la
-    // versión a androidx.test no es opción —AGP alinea las dependencias de los tests con
-    // las de la app (consistent resolution) y ahí runner está fijo en 1.3.0—, así que el
-    // recorrido se escribe contra lo que hay: UI Automator y JUnit4, sin ActivityScenario.
     androidTestImplementation("tools.fastlane:screengrab:2.1.1")
+
+    // screengrab declara todas sus dependencias con alcance de ejecución: van en el APK de
+    // tests pero no están al compilar. Se repiten acá las que usa el recorrido, en las
+    // mismas versiones que ya trae, porque subirlas no es opción: AGP alinea las
+    // dependencias de los tests con las de la app y ahí androidx.test queda fijo.
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
+    androidTestImplementation("androidx.test:runner:1.3.0")
+    // JUnit sólo para compilar: así no entra al classpath de ejecución —donde lo pone
+    // screengrab— y no hay versión que alinear. Las anotaciones no cambiaron entre 4.12 y
+    // 4.13, que es lo único que se usa de acá.
+    androidTestCompileOnly("junit:junit:4.13.2")
 }
