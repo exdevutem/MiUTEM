@@ -105,18 +105,49 @@ class ScreenshotsTest {
     // ---- Recorrido ----
 
     private fun iniciarSesion() {
-        // Flutter publica los campos de texto con la clase de un EditText. Se buscan por
-        // ahí y no por su etiqueta porque en un campo de texto la etiqueta viaja junto al
-        // valor y al hint, todo en el mismo texto del nodo.
-        val campos = esperarCampos()
-        // Escribir por accesibilidad en vez de tecleando: así no aparece el teclado, que
-        // taparía el botón de ingresar.
-        campos[0].text = USUARIO
-        campos[1].text = CLAVE
+        // `or` y no `||`: el segundo campo se escribe siempre, no sólo si el primero
+        // necesitó el teclado.
+        val conTeclado = escribir(0, USUARIO) or escribir(1, CLAVE)
+        if (conTeclado) {
+            // El teclado tapa el botón de ingresar. Acá `pressBack` lo cierra en vez de
+            // navegar, que es lo que haría con el teclado abajo.
+            device.pressBack()
+            esperarCarga(1)
+        }
 
         tocar("el botón de ingresar", "Ingresar")
         esperar("la navegación principal", "Inicio")
         esperarCarga()
+    }
+
+    /**
+     * Escribe en el campo de texto que ocupa esa posición y devuelve si hubo que teclear.
+     *
+     * Primero por accesibilidad, que es lo que menos molesta: no abre el teclado y por lo
+     * tanto no tapa el botón de ingresar. Flutter no siempre atiende esa acción, así que si
+     * el campo queda vacío se escribe como lo haría una persona —enfocándolo y mandando las
+     * teclas—, y ahí sí queda el teclado arriba.
+     *
+     * El campo se vuelve a buscar en cada llamada porque escribir en el anterior rehace el
+     * árbol de accesibilidad y deja al otro apuntando a un nodo que ya no existe.
+     */
+    private fun escribir(indice: Int, valor: String): Boolean {
+        // En un envoltorio porque UI Automator no se limita a devolver que la acción no se
+        // atendió: cuando el nodo la rechaza, revienta.
+        val quedoEscrito = runCatching {
+            esperarCampos()[indice].text = valor
+            SystemClock.sleep(PASO)
+            !esperarCampos()[indice].text.isNullOrBlank()
+        }.getOrDefault(false)
+        if (quedoEscrito) {
+            return false
+        }
+
+        esperarCampos()[indice].click()
+        SystemClock.sleep(PASO)
+        InstrumentationRegistry.getInstrumentation().sendStringSync(valor)
+        SystemClock.sleep(PASO)
+        return true
     }
 
     /**
@@ -157,6 +188,13 @@ class ScreenshotsTest {
 
     // ---- Utilidades ----
 
+    /**
+     * Los campos del login, en el orden en que están en pantalla: usuario y contraseña.
+     *
+     * Flutter publica sus campos de texto con la clase de un EditText, y se buscan por ahí
+     * y no por su etiqueta porque en un campo de texto la etiqueta viaja pegada al valor y
+     * al hint, todo en el mismo texto del nodo.
+     */
     private fun esperarCampos(): List<UiObject2> {
         val fin = SystemClock.uptimeMillis() + LIMITE
         while (SystemClock.uptimeMillis() < fin) {
@@ -167,7 +205,29 @@ class ScreenshotsTest {
             SystemClock.sleep(PASO)
         }
 
-        throw AssertionError("No apareció el login (¿falta --dart-define=SCREENSHOT_MODE=true?) después de ${LIMITE / 1000}s.")
+        throw AssertionError(
+            "No apareció el login (¿falta --dart-define=SCREENSHOT_MODE=true?) después de ${LIMITE / 1000}s. ${loQueSeVe()}"
+        )
+    }
+
+    /**
+     * Lo que hay en pantalla en el momento del fallo.
+     *
+     * Va pegado al mensaje del error y no a un log aparte porque el recorrido corre en el
+     * emulador de CI: lo único que llega de vuelta es el texto de la excepción, y sin esto
+     * un fallo sólo dice "no apareció X" sin distinguir si la app se quedó en el login, si
+     * mostró un error o si la etiqueta que se busca cambió de nombre.
+     */
+    private fun loQueSeVe(): String {
+        val textos = device.findObjects(By.textMatches(".+")).mapNotNull { it.text }
+        val etiquetas = device.findObjects(By.descMatches(".+")).mapNotNull { it.contentDescription }
+        val visible = (textos + etiquetas).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+
+        return if (visible.isEmpty()) {
+            "No hay ningún texto ni etiqueta en pantalla."
+        } else {
+            "En pantalla: ${visible.joinToString(" ┊ ").take(3000)}"
+        }
     }
 
     /**
@@ -190,7 +250,7 @@ class ScreenshotsTest {
             SystemClock.sleep(PASO)
         }
 
-        throw AssertionError("No apareció $descripcion después de ${LIMITE / 1000}s.")
+        throw AssertionError("No apareció $descripcion después de ${LIMITE / 1000}s. ${loQueSeVe()}")
     }
 
     /**
@@ -209,7 +269,7 @@ class ScreenshotsTest {
         }
 
         if (objeto.visibleBounds.isEmpty) {
-            throw AssertionError("$descripcion nunca quedó a la vista para tocarlo.")
+            throw AssertionError("$descripcion nunca quedó a la vista para tocarlo. ${loQueSeVe()}")
         }
 
         objeto.click()
