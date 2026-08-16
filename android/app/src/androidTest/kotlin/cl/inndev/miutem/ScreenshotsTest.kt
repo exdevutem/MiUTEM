@@ -106,49 +106,47 @@ class ScreenshotsTest {
     // ---- Recorrido ----
 
     private fun iniciarSesion() {
-        // `or` y no `||`: el segundo campo se escribe siempre, no sólo si el primero
-        // necesitó el teclado.
-        val conTeclado = escribir(0, USUARIO) or escribir(1, CLAVE)
-        if (conTeclado) {
-            // El teclado tapa el botón de ingresar. Acá `pressBack` lo cierra en vez de
-            // navegar, que es lo que haría con el teclado abajo.
+        escribir(0, USUARIO)
+        escribir(1, CLAVE)
+
+        // Se envía con la tecla de acción del teclado en vez de tocar el botón. El teclado
+        // tapa la mitad de abajo de la pantalla, que es donde está "Ingresar", y UI
+        // Automator no lo sabe: calcula lo que se ve de un nodo contra los límites de la
+        // ventana de la app, sin considerar que el teclado va encima, así que el toque
+        // aterriza en una tecla. En este formulario la acción del campo de usuario pasa el
+        // foco a la contraseña y la de la contraseña envía, que es el mismo camino que
+        // terminó funcionando en iOS.
+        device.pressEnter()
+        esperarCarga(3)
+
+        // Si el foco no llegó a saltar, queda el botón, y para eso hay que despejarlo:
+        // con el teclado arriba `pressBack` lo cierra en vez de navegar.
+        if (buscar("Inicio") == null) {
             device.pressBack()
             esperarCarga(1)
+            tocar("el botón de ingresar", "Ingresar")
         }
 
-        tocar("el botón de ingresar", "Ingresar")
         esperar("la navegación principal", "Inicio")
         esperarCarga()
     }
 
     /**
-     * Escribe en el campo de texto que ocupa esa posición y devuelve si hubo que teclear.
+     * Escribe en el campo de texto que ocupa esa posición, tecleando.
      *
-     * Primero por accesibilidad, que es lo que menos molesta: no abre el teclado y por lo
-     * tanto no tapa el botón de ingresar. Flutter no siempre atiende esa acción, así que si
-     * el campo queda vacío se escribe como lo haría una persona —enfocándolo y mandando las
-     * teclas—, y ahí sí queda el teclado arriba.
+     * Se enfoca y se mandan las teclas en vez de usar la acción de accesibilidad, que sería
+     * más directa y no abriría el teclado: en un campo con la contraseña oculta no hay
+     * forma de leer de vuelta el valor para saber si la acción se atendió, y al intentarlo
+     * de las dos maneras el texto se termina escribiendo dos veces.
      *
      * El campo se vuelve a buscar en cada llamada porque escribir en el anterior rehace el
      * árbol de accesibilidad y deja al otro apuntando a un nodo que ya no existe.
      */
-    private fun escribir(indice: Int, valor: String): Boolean {
-        // En un envoltorio porque UI Automator no se limita a devolver que la acción no se
-        // atendió: cuando el nodo la rechaza, revienta.
-        val quedoEscrito = runCatching {
-            esperarCampos()[indice].text = valor
-            SystemClock.sleep(PASO)
-            !esperarCampos()[indice].text.isNullOrBlank()
-        }.getOrDefault(false)
-        if (quedoEscrito) {
-            return false
-        }
-
+    private fun escribir(indice: Int, valor: String) {
         esperarCampos()[indice].click()
         SystemClock.sleep(PASO)
         InstrumentationRegistry.getInstrumentation().sendStringSync(valor)
         SystemClock.sleep(PASO)
-        return true
     }
 
     /**
@@ -227,11 +225,17 @@ class ScreenshotsTest {
         val etiquetas = device.findObjects(By.desc(algo)).mapNotNull { it.contentDescription }
         val visible = (textos + etiquetas).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
 
-        return if (visible.isEmpty()) {
+        // Aparte, porque en la lista de arriba un campo vacío no aparece y es justamente lo
+        // que hay que saber cuando el login no avanza.
+        val campos = device.findObjects(By.clazz("android.widget.EditText"))
+            .joinToString(", ") { "«${it.text.orEmpty()}»" }
+
+        val pantalla = if (visible.isEmpty()) {
             "No hay ningún texto ni etiqueta en pantalla."
         } else {
             "En pantalla: ${visible.joinToString(" ┊ ").take(3000)}"
         }
+        return if (campos.isEmpty()) pantalla else "$pantalla | Campos de texto: $campos"
     }
 
     /**
