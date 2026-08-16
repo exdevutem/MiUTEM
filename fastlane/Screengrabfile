@@ -1,0 +1,25 @@
+# Configuración de screengrab, el generador de capturas de fastlane para Android.
+# https://docs.fastlane.tools/getting-started/android/screenshots/
+#
+# Acá vive lo que no cambia entre corridas. El paquete de la app, las rutas de los APK, el
+# dispositivo y la carpeta de salida los pasa el lane `android screenshots`, porque
+# dependen del flavor y del emulador que haya levantado.
+
+# El idioma de la ficha de Google Play, y el nombre de la carpeta en la que quedan las
+# capturas.
+locales(["es-419"])
+
+# El recorrido vive en android/app/src/androidTest/kotlin/cl/inndev/miutem: acotarlo evita
+# que un test que se agregue después termine metido en las capturas de la tienda.
+use_tests_in_packages(["cl.inndev.miutem"])
+
+# Google Play sólo acepta 8 capturas por dispositivo: si quedan las de la corrida anterior,
+# el upload falla.
+clear_previous_screenshots(true)
+
+# Sin la marca de tiempo en el nombre: el orden de las capturas en la ficha es el orden
+# alfabético de los archivos, y de ahí también sacan su título frameit y el Framefile.
+use_timestamp_suffix(false)
+
+# En CI no hay quién mire el resumen HTML.
+skip_open_summary(true)

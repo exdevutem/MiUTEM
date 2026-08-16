@@ -187,12 +187,11 @@ platform :ios do
     end
   end
 
-  # El recorrido no usa `snapshot` porque esa herramienta maneja la app con UI Tests de
-  # XCUITest (Swift), y acá las pantallas son de Flutter: el recorrido vive en
-  # integration_test/screenshots_test.dart y lo ejecuta `flutter drive`, que además sirve
-  # igual para Android. Del flujo de snapshot sí se conserva todo lo demás —la carpeta
-  # fastlane/screenshots/<idioma>/ y los nombres "<Dispositivo>-<pantalla>.png"— para que
-  # frameit y deliver reconozcan el dispositivo sin configuración extra.
+  # El recorrido lo maneja snapshot con los UI Tests de Apple, como indica la guía de
+  # fastlane (docs.fastlane.tools/getting-started/ios/screenshots): vive en
+  # ios/RunnerUITests/ScreenshotsUITests.swift, se configura en fastlane/Snapfile y deja
+  # las capturas en fastlane/screenshots/<idioma>/ con el nombre "<Dispositivo>-<pantalla>.png",
+  # que es de donde frameit y deliver deducen el dispositivo.
   desc "Genera las capturas de pantalla de iPhone y iPad en el simulador y las guarda en fastlane/screenshots"
   lane :screenshots do |options|
     # La App Store pide un juego por tamaño de pantalla: el iPhone más grande y un iPad de
@@ -223,30 +222,64 @@ platform :ios do
     # iPhone con iPad dejaría a uno de los dos con los fondos recortados del otro.
     listas = Dir.mktmpdir("miutem-capturas")
 
+    # El paso de símbolos de Crashlytics que agrega flutterfire saca la carpeta de paquetes
+    # de Swift de $BUILD_ROOT: le recorta todo lo que venga después de "DerivedData/<algo>"
+    # y busca ahí SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run. snapshot compila
+    # en una carpeta temporal (/var/folders/.../snapshot_derived*), que no tiene ese tramo en
+    # la ruta, así que el recorte no hace nada y el script termina buscando los checkouts
+    # dentro de Build/Products, donde xcodebuild no los deja: la fase se cae con
+    # "PhaseScriptExecution FlutterFire: upload-crashlytics-symbols" y no llega a correr ni
+    # un test. Con la carpeta fija se puede dejar el enlace donde el script lo espera, que es
+    # lo mismo que hace el lane de macOS.
+    derived_data = File.join(root, "build", "ios-capturas")
+    productos = File.join(derived_data, "Build", "Products")
+    FileUtils.mkdir_p(productos)
+    FileUtils.ln_sf(File.join(derived_data, "SourcePackages"), File.join(productos, "SourcePackages"))
+
+    # Antes de compilar, snapshot pregunta por los ajustes con `xcodebuild -showBuildSettings`,
+    # y eso en este proyecto resuelve primero todos los paquetes de Swift (Firebase incluido):
+    # en un runner frío no alcanza a responder en los 3 segundos que fastlane espera por
+    # defecto, ni en los 4 reintentos que hace doblando el plazo. La palanca es esta variable.
+    ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "180"
+
+    # snapshot compila con xcodebuild, que no sabe nada de `--dart-define`. `--config-only`
+    # no compila: deja el punto de entrada y los defines en ios/Flutter/Generated.xcconfig,
+    # y de ahí los toma la fase de compilación de Flutter cuando xcodebuild construye la app.
+    #
+    # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/ en vez de
+    # conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
+    sh(
+      "flutter", "build", "ios",
+      "--config-only",
+      "--simulator",
+      "--debug",
+      "--flavor=#{scheme}",
+      "--target=#{scheme == 'production' ? 'lib/main_prod.dart' : 'lib/main_dev.dart'}",
+      "--dart-define=SCREENSHOT_MODE=true"
+    )
+
     devices.each do |device|
       udid, nombre = ios_simulator(device)
       UI.message("📱 Preparando #{nombre} (#{udid})")
       sh("xcrun", "simctl", "bootstatus", udid, "-b")
 
-      ENV["SCREENSHOTS_DIR"] = output_dir
-      # Mismo formato de nombre que usa snapshot: frameit y deliver deducen de ahí el dispositivo.
-      ENV["SCREENSHOT_PREFIX"] = "#{nombre}-"
-
-      # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
-      # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
-      sh(
-        "flutter", "drive",
-        "--driver=test_driver/integration_test.dart",
-        "--target=integration_test/screenshots_test.dart",
-        "--flavor", scheme,
-        "-d", udid,
-        "--dart-define=SCREENSHOT_MODE=true",
-        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
+      # El resto de las opciones (scheme, configuración, xcargs) están en fastlane/Snapfile.
+      # El nombre del simulador va resuelto, no el prefijo con el que se pidió: snapshot
+      # busca el dispositivo por nombre exacto y así se elige el runtime más nuevo.
+      capture_ios_screenshots(
+        workspace: File.join(root, "ios", "Runner.xcworkspace"),
+        devices: [nombre],
+        languages: [locale],
+        output_directory: screenshots_dir,
+        scheme: scheme,
+        configuration: "Debug-#{scheme}",
+        derived_data_path: derived_data,
       )
 
-      # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+      # Un test que se cuelga y agota el tiempo igual deja el lane en verde sin escribir
+      # nada, así que se verifica el resultado.
       capturas = Dir.glob(File.join(output_dir, "*.png"))
-      UI.user_error!("❌ No se generó ninguna captura de #{nombre}. Revisa el log de `flutter drive`.") if capturas.empty?
+      UI.user_error!("❌ No se generó ninguna captura de #{nombre}. Revisa el log de snapshot.") if capturas.empty?
 
       if frame
         # Los fondos se cortan al tamaño exacto de las capturas: si cambia el simulador

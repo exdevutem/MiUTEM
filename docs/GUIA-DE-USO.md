@@ -275,9 +275,45 @@ Para usar el sistema académico real, omite el `--dart-define`.
 
 ### Capturas automatizadas para las tiendas
 
-El repositorio ya incluye un recorrido automatizado que genera las capturas de App Store y Play
-Store: [`integration_test/screenshots_test.dart`](../integration_test/screenshots_test.dart), junto
-con la lane de fastlane correspondiente.
+El repositorio incluye un recorrido automatizado que genera las capturas de App Store, Mac App Store
+y Play Store. Cada plataforma usa la herramienta de fastlane que le corresponde, y las tres dejan
+las capturas enmarcadas con `frameit` y los fondos de `scripts/generate-screenshot-backgrounds`:
+
+| Plataforma | Herramienta | Recorrido | Lane |
+| --- | --- | --- | --- |
+| iPhone y iPad | [snapshot](https://docs.fastlane.tools/getting-started/ios/screenshots/) (UI Tests de Xcode) | [`ios/RunnerUITests/ScreenshotsUITests.swift`](../ios/RunnerUITests/ScreenshotsUITests.swift) | `bundle exec fastlane ios screenshots` |
+| Android | [screengrab](https://docs.fastlane.tools/getting-started/android/screenshots/) (tests instrumentados) | [`android/app/src/androidTest/kotlin/cl/inndev/miutem/ScreenshotsTest.kt`](../android/app/src/androidTest/kotlin/cl/inndev/miutem/ScreenshotsTest.kt) | `bundle exec fastlane android screenshots` |
+| macOS | `flutter drive` | [`integration_test/screenshots_test.dart`](../integration_test/screenshots_test.dart) | `bundle exec fastlane mac screenshots` |
+
+macOS va aparte porque snapshot recorre la app con un simulador de iOS y para el escritorio no hay
+equivalente.
+
+Los tres recorridos compilan la app con `--dart-define=SCREENSHOT_MODE=true`, así que trabajan con
+los datos ficticios y no necesitan ninguna cuenta real. La configuración de snapshot está en
+[`fastlane/Snapfile`](../fastlane/Snapfile) y la de screengrab en
+[`fastlane/Screengrabfile`](../fastlane/Screengrabfile).
+
+En CI los ejecuta el workflow [`screenshots.yml`](../.github/workflows/screenshots.yml), que corre
+al hacer push a `dev` y `prod`, al abrir una pull request, al sacarla de borrador, a mano desde la
+pestaña Actions y comentando en una pull request:
+
+```
+@miutem screenshot            # las tres plataformas
+@miutem screenshot ios        # sólo iPhone y iPad
+@miutem screenshot android
+@miutem screenshot macos
+@miutem screenshot all
+```
+
+El comando sólo lo atiende a quien tenga permiso de escritura en el repositorio, porque la corrida
+usa los secretos del repositorio sobre el código de la rama de la pull request. Cuando se toma, el
+comentario queda con una reacción 👀: el run no aparece entre los checks de la pull request, así que
+esa es la señal de que arrancó.
+
+En las pull requests el workflow deja además un comentario con lo que salió en cada plataforma y el
+enlace para descargar las capturas, que arma
+[`scripts/pr-screenshots-comment`](../scripts/pr-screenshots-comment): las imágenes no se pueden
+mostrar embebidas porque GitHub no deja adjuntar archivos a un comentario desde su API.
 
 ### Problemas conocidos al compilar
 

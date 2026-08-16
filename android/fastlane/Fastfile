@@ -1,6 +1,20 @@
 import "../fastlane/src/helpers.rb"
 
+require "json"
 require "timeout"
+
+# applicationId que AGP deja anotado junto al APK que acaba de compilar, o nil si no está.
+#
+# Es el nombre con el que el paquete queda instalado en el dispositivo, sufijos de flavor
+# incluidos, y no tiene por qué coincidir con APP_PACKAGE_NAME: ese secreto es el de la
+# ficha de Google Play.
+def android_application_id(metadata)
+  return nil unless File.exist?(metadata)
+
+  JSON.parse(File.read(metadata))["applicationId"]
+rescue JSON::ParserError
+  nil
+end
 
 # Raíz del SDK de Android. `adb` y `emulator` casi nunca están en el PATH de un lane.
 def android_sdk_root
@@ -122,14 +136,21 @@ platform :android do
     output_dir = File.join(screenshots_dir, locale)
     play_dir = File.join(root, "android", "fastlane", "metadata", "android", locale, "images", "phoneScreenshots")
 
+    # screengrab deja las capturas con la forma que espera supply
+    # (<locale>/images/phoneScreenshots): se recogen de acá y se mueven junto al
+    # title.strings, que es donde trabajan frameit y los scripts de fondos.
+    #
+    # El nombre no puede contener "screengrab": al armar el destino, screengrab le quita a
+    # la ruta el trozo que coincida con `(app_)?screengrab/` —está pensado para el
+    # app_screengrab/ del dispositivo— y de paso se comería esta carpeta, dejando las
+    # capturas un nivel más arriba mientras el reporte HTML se escribe acá y no encuentra
+    # el directorio.
+    screengrab_dir = File.join(screenshots_dir, ".capturas")
+
     serial = android_connected_device
     started_here = serial.nil?
     serial = android_boot_emulator(avd) if started_here
     UI.message("📱 Usando #{serial}")
-
-    # Una instalación previa firmada con otra llave deja a `flutter drive` sin poder
-    # lanzar la actividad, con un error que no dice que el problema es ese.
-    [package_name, "#{package_name}.test"].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
 
     # Google Play sólo acepta 8 capturas por dispositivo: si quedan las anteriores, falla el upload.
     # Se borran sólo las imágenes: en la carpeta del idioma también vive el title.strings de frameit.
@@ -145,22 +166,57 @@ platform :android do
         sleep(5) # La UI del sistema se reinicia al cambiar la resolución.
       end
 
-      ENV["SCREENSHOTS_DIR"] = output_dir
-      ENV["SCREENSHOT_PREFIX"] = ""
-      # El APK de las capturas es debug y no se distribuye: se firma con la llave de debug
-      # para no depender del keystore de release que traiga el .env.
+      # Los APK de las capturas son debug y no se distribuyen: se firman con la llave de
+      # debug para no depender del keystore de release que traiga el .env. Los dos tienen
+      # que quedar firmados igual o Android no deja instrumentar la app.
       ENV["MIUTEM_USE_DEBUG_SIGNING"] = "true"
 
+      # screengrab necesita el APK de la app y el de los tests, como dice la guía
+      # (`./gradlew assembleDebug assembleAndroidTest`). Acá el primero lo compila flutter,
+      # porque es el único que sabe de `--dart-define`, y el segundo gradle, que es quien
+      # arma el bundle de tests instrumentados.
+      #
       # SCREENSHOT_MODE hace que la app use los datos ficticios de lib/core/mock/
       # en vez de conectarse a SIGA y Mi.UTEM: no se necesita ninguna cuenta real.
       sh(
-        "flutter", "drive",
-        "--driver=test_driver/integration_test.dart",
-        "--target=integration_test/screenshots_test.dart",
-        "--flavor", scheme,
-        "-d", serial,
-        "--dart-define=SCREENSHOT_MODE=true",
-        "--dart-define=SCREENSHOT_PROD=#{app_env == 'prod'}"
+        "flutter", "build", "apk",
+        "--debug",
+        "--flavor=#{scheme}",
+        "--target=#{scheme == 'production' ? 'lib/main_prod.dart' : 'lib/main_dev.dart'}",
+        "--dart-define=SCREENSHOT_MODE=true"
+      )
+      # Va después de flutter: la tarea de gradle recompila la app sin los defines, pero
+      # escribe en outputs/apk/, no en flutter-apk/, que es de donde sale el APK de abajo.
+      gradle(project_dir: File.join(root, "android"), task: "assemble#{scheme.capitalize}DebugAndroidTest")
+
+      app_apk = File.join(root, "build", "app", "outputs", "flutter-apk", "app-#{scheme}-debug.apk")
+      tests_apk = File.join(root, "build", "app", "outputs", "apk", "androidTest", scheme, "debug", "app-#{scheme}-debug-androidTest.apk")
+      [app_apk, tests_apk].each do |apk|
+        UI.user_error!("❌ No se generó #{apk}.") unless File.exist?(apk)
+      end
+
+      # Los nombres salen de lo que anotó AGP al compilar y no de APP_PACKAGE_NAME + el
+      # sufijo del flavor: si no calzan, screengrab instala los dos APK igual y recién
+      # después se cae con "package not found" al dar los permisos y al instrumentar.
+      # El secreto queda de respaldo, que es lo que hay cuando no está el metadata.
+      package_name = android_application_id(File.join(root, "build", "app", "outputs", "apk", scheme, "debug", "output-metadata.json")) || package_name
+      tests_package_name = android_application_id(File.join(root, "build", "app", "outputs", "apk", "androidTest", scheme, "debug", "output-metadata.json")) || "#{package_name}.test"
+      UI.message("📦 Instalando #{package_name} y #{tests_package_name}")
+
+      # Una instalación previa firmada con otra llave deja a screengrab sin poder instalar
+      # los APK, con un error que no dice que el problema es ese.
+      [package_name, tests_package_name].each { |pkg| `#{adb_bin} -s #{serial} uninstall #{pkg}` }
+
+      # El resto de las opciones (idiomas, paquete de los tests, nombres sin marca de
+      # tiempo) están en fastlane/Screengrabfile.
+      capture_android_screenshots(
+        app_package_name: package_name,
+        tests_package_name: tests_package_name,
+        app_apk_path: app_apk,
+        tests_apk_path: tests_apk,
+        specific_device: serial,
+        locales: [locale],
+        output_directory: screengrab_dir,
       )
     ensure
       # El emulador puede ser uno que ya tenía abierto quien ejecuta el lane.
@@ -168,9 +224,13 @@ platform :android do
       `#{adb_bin} -s #{serial} emu kill` if started_here
     end
 
-    # Un timeout del test igual reporta "All tests passed" sin escribir nada, así que se verifica el resultado.
+    Dir.glob(File.join(screengrab_dir, "**", "*.png")).each { |captura| FileUtils.mv(captura, output_dir) }
+    FileUtils.rm_rf(screengrab_dir)
+
+    # Un test que se cuelga y agota el tiempo igual puede dejar el lane en verde sin
+    # escribir nada, así que se verifica el resultado.
     capturas = Dir.glob(File.join(output_dir, "*.png"))
-    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de `flutter drive`.") if capturas.empty?
+    UI.user_error!("❌ No se generó ninguna captura. Revisa el log de screengrab.") if capturas.empty?
 
     if frame
       # Los fondos se cortan al tamaño exacto de las capturas: si cambia la resolución del

@@ -43,7 +43,11 @@ capturas_de() {
 # Las claves y su orden salen de title.strings. macOS no tiene el suyo: reusa el de iOS,
 # porque son las mismas pantallas y la ficha lleva las mismas ocho capturas.
 generar() {
-  local base=$1 locale=$2 ancho=$3 alto=$4 textos=${5:-$base/$locale}
+  local base=$1 locale=$2 ancho=$3 alto=$4
+  # En su propia línea: bash declara todos los locales de una misma sentencia antes de
+  # evaluar las asignaciones, así que un `${5:-$base/$locale}` puesto arriba se expande
+  # cuando `base` todavía no existe y con `set -u` corta el script con "unbound variable".
+  local textos=${5:-$base/$locale}
 
   # Las capturas ya tomadas mandan sobre el tamaño por defecto: si el alto no calza
   # con el de la captura, frameit reescala y recorta el fondo y se pierde la continuidad.

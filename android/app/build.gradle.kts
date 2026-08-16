@@ -72,11 +72,15 @@ android {
 
     defaultConfig {
         applicationId = "cl.inndev.miutem"
-        
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // El runner con el que screengrab ejecuta el recorrido de las capturas.
+        // https://docs.fastlane.tools/getting-started/android/screenshots/
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -110,4 +114,20 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
+    // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
+    androidTestImplementation("tools.fastlane:screengrab:2.1.1")
+
+    // El POM de screengrab declara todas sus dependencias con alcance de ejecución, así que
+    // están en el APK de tests pero no al compilar el recorrido. JUnit y el registro de
+    // instrumentación igual se resuelven porque el plugin integration_test los expone por
+    // el classpath de la app; UI Automator no lo trae nadie más y hay que pedirlo acá.
+    //
+    // En la misma versión que ya resuelve screengrab: AGP alinea el classpath de
+    // compilación de los tests con el de ejecución, y pedir otra versión termina en
+    // "cannot find a version ... by consistent resolution".
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
 }

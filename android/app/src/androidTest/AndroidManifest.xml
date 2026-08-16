@@ -1,0 +1,26 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- androidx.test:core 1.3.0 —la versión que arrastra screengrab— declara estas tres
+         actividades sin `android:exported`, y desde Android 12 el merge de manifests lo
+         exige para cualquier componente con intent-filter. El recorrido no las usa (son de
+         ActivityScenario, que no se utiliza), pero vienen en el manifest de la librería
+         igual, así que se les fija el atributo acá.
+
+         Subirle la versión a androidx.test no es alternativa: AGP alinea las dependencias
+         de los tests con las de la app, y ahí quedan fijas en las que trae el plugin de
+         integration_test. -->
+    <application>
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            android:exported="true"
+            tools:node="merge" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+            android:exported="true"
+            tools:node="merge" />
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+            android:exported="true"
+            tools:node="merge" />
+    </application>
+</manifest>
