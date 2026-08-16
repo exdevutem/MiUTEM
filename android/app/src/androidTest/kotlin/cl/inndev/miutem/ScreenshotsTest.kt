@@ -117,16 +117,10 @@ class ScreenshotsTest {
         // foco a la contraseña y la de la contraseña envía, que es el mismo camino que
         // terminó funcionando en iOS.
         device.pressEnter()
-        esperarCarga(3)
 
-        // Si el foco no llegó a saltar, queda el botón, y para eso hay que despejarlo:
-        // con el teclado arriba `pressBack` lo cierra en vez de navegar.
-        if (buscar("Inicio") == null) {
-            device.pressBack()
-            esperarCarga(1)
-            tocar("el botón de ingresar", "Ingresar")
-        }
-
+        // Sin camino de respaldo por el botón: para despejarlo habría que cerrar el
+        // teclado, y la tecla de acción ya lo cerró al enviar. `pressBack` ahí no cierra
+        // nada, sale de la app y deja el recorrido mirando el escritorio de Android.
         esperar("la navegación principal", "Inicio")
         esperarCarga()
     }
@@ -235,7 +229,14 @@ class ScreenshotsTest {
         } else {
             "En pantalla: ${visible.joinToString(" ┊ ").take(3000)}"
         }
-        return if (campos.isEmpty()) pantalla else "$pantalla | Campos de texto: $campos"
+        // El paquete primero: si no es el de la app, lo de abajo es de otra pantalla y no
+        // hay nada que buscarle sentido.
+        val donde = "Paquete: ${device.currentPackageName}"
+        return if (campos.isEmpty()) {
+            "$donde | $pantalla"
+        } else {
+            "$donde | $pantalla | Campos de texto: $campos"
+        }
     }
 
     /**
