@@ -246,11 +246,16 @@ class ScreenshotsTest {
      * el título y el subtítulo de un mismo control, y se prefiere el nodo tocable: el
      * mismo texto suele estar además como texto suelto dentro del control.
      */
-    private fun buscar(texto: String): UiObject2? =
-        device.findObject(By.clickable(true).descContains(texto))
-            ?: device.findObject(By.clickable(true).textContains(texto))
-            ?: device.findObject(By.descContains(texto))
-            ?: device.findObject(By.textContains(texto))
+    private fun buscar(texto: String): UiObject2? {
+        // El patrón a mano en vez de `descContains`/`textContains`, que arman `^.*texto.*$`
+        // sin DOTALL: `.` no cruza saltos de línea y esas etiquetas los traen —una pestaña
+        // llega como "Inicio\nTab 1 of 5"—, así que ninguna pestaña era encontrable.
+        val patron = Pattern.compile(".*${Pattern.quote(texto)}.*", Pattern.DOTALL)
+        return device.findObject(By.clickable(true).desc(patron))
+            ?: device.findObject(By.clickable(true).text(patron))
+            ?: device.findObject(By.desc(patron))
+            ?: device.findObject(By.text(patron))
+    }
 
     private fun esperar(descripcion: String, texto: String): UiObject2 {
         val fin = SystemClock.uptimeMillis() + LIMITE
