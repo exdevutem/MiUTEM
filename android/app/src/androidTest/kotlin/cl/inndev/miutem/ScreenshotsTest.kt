@@ -7,6 +7,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+import java.util.regex.Pattern
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -219,8 +220,11 @@ class ScreenshotsTest {
      * mostró un error o si la etiqueta que se busca cambió de nombre.
      */
     private fun loQueSeVe(): String {
-        val textos = device.findObjects(By.textMatches(".+")).mapNotNull { it.text }
-        val etiquetas = device.findObjects(By.descMatches(".+")).mapNotNull { it.contentDescription }
+        // `By.text`/`By.desc` con patrón y no con texto: así traen todo lo que tenga algo
+        // escrito. DOTALL porque una etiqueta con salto de línea si no queda fuera.
+        val algo = Pattern.compile(".+", Pattern.DOTALL)
+        val textos = device.findObjects(By.text(algo)).mapNotNull { it.text }
+        val etiquetas = device.findObjects(By.desc(algo)).mapNotNull { it.contentDescription }
         val visible = (textos + etiquetas).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
 
         return if (visible.isEmpty()) {
