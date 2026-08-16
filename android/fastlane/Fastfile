@@ -139,7 +139,13 @@ platform :android do
     # screengrab deja las capturas con la forma que espera supply
     # (<locale>/images/phoneScreenshots): se recogen de acá y se mueven junto al
     # title.strings, que es donde trabajan frameit y los scripts de fondos.
-    screengrab_dir = File.join(screenshots_dir, ".screengrab")
+    #
+    # El nombre no puede contener "screengrab": al armar el destino, screengrab le quita a
+    # la ruta el trozo que coincida con `(app_)?screengrab/` —está pensado para el
+    # app_screengrab/ del dispositivo— y de paso se comería esta carpeta, dejando las
+    # capturas un nivel más arriba mientras el reporte HTML se escribe acá y no encuentra
+    # el directorio.
+    screengrab_dir = File.join(screenshots_dir, ".capturas")
 
     serial = android_connected_device
     started_here = serial.nil?
