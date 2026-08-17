@@ -1,7 +1,9 @@
 import "dart:io";
+import "dart:ui" as ui;
 
 import "package:adaptive_theme/adaptive_theme.dart";
 import "package:flutter/material.dart";
+import "package:flutter/rendering.dart";
 import "package:flutter_test/flutter_test.dart";
 import "package:integration_test/integration_test.dart";
 import "package:miutem/firebase_options_dev.dart" as dev;
@@ -176,6 +178,11 @@ Future<void> capturar(WidgetTester tester, IntegrationTestWidgetsFlutterBinding 
   FocusManager.instance.primaryFocus?.unfocus();
   await esperar(tester, const Duration(seconds: 2));
 
+  if (Platform.isMacOS) {
+    await capturarDesdeFlutter(tester, binding, archivo);
+    return;
+  }
+
   // La captura nativa de iOS usa `drawViewHierarchyInRect:afterScreenUpdates:YES`, que espera
   // un frame nuevo. El binding de tests sólo dibuja cuando se le pide, así que hay que seguir
   // bombeando mientras se espera la respuesta del canal o se produce un deadlock.
@@ -185,5 +192,46 @@ Future<void> capturar(WidgetTester tester, IntegrationTestWidgetsFlutterBinding 
     await tester.pump(const Duration(milliseconds: 50));
   }
   await captura;
+  paso(binding, "capturada $archivo");
+}
+
+/// Ancho en píxeles de las capturas de macOS. La Mac App Store sólo acepta 1280x800,
+/// 1440x900, 2560x1600 y 2880x1800: la ventana se abre en 1440x900 (MIUTEM_WINDOW_SIZE)
+/// y acá se rasteriza al doble, así el resultado calza con 2880x1800 sin recortar nada.
+const double anchoCapturaMacOS = 2880;
+
+/// Captura la ventana desde el árbol de Flutter y la deja en `reportData`, que es de donde
+/// el driver escribe los archivos (misma llave que usa `binding.takeScreenshot`).
+///
+/// En macOS el plugin de integration_test sólo responde `allTestsFinished`: no implementa
+/// `captureScreenshot`, así que la captura nativa devuelve MissingPluginException. Rasterizar
+/// la capa raíz da lo mismo en pantalla y además deja elegir la resolución de salida.
+Future<void> capturarDesdeFlutter(WidgetTester tester, IntegrationTestWidgetsFlutterBinding binding, String archivo) async {
+  final vista = tester.binding.renderViews.first;
+  final capa = vista.debugLayer! as OffsetLayer;
+
+  ui.Image? imagen;
+  var listo = false;
+  // Igual que en iOS: el binding sólo dibuja cuando se le pide, así que se sigue bombeando
+  // mientras el rasterizado está en curso. Se espera por `listo` y no por la imagen, para
+  // que un error corte el bucle y salga por el `await` de abajo.
+  final render = capa
+      .toImage(vista.paintBounds, pixelRatio: anchoCapturaMacOS / vista.paintBounds.width)
+      .then((resultado) => imagen = resultado)
+      .whenComplete(() => listo = true);
+  while (!listo) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  await render;
+
+  final bytes = await imagen!.toByteData(format: ui.ImageByteFormat.png);
+  imagen!.dispose();
+
+  binding.reportData ??= <String, dynamic>{};
+  final capturas = binding.reportData!["screenshots"] ??= <dynamic>[];
+  (capturas as List<dynamic>).add(<String, dynamic>{
+    "screenshotName": archivo,
+    "bytes": bytes!.buffer.asUint8List(),
+  });
   paso(binding, "capturada $archivo");
 }

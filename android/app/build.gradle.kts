@@ -48,8 +48,6 @@ android {
         ?: (keystoreProperties["keyPassword"] as String?)
     val useDebugSigning = System.getenv("MIUTEM_USE_DEBUG_SIGNING")?.toBoolean() ?: false
 
-    val debugKeystore = file("${System.getProperty("user.home")}/.android/debug.keystore")
-
     signingConfigs {
         create("release") {
             keyAlias = resolvedKeyAlias
@@ -57,21 +55,32 @@ android {
             storeFile = resolvedStoreFile?.let { file(it) }
             storePassword = resolvedStorePassword
         }
+        // Sin keystore propio se deja el `debug` tal cual lo trae AGP, que apunta a
+        // ~/.android/debug.keystore y lo crea la primera vez que lo necesita. Fijarle el
+        // `storeFile` a mano lo convierte en un keystore del usuario y Gradle exige que ya
+        // exista: en una máquina limpia —los runners de CI lo son— el build muere con
+        // "Keystore file '~/.android/debug.keystore' not found for signing config 'debug'".
         getByName("debug") {
-            keyAlias = if (useDebugSigning) "androiddebugkey" else (resolvedKeyAlias ?: "androiddebugkey")
-            keyPassword = if (useDebugSigning) "android" else (resolvedKeyPassword ?: "android")
-            storeFile = if (useDebugSigning) debugKeystore else (resolvedStoreFile?.let { file(it) } ?: debugKeystore)
-            storePassword = if (useDebugSigning) "android" else (resolvedStorePassword ?: "android")
+            if (!useDebugSigning && resolvedStoreFile != null) {
+                keyAlias = resolvedKeyAlias ?: "androiddebugkey"
+                keyPassword = resolvedKeyPassword ?: "android"
+                storeFile = file(resolvedStoreFile)
+                storePassword = resolvedStorePassword ?: "android"
+            }
         }
     }
 
     defaultConfig {
         applicationId = "cl.inndev.miutem"
-        
+
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // El runner con el que screengrab ejecuta el recorrido de las capturas.
+        // https://docs.fastlane.tools/getting-started/android/screenshots/
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -105,4 +114,20 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // Capturas de pantalla para Google Play. La dependencia es la que pide la guía de
+    // fastlane: https://docs.fastlane.tools/getting-started/android/screenshots/
+    androidTestImplementation("tools.fastlane:screengrab:2.1.1")
+
+    // El POM de screengrab declara todas sus dependencias con alcance de ejecución, así que
+    // están en el APK de tests pero no al compilar el recorrido. JUnit y el registro de
+    // instrumentación igual se resuelven porque el plugin integration_test los expone por
+    // el classpath de la app; UI Automator no lo trae nadie más y hay que pedirlo acá.
+    //
+    // En la misma versión que ya resuelve screengrab: AGP alinea el classpath de
+    // compilación de los tests con el de ejecución, y pedir otra versión termina en
+    // "cannot find a version ... by consistent resolution".
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
 }

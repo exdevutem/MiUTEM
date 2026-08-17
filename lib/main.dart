@@ -3,15 +3,26 @@ import "dart:io";
 import "package:adaptive_theme/adaptive_theme.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:flutter/material.dart";
+import "package:flutter/semantics.dart";
 import "package:flutter/services.dart";
 import "package:miutem/core/models/preferencia.dart";
 import "package:miutem/core/services/controllers/local_notifications_controller.dart";
 import "package:miutem/core/services/service_manager.dart";
+import "package:miutem/core/utils/constants.dart";
 import "package:miutem/core/utils/http/functions.dart";
 import "package:miutem/styles/styles.dart";
 
 void runMainApp(FirebaseOptions firebaseOptions) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Las capturas de las tiendas las toman `fastlane snapshot` (UI Tests de Xcode) en iOS y
+  // `fastlane screengrab` (tests instrumentados con UI Automator) en Android, y los dos
+  // recorren la app por el árbol de accesibilidad. Flutter sólo lo publica cuando el
+  // sistema declara un cliente de accesibilidad activo: sin esto los tests se quedan
+  // mirando un lienzo vacío y no encuentran ni el botón de ingresar.
+  if (modoCapturas) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
 
   if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
     // Set window title to "Mi UTEM"

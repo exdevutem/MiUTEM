@@ -56,7 +56,9 @@ class HorarioController {
     const Color(0xFFBA68C8), // Purple 300
   ];
 
-  final _randomColors = List<Color>.from(_pastelColors)..shuffle();
+  // En modo capturas la paleta va en su orden original: así cada corrida reparte los mismos
+  // colores entre los ramos y las capturas de la tienda no cambian de una compilación a otra.
+  final _randomColors = modoCapturas ? List<Color>.from(_pastelColors) : (List<Color>.from(_pastelColors)..shuffle());
   final _now = ahora();
 
   num daysCount = 6;

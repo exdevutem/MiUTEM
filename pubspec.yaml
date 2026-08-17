@@ -2,7 +2,7 @@ name: miutem
 description: "Plataforma académica para estudiantes de la Universidad Tecnológica Metropolitana (UTEM)"
 publish_to: none
 
-version: 4.0.0+153
+version: 4.0.0+163
 
 environment:
   sdk: ^3.11.1

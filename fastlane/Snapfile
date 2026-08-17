@@ -1,0 +1,28 @@
+# Configuración de snapshot, el generador de capturas de fastlane para iOS.
+# https://docs.fastlane.tools/actions/snapshot/
+#
+# Acá vive lo que no cambia entre corridas, para que `fastlane snapshot` a secas también
+# funcione. El lane `ios screenshots` pisa el dispositivo, la carpeta de salida y la ruta
+# del workspace —dependen del runner y del simulador disponible— y también el scheme y la
+# configuración cuando se le pide el flavor de desarrollo.
+
+# El scheme que corre el target de UI Tests (RunnerUITests). Es el del flavor de
+# producción: el nombre, el ícono y el bundle id de la tienda salen de ahí.
+scheme("production")
+
+# La ficha de la App Store está en español y el resto del pipeline —los títulos de
+# fastlane/screenshots/es-MX y el Framefile de frameit— trabaja sobre esta carpeta.
+languages(["es-MX"])
+
+# Las capturas salen de una compilación de debug del flavor de producción, que es la que
+# deja `flutter build ios --config-only --debug --flavor production`.
+configuration("Debug-production")
+
+# En el simulador no se firma nada, pero el proyecto declara el perfil de aprovisionamiento
+# del dispositivo real: sin esto xcodebuild lo exigiría y en CI no existe.
+xcargs("CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY='' PROVISIONING_PROFILE_SPECIFIER=''")
+
+# En CI no hay quién mire el resumen HTML, y un dispositivo que falle tiene que cortar el
+# job: una ficha a medias no sirve.
+skip_open_summary(true)
+stop_after_first_error(true)

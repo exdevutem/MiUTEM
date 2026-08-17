@@ -5,7 +5,10 @@ import "package:integration_test/integration_test_driver_extended.dart";
 /// Driver de `flutter drive`: guarda en disco cada captura tomada con
 /// `binding.takeScreenshot(<nombre>)` desde integration_test/screenshots_test.dart.
 ///
-/// Se configura con variables de entorno (las define el lane `ios screenshots`):
+/// Sólo lo usan las capturas de macOS: las de iOS y Android las toman snapshot y
+/// screengrab, que traen su propio recorrido nativo.
+///
+/// Se configura con variables de entorno (las define el lane `mac screenshots`):
 /// - SCREENSHOTS_DIR: carpeta destino (por defecto fastlane/screenshots/es-MX)
 /// - SCREENSHOT_PREFIX: prefijo del archivo, usado para separar por dispositivo
 Future<void> main() async {

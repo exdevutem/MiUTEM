@@ -120,6 +120,10 @@ class FeatureFlag extends StatelessWidget {
 
   /// Internal method to evaluate nested feature flags from the JSON structure
   static bool _evaluateNestedFlag(FirebaseRemoteConfig remoteConfig, String flagKey) {
+    // En modo capturas se muestran todas las características, incluidas las que estén
+    // apagadas en Remote Config: las capturas de las tiendas tienen que mostrarlas.
+    if (modoCapturas) return true;
+
     try {
       // Get the feature_flags JSON from Remote Config
       final featureFlagsJson = remoteConfig.getString(RemoteConfigServiceKeys.featureFlags);

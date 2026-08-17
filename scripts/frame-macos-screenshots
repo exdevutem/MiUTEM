@@ -1,0 +1,215 @@
+#!/usr/bin/env bash
+# Enmarca las capturas de macOS como las de iOS y Android: el mismo fondo panorámico, el
+# mismo par titular/subtítulo arriba, y la captura ocupando toda la pantalla de un MacBook
+# Pro 16, para que se lea de una que la app es de Mac. Deja los *_framed.png al lado.
+#
+# Arma además las dos primeras capturas de la ficha —el MacBook en diagonal con la pantalla
+# de splash, cruzando de una a la otra—, que no salen de la app. En iOS y Android las hace
+# scripts/compose-store-screenshots; acá van en el mismo script porque el marco y los textos
+# ya están cargados, y ese otro sólo sabe de teléfonos.
+#
+# No lo hace frameit, aunque tenga un MacEditor: ese editor sólo pega la captura sobre el
+# fondo ("Macs don't need frames - backgrounds only") y encima nunca llega a correr, porque
+# reconoce al Mac comparando el nombre del dispositivo con "MacBook" y el de su propia lista
+# es "Apple MacBook"; la captura termina tratada como un iPhone sin marco y frameit se va
+# sin escribir nada. El marco sí es el suyo: está bajado de frameit-frames.
+#
+# Se ejecuta después de `scripts/generate-screenshot-backgrounds macos`, que es quien deja
+# las tiras de fondo con el nombre de cada captura.
+#
+# Uso: scripts/frame-macos-screenshots [locale]
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+BASE="macos/fastlane/screenshots"
+TEXTOS="fastlane/screenshots" # Los titulares son los de iOS: son las mismas pantallas.
+FUENTE_TEXTO="fastlane/screenshots/fonts/Roboto.ttf"
+
+# El marco y el hueco de su pantalla, medido sobre ese archivo (es la única zona
+# transparente de adentro). El hueco es 16:10, igual que las capturas de 2880x1800.
+MARCO="fastlane/screenshots/frames/Apple MacBook Pro 16 Space Gray.png"
+MARCO_ANCHO=3910
+MARCO_ALTO=2241
+PANTALLA_ANCHO=3072
+PANTALLA_ALTO=1920
+PANTALLA_X=419
+PANTALLA_Y=98
+
+# Las medidas van en fracciones del alto de la captura —el lado corto, porque es apaisada—
+# para que el resultado no dependa del tamaño en que se hayan tomado.
+CUERPO_TITULAR=0.064    # Mismo cuerpo relativo que el Framefile de iOS (84 sobre 1320).
+CUERPO_SUBTITULO=0.037
+COLOR_TITULAR="#FFFFFF"
+COLOR_SUBTITULO="#CFE8DC"
+MARGEN_SUPERIOR=0.055   # Del borde de arriba al titular.
+ESPACIO_BAJO_TEXTO=0.05 # Del subtítulo al MacBook.
+MARGEN_INFERIOR=0.08    # Tiene que dar para la sombra, o se corta contra el borde.
+ANCHO_MACBOOK=0.86      # Ancho máximo del MacBook, en anchos de captura.
+SOMBRA=0.022            # Desenfoque de la sombra.
+SOMBRA_OPACIDAD=0.6
+
+# La composición de las dos primeras, en fracciones del ancho (X) y del alto (Y) de una
+# captura, contadas desde el borde izquierdo del par.
+ROTACION=-12            # Grados de inclinación del MacBook.
+ANCHO_DIAGONAL=0.68     # Ancho del MacBook antes de inclinarlo.
+CENTRO_X=0.92           # Centro del MacBook: cruza la unión entre las dos capturas.
+CENTRO_Y=0.50
+LOGO_ANCHO=0.28         # Ancho del logo de la UTEM.
+LOGO_MARGEN=0.06
+TEXTO_CENTRO_X=1.60     # Centro del texto: en la mitad derecha, lejos de la esquina del
+TEXTO_ARRIBA=0.14       # MacBook, que entra en la segunda captura.
+SPLASH_LOGO_ALTO=0.26   # Alto del logo del splash y de la marca, en altos de captura.
+SPLASH_MARCA_ALTO=0.06
+SPLASH_MARCA_ABAJO=0.07
+
+# Los mismos assets con los que flutter_native_splash dibuja la pantalla de inicio.
+SPLASH_LOGO="assets/launcher_icons/production/miutem-splash-light.png"
+SPLASH_MARCA="assets/images/exdev_dark.png"
+SPLASH_FONDO="#fafafa" # El mismo de flutter_native_splash-production.yaml.
+LOGO_UTEM="assets/images/utem_logo_color_blanco.png" # El blanco: va sobre el fondo oscuro.
+
+command -v magick >/dev/null || { echo "❌ Falta ImageMagick (brew install imagemagick)" >&2; exit 1; }
+[ -f "$MARCO" ] || { echo "❌ Falta el marco $MARCO" >&2; exit 1; }
+[ "$(magick identify -format "%wx%h" "$MARCO")" = "${MARCO_ANCHO}x${MARCO_ALTO}" ] || {
+  echo "❌ $MARCO ya no mide ${MARCO_ANCHO}x${MARCO_ALTO}: vuelve a medir el hueco de la pantalla." >&2
+  exit 1
+}
+
+calc() { python3 -c "print(round($1))"; }
+
+# Valor de una clave en un archivo .strings, con los \n convertidos en saltos reales.
+texto_de() {
+  printf "%b" "$(sed -n "s/^\"$2\" = \"\(.*\)\";$/\1/p" "$1")"
+}
+
+# Mete una captura en la pantalla del MacBook, a pantalla completa. Sale con lo de alrededor
+# transparente, para que la sombra y el fondo los ponga quien componga después.
+en_macbook() {
+  magick -size "${MARCO_ANCHO}x${MARCO_ALTO}" xc:none \
+    \( "$1" -resize "${PANTALLA_ANCHO}x${PANTALLA_ALTO}^" -gravity center \
+       -extent "${PANTALLA_ANCHO}x${PANTALLA_ALTO}" \) \
+    -gravity northwest -geometry "+$PANTALLA_X+$PANTALLA_Y" -composite \
+    "$MARCO" -gravity northwest -geometry "+0+0" -composite "$2"
+}
+
+# El par titular/subtítulo de una captura, con el mismo estilo del resto de las tiendas.
+# El espacio entre los dos se hace con -splice y no con una imagen vacía: el -size de esa
+# imagen se quedaría pegado y recortaría el label siguiente.
+#
+# Con un cuarto argumento se respetan los saltos de línea del .strings. Por defecto se
+# aplanan: están puestos para las pantallas verticales de iOS y Android, y sobre una captura
+# apaisada sobra ancho. La excepción es el par compuesto, donde el texto va en media captura.
+texto_png() {
+  local clave=$1 ancho_max=$2 destino=$3 saltos=${4:-}
+  local titular subtitulo cuerpo_titular cuerpo_subtitulo
+  titular=$(texto_de "$TEXTOS/$LOCALE/keyword.strings" "$clave")
+  subtitulo=$(texto_de "$TEXTOS/$LOCALE/title.strings" "$clave")
+  [ -n "$titular" ] || { echo "❌ Falta el titular de $clave en $TEXTOS/$LOCALE/keyword.strings" >&2; exit 1; }
+  [ -n "$subtitulo" ] || { echo "❌ Falta el subtítulo de $clave en $TEXTOS/$LOCALE/title.strings" >&2; exit 1; }
+  [ -n "$saltos" ] || { titular=${titular//$'\n'/ }; subtitulo=${subtitulo//$'\n'/ }; }
+
+  cuerpo_titular=$(calc "$ALTO * $CUERPO_TITULAR")
+  cuerpo_subtitulo=$(calc "$ALTO * $CUERPO_SUBTITULO")
+  magick -background none -font "$FUENTE_TEXTO" \
+    \( -fill "$COLOR_TITULAR" -pointsize "$cuerpo_titular" -gravity center label:"$titular" \) \
+    \( -fill "$COLOR_SUBTITULO" -pointsize "$cuerpo_subtitulo" -gravity center label:"$subtitulo" \
+       -gravity north -splice "0x$((cuerpo_titular / 2))" \) \
+    -gravity center -append +repage \
+    -resize "${ancho_max}x>" \
+    "$destino"
+}
+
+# La sombra del MacBook, dentro de un margen fijo para saber cuánto crece el conjunto y
+# poder centrarlo después. Deja el resultado en $tmp/conjunto.png y $margen con el margen.
+con_sombra() {
+  local desenfoque caida ancho_pieza alto_pieza
+  desenfoque=$(calc "$ALTO * $SOMBRA")
+  caida=$(calc "$desenfoque * 0.8")
+  margen=$(calc "$desenfoque * 2.5 + $caida")
+  read -r ancho_pieza alto_pieza <<<"$(magick identify -format "%w %h" "$1")"
+  magick -size "$((ancho_pieza + margen * 2))x$((alto_pieza + margen * 2))" xc:none \
+    \( "$1" -fill black -colorize 100 \
+       -channel A -evaluate multiply "$SOMBRA_OPACIDAD" +channel \
+       -bordercolor none -border "$margen" -blur "0x$desenfoque" \) \
+    -gravity northwest -geometry "+0+$caida" -composite \
+    "$1" -gravity northwest -geometry "+$margen+$margen" -composite \
+    "$tmp/conjunto.png"
+}
+
+LOCALE="${1:-es-MX}"
+DIR="$BASE/$LOCALE"
+
+capturas=()
+while IFS= read -r captura; do capturas+=("$captura"); done \
+  < <(find "$DIR" -name "*.png" ! -name "*_framed.png" 2>/dev/null | sort)
+[ "${#capturas[@]}" -gt 0 ] || { echo "❌ No hay capturas en $DIR: genéralas antes." >&2; exit 1; }
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+# Todas las capturas salen del mismo recorrido y miden lo mismo; el tamaño de la primera
+# manda sobre las medidas relativas y sobre el par de capturas compuestas.
+read -r ANCHO ALTO <<<"$(magick identify -format "%w %h" "${capturas[0]}")"
+
+for captura in "${capturas[@]}"; do
+  clave=$(basename "$captura" .png)
+
+  fondo="$BASE/backgrounds/$clave.jpg"
+  [ -f "$fondo" ] || fondo="$BASE/background.jpg"
+  [ -f "$fondo" ] || { echo "❌ Falta el fondo de $clave: corre generate-screenshot-backgrounds macos" >&2; exit 1; }
+
+  # 1. La captura dentro del MacBook y el texto de arriba.
+  en_macbook "$captura" "$tmp/macbook.png"
+  texto_png "$clave" "$(calc "$ANCHO * 0.9")" "$tmp/texto.png"
+
+  # 2. El MacBook, achicado a lo que queda libre bajo el texto.
+  alto_texto=$(magick identify -format "%h" "$tmp/texto.png")
+  arriba_texto=$(calc "$ALTO * $MARGEN_SUPERIOR")
+  arriba_macbook=$((arriba_texto + alto_texto + $(calc "$ALTO * $ESPACIO_BAJO_TEXTO")))
+  alto_libre=$((ALTO - arriba_macbook - $(calc "$ALTO * $MARGEN_INFERIOR")))
+  magick "$tmp/macbook.png" -resize "$(calc "$ANCHO * $ANCHO_MACBOOK")x${alto_libre}" "$tmp/macbook_final.png"
+
+  con_sombra "$tmp/macbook_final.png"
+
+  # 3. Todo junto sobre la tira de fondo que le toca a esta captura.
+  read -r ancho_conjunto _ <<<"$(magick identify -format "%w %h" "$tmp/conjunto.png")"
+  magick "$fondo" -resize "${ANCHO}x${ALTO}^" -gravity center -extent "${ANCHO}x${ALTO}" \
+    "$tmp/conjunto.png" -gravity northwest \
+      -geometry "+$(((ANCHO - ancho_conjunto) / 2))+$((arriba_macbook - margen))" -composite \
+    "$tmp/texto.png" -gravity north -geometry "+0+$arriba_texto" -composite \
+    "$DIR/${clave}_framed.png"
+done
+
+# Las dos primeras capturas de la ficha: el MacBook en diagonal con el splash, sobre las dos
+# tiras de fondo puestas lado a lado, y el par cortado por la mitad al final.
+magick -size "${ANCHO}x${ALTO}" "xc:$SPLASH_FONDO" \
+  \( "$SPLASH_LOGO" -resize "x$(calc "$ALTO * $SPLASH_LOGO_ALTO")" \) -gravity center -composite \
+  \( "$SPLASH_MARCA" -resize "x$(calc "$ALTO * $SPLASH_MARCA_ALTO")" \) -gravity south \
+    -geometry "+0+$(calc "$ALTO * $SPLASH_MARCA_ABAJO")" -composite \
+  "$tmp/splash.png"
+
+en_macbook "$tmp/splash.png" "$tmp/macbook_splash.png"
+magick "$tmp/macbook_splash.png" -background none \
+  -resize "$(calc "$ANCHO * $ANCHO_DIAGONAL")x" -rotate "$ROTACION" "$tmp/diagonal.png"
+con_sombra "$tmp/diagonal.png"
+
+texto_png "02_bienvenida" "$(calc "$ANCHO * 0.8")" "$tmp/texto.png" saltos
+
+read -r ancho_conjunto alto_conjunto <<<"$(magick identify -format "%w %h" "$tmp/conjunto.png")"
+magick "$BASE/backgrounds/01_bienvenida.jpg" "$BASE/backgrounds/02_bienvenida.jpg" +append \
+  "$tmp/conjunto.png" -gravity northwest \
+    -geometry "$(printf "%+d%+d" \
+      "$(calc "$ANCHO * $CENTRO_X - $ancho_conjunto / 2")" \
+      "$(calc "$ALTO * $CENTRO_Y - $alto_conjunto / 2")")" -composite \
+  \( "$LOGO_UTEM" -resize "$(calc "$ANCHO * $LOGO_ANCHO")x" \) -gravity southwest \
+    -geometry "+$(calc "$ANCHO * $LOGO_MARGEN")+$(calc "$ALTO * $LOGO_MARGEN")" -composite \
+  "$tmp/texto.png" -gravity north \
+    -geometry "$(printf "%+d%+d" "$(calc "$ANCHO * ($TEXTO_CENTRO_X - 1)")" "$(calc "$ALTO * $TEXTO_ARRIBA")")" \
+    -composite \
+  "$tmp/bienvenida.png"
+
+magick "$tmp/bienvenida.png" -crop "${ANCHO}x${ALTO}+0+0" +repage "$DIR/01_bienvenida_framed.png"
+magick "$tmp/bienvenida.png" -crop "${ANCHO}x${ALTO}+${ANCHO}+0" +repage "$DIR/02_bienvenida_framed.png"
+
+echo "✅ ${#capturas[@]} capturas enmarcadas y 2 compuestas en $DIR"
