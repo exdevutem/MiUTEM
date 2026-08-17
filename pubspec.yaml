@@ -20,7 +20,7 @@ dependencies:
   dart_jsonwebtoken: ^3.4.1
   google_fonts: ^8.2.1
   flutter_native_splash: ^2.4.1
-  video_player: ^2.9.2
+  video_player: ^2.14.0
   url_launcher: ^6.3.0
   skeletonizer: ^2.1.0+1
   material_symbols_icons: ^4.2960.0
