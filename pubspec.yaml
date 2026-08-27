@@ -33,7 +33,7 @@ dependencies:
   screenshot: ^3.0.0
   share_plus: ^13.3.0
   # Firebase
-  firebase_core: ^4.13.0
+  firebase_core: ^4.14.0
   firebase_remote_config: ^6.5.6
   firebase_analytics: ^12.4.6
   firebase_crashlytics: ^5.2.7
